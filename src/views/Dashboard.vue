@@ -442,6 +442,8 @@
               <strong>{{item.value}}</strong>
             </div>
           </b-table>
+
+          
         </b-card>
       </b-col>
     </b-row>
@@ -449,6 +451,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import CardLine1ChartExample from './dashboard/CardLine1ChartExample'
 import CardLine2ChartExample from './dashboard/CardLine2ChartExample'
 import CardLine3ChartExample from './dashboard/CardLine3ChartExample'

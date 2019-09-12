@@ -17,6 +17,11 @@ import VueAxios from 'vue-axios'
  
 Vue.use(VueAxios, axios)
 
+
+const token = 'Bearer '+localStorage.getItem('access_token')
+if (token) {
+  axios.defaults.headers.common['Authorization'] = token
+}
 // todo
 // cssVars()
 

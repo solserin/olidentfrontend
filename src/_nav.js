@@ -5,14 +5,34 @@ export default {
       url: '/dashboard',
       icon: 'icon-speedometer',
     },
-  
     {
       divider: true
     },
     {
       title: true,
-      name: 'Extras'
+      name: 'MENÚ'
     },
+
+
+    {
+      name: 'Roles',
+      url: '/usuarios',
+      icon: 'icon-star',
+      children: [
+        {
+          name: 'Usuarios',
+          url: '/usuarios/',
+          icon: 'icon-star'
+        },
+        {
+          name: 'Roles',
+          url: '/usuarios/roles',
+          icon: 'icon-star'
+        }
+      ]
+    },
+
+
     {
       name: 'Pages',
       url: '/pages',

@@ -16,6 +16,13 @@ const Login = () => import('@/views/pages/Login')
 const Register = () => import('@/views/pages/Register')
 
 
+
+
+//Componentes para el control de usuarios
+const Roles = () => import('@/views/usuarios/Roles')
+const Usuarios = () => import('@/views/usuarios/Usuarios')
+
+
 Vue.use(Router)
 
 let router=new Router({
@@ -37,10 +44,36 @@ let router=new Router({
             requiresAuth: true
           }
         },
-        
-        
       ]
     },
+
+
+
+    {
+      path: '/usuarios',
+      redirect: '/usuarios/',
+      name: 'Usuarios',
+      component: DefaultContainer,
+      children: [
+        {
+          path: '/',
+          name: 'Usuarios',
+          component: Usuarios,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'roles',
+          name: 'Roles',
+          component: Roles,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+      ]
+    },
+    
     {
       path: '/pages',
       redirect: '/pages/404',
@@ -77,8 +110,6 @@ let router=new Router({
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {
-      console.log(to)
-     
       next()
       return
     }

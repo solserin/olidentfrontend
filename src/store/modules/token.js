@@ -1,9 +1,11 @@
 import axios from 'axios'
 
+
+
 const state={
     status: '',
     token: localStorage.getItem('access_token') || '',
-    user: {},
+    user: {}
 };
 
 const getters={
@@ -25,7 +27,8 @@ const mutations={
       },
       logout(state) {
         state.status = ''
-        state.token = ''
+        state.token = '',
+        state.modulos=[]//reseteo los modulos
       }
 };
 
@@ -33,22 +36,22 @@ const actions={
     login({ commit },data) {
         return new Promise((resolve, reject) => {
           var datos={
-            client_id:3,
-            client_secret:'mP2kXH2raUe0kErUaG8410mfFIfINKEmSByXscvX',
+            client_id:1,
+            client_secret:'4r6xNH7MYlNRf1YFstb6oFsI87uuY2nlcBA6K1Ft',
             grant_type:'password',
             username:data.email,
             password:data.password
           }
           commit('auth_request')
-          axios({ url: 'http://localhost:8000/oauth/token', data: datos, method: 'POST' })
+           axios({ url: 'http://localhost:8000/oauth/token', data: datos, method: 'POST' })
             .then(resp => {
-            
               const token = resp.data.access_token
-              const user = resp.data.user
+              const user = resp
+              
               //console.log(resp.data)
               localStorage.setItem('access_token', token)
               // Add the following line:
-              axios.defaults.headers.common['Authorization'] = token
+              axios.defaults.headers.common['Authorization'] = 'Bearer '+token
               commit('auth_success', token, user)
               resolve(resp)
             })

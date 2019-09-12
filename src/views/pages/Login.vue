@@ -6,6 +6,7 @@
                 <b-card-group>
                     <b-card no-body class="p-4">
                         <b-card-body>
+                             <loading v-if="authStatus ==='loading'" :active.sync="isLoading"></loading>
                             <b-form>
                                 <h1>Login</h1>
                                 <p class="text-muted">Sign In to your account</p>
@@ -27,6 +28,7 @@
                                     </b-col>
                                     <b-col cols="6" class="text-right">
                                         <b-button variant="link" class="px-0">Forgot password?</b-button>
+                                        {{authStatus}}
                                     </b-col>
                                 </b-row>
                             </b-form>
@@ -49,12 +51,20 @@
 </template>
 
 <script>
+import Loading from 'vue-loading-overlay';
+    // Import stylesheet
+import 'vue-loading-overlay/dist/vue-loading.css';
+import { mapGetters } from 'vuex'
 export default {
     data() {
         return {
             password: '',
-            userEmail: ''
+            userEmail: '',
+            isLoading: true,
         }
+    },
+    components: {
+            Loading
     },
 
     methods: {
@@ -82,6 +92,12 @@ export default {
               vm.showResult = true;
             }*/
         }
-    }
+    },
+      computed: {
+    // mix the getters into computed with object spread operator
+    ...mapGetters([
+      'authStatus'
+    ])
+  }
 }
 </script>

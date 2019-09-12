@@ -51,7 +51,6 @@ const actions={
                 let id_modulos=0
                 let id_grupo=0
                 let grupos=[]
-                
                 data.forEach(function(item,index){
                    if(id_modulos==0){
                        id_modulos=item['modulo_id']

@@ -14,7 +14,7 @@ const getters={
 };
 
 const mutations={
-    auth_request(state) {
+      auth_request(state) {
         state.status = 'loading'
       },
       auth_success(state, token, user){
@@ -27,8 +27,7 @@ const mutations={
       },
       logout(state) {
         state.status = ''
-        state.token = '',
-        state.modulos=[]//reseteo los modulos
+        state.token = ''
       }
 };
 
@@ -64,9 +63,11 @@ const actions={
       },
       logout({ commit }) {
         return new Promise((resolve, reject) => {
-          commit('logout')
+          commit('auth_request')
           localStorage.removeItem('access_token')
           delete axios.defaults.headers.common['Authorization']
+          commit('logout')
+          
           resolve()
         })
       }

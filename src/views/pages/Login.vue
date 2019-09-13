@@ -9,26 +9,25 @@
                              <loading v-if="authStatus ==='loading'" :active.sync="isLoading"></loading>
                             <b-form>
                                 <h1>Login</h1>
-                                <p class="text-muted">Sign In to your account</p>
+                                <p class="text-muted">Ingrese sus datos de acceso</p>
                                 <b-input-group class="mb-3">
                                     <b-input-group-prepend>
                                         <b-input-group-text><i class="icon-user"></i></b-input-group-text>
                                     </b-input-group-prepend>
-                                    <b-form-input v-model="userEmail" type="text" class="form-control" placeholder="Username" autocomplete="username email" />
+                                    <b-form-input v-model="userEmail" type="email" required="required" class="form-control" placeholder="Username" autocomplete="username email" />
                                 </b-input-group>
                                 <b-input-group class="mb-4">
                                     <b-input-group-prepend>
                                         <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
                                     </b-input-group-prepend>
-                                    <b-form-input v-model="password" type="password" class="form-control" placeholder="Password" autocomplete="current-password" />
+                                    <b-form-input v-model="password" type="password" class="form-control" placeholder="Password" autocomplete="current-password" v-on:keyup.enter="login()" />
                                 </b-input-group>
                                 <b-row>
-                                    <b-col cols="6">
+                                    <b-col cols="4">
                                         <b-button variant="primary" class="px-4" @click="login()">Login</b-button>
                                     </b-col>
-                                    <b-col cols="6" class="text-right">
-                                        <b-button variant="link" class="px-0">Forgot password?</b-button>
-                                        {{authStatus}}
+                                    <b-col cols="8" class="text-right">
+                                        <b-button variant="link" class="px-0">Olvidó su contraseña?</b-button>
                                     </b-col>
                                 </b-row>
                             </b-form>
@@ -37,9 +36,9 @@
                     <b-card no-body class="text-white bg-primary py-5 d-md-down-none" style="width:44%">
                         <b-card-body class="text-center">
                             <div>
-                                <h2>Sign up</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                                <b-button variant="primary" class="active mt-3">Register Now!</b-button>
+                                <h2>NOMBRE DEL SISTEMA</h2>
+                                <p>Bienvenido al sistema integral de cobranza y servicios dentales de OLI DENT.</p>
+                                LOGO
                             </div>
                         </b-card-body>
                     </b-card>
@@ -78,10 +77,18 @@ export default {
                     password
                 })
                 .then(() => {
+                    this.$toasted.clear();
                     this.$router.push("/")
                 })
                 .catch(err => {
-                    console.log(err)
+                   this.$toasted.show("Error de usuario y/o contraseña",{
+                       iconPack:'fontawesome',
+                       type:'error',
+                       theme:'toasted-primary',
+                       icon:'lock',
+                       duration:10000,
+                       position:'bottom-center'
+                   });
                 });
             /*if (vm.userEmail === vm.$root.userEmail && vm.password === vm.$root.userPassword) {
               //vm.$router.push({ name: 'Dashboard' });

@@ -39,6 +39,8 @@
         <main class="main">
             <Breadcrumb :list="list" />
             <div class="container-fluid">
+                <loading v-if="status==='loading'" :active.sync="isLoading"></loading>
+                {{user}}
                 <router-view></router-view>
             </div>
         </main>
@@ -55,14 +57,18 @@
         </div>
         <div class="ml-auto">
             <span class="mr-1">Desarrollado Por</span>
-            <a href="https://www.solserin.com">Solserinsoluciones Web</a>
+            <a href="https://www.solserin.com">Solserin Soluciones Web</a>
         </div>
     </TheFooter>
 </div>
 </template>
 
 <script>
-import nav from '@/_nav'
+import Loading from 'vue-loading-overlay';
+    // Import stylesheet
+import 'vue-loading-overlay/dist/vue-loading.css';
+//import nav from '@/_nav'
+import { mapGetters } from 'vuex'
 import {
     Header as AppHeader,
     SidebarToggler,
@@ -83,6 +89,7 @@ import DefaultHeaderDropdownAccnt from './DefaultHeaderDropdownAccnt'
 export default {
     name: 'DefaultContainer',
     components: {
+        Loading,
         AsideToggler,
         AppHeader,
         AppSidebar,
@@ -100,7 +107,8 @@ export default {
     },
     data() {
         return {
-            nav: nav.items
+            nav: [],
+            isLoading: true
         }
     },
     computed: {
@@ -109,10 +117,26 @@ export default {
         },
         list() {
             return this.$route.matched.filter((route) => route.name || route.meta.label)
-        }
-    }
-    
+        },
+        // mix the getters into computed with object spread operator
+        ...mapGetters([
+            'user',
+            'menu',
+            'status'
+        ])
+    },
+    created(){
+      console.log(this.user)
+    },
+    beforeCreate() {
+        //comienzo el loading
+        this.$store.dispatch("loading")
+        this.$store.dispatch("fillPerfil")
+        .then(()=>{
+           this.nav=this.menu
+            //quito el loading
+            this.$store.dispatch("success")
+        })
+    },
 }
 </script>
- 
-    

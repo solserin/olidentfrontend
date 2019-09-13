@@ -12,8 +12,6 @@ export default {
       title: true,
       name: 'MENÚ'
     },
-
-
     {
       name: 'Roles',
       url: '/usuarios',
@@ -31,8 +29,6 @@ export default {
         }
       ]
     },
-
-
     {
       name: 'Pages',
       url: '/pages',

@@ -1,51 +1,25 @@
 import axios from 'axios'
 
 const state={
-    perfil:[],
-    user_id:'',
-    user_email:'',
     menu:[]
 };
 
 const getters={
-    datos:state=>state.perfil,
-    user_id:state=>state.user_id,
-    user_email:state=>state.user_email,
     menu:state=>state.menu
 };
 
 const mutations={
-    getPerfil(state,data,men){
-        state.perfil=data
-        state.user_id=data[0]['id']
-        state.user_email=data[0]['email']
-        state.menu=men
+    getPerfil(state,menu){
+        state.menu=menu
     }
 };
 
 const actions={
     fillPerfil({ commit }) {
         return new Promise((resolve, reject) => {
-            axios.post('http://localhost:8000/usuarios/loadPerfil/1')
+            axios.post("http://localhost:8000/usuarios/loadPerfil/1")
             .then(res=>{
                 const data=res.data.data;
-                const menu=[];
-                
-                let x=0;
-                /*data.forEach(function(item){
-                    if(x==0){
-                        grupo=[
-                            {
-                                'name':item['grupo'],
-                                'url':item['url'],
-                                'icon':item['icon']
-                            }
-                        ]
-                        menu.push(grupo)
-                    }
-                    x+=1;
-                });*/
-
                 //obtengo los todos los modulos pero falta agruparlos
                 let modulos=[]
                 let id_modulos=0
@@ -81,17 +55,65 @@ const actions={
                    }
                    if(id_grupo==0){
                        id_grupo=item['grupo_id']
-                       grupos.push({'id':id_grupo,'index':index})
+                       grupos.push({'id':id_grupo,'index':index,'grupo':item['grupo']})
                    }else{
                        if(id_grupo!=item['grupo_id']){
                           id_grupo=item['grupo_id']
-                          grupos.push({'id':id_grupo,'index':index})
+                          grupos.push({'id':id_grupo,'index':index,'grupo':item['grupo']})
                        }
                    }
                 });
-                console.log(modulos);
-                console.log(grupos);
-                commit('getPerfil',data,menu)
+
+                //aqui comienzo a organizar el menu
+                let menu=[]
+
+                menu.push(
+                    {
+                        name: 'INICIO',
+                        url: '/dashboard',
+                        icon: 'icon-speedometer',
+                      },
+                      {
+                        divider: true
+                      },
+                      {
+                        title: true,
+                        name: 'MENÚ'
+                    }
+                );
+                let temporal=[]
+                let childrens=[]
+                let lasItem=1
+                grupos.forEach(function(itemGrupo,index){
+                    //aqui saco todos los modulos por grupo
+                    lasItem=1
+                    modulos.forEach(function(itemModulo,index){
+                        if(itemGrupo['id']==itemModulo['id_grupo']){
+                            childrens.push(
+                                {
+                                    'name':itemModulo['name'],
+                                    'url':itemModulo['url'],
+                                    'icon':itemModulo['icon']
+                                }
+                            );
+                        }
+                        if(lasItem==modulos.length){
+                            //aqui se juntan los dos arrays de datos
+                            temporal=
+                                {
+                                    'name': itemGrupo['grupo'],
+                                    'url': itemModulo['url'],
+                                    'icon': itemModulo['icon'],
+                                    'children':childrens
+                                }
+                        }
+                        lasItem++
+                    });
+                    menu.push(temporal)
+                    childrens=[]
+                    temporal=[]
+                });
+                commit('getPerfil',menu)
                 resolve(res)
             })
             .catch(err=>{

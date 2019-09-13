@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import tokenManagement from './modules/token'
 import Perfil from './modules/perfil'
+import Status from './modules/status'
 
 //load vuex
 Vue.use(Vuex)
@@ -10,6 +11,7 @@ Vue.use(Vuex)
 export const store=new Vuex.Store({
     modules:{
       tokenManagement,
-      Perfil
+      Perfil,
+      Status
     }
 })

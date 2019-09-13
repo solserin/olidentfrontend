@@ -1,33 +1,36 @@
 import axios from 'axios'
 
-
-
 const state={
     status: '',
     token: localStorage.getItem('access_token') || '',
-    user: {}
+    user:[],
+    host:'http://localhost:8000/'
 };
 
 const getters={
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
+    user: state => state.user,
 };
 
 const mutations={
       auth_request(state) {
         state.status = 'loading'
       },
-      auth_success(state, token, user){
+      auth_success(state, token){
         state.status = 'success'
         state.token = token
-        state.user = user
       },
       auth_error(state) {
         state.status = 'error'
       },
       logout(state) {
         state.status = ''
-        state.token = ''
+        state.token = '',
+        state.user=[]
+      },
+      datosUsuario(state,datos){
+        state.user=datos
       }
 };
 
@@ -42,16 +45,17 @@ const actions={
             password:data.password
           }
           commit('auth_request')
-           axios({ url: 'http://localhost:8000/oauth/token', data: datos, method: 'POST' })
+           axios({ url: state.host+'oauth/token', data: datos, method: 'POST' })
             .then(resp => {
               const token = resp.data.access_token
-              const user = resp
-              
-              //console.log(resp.data)
               localStorage.setItem('access_token', token)
               // Add the following line:
               axios.defaults.headers.common['Authorization'] = 'Bearer '+token
-              commit('auth_success', token, user)
+              axios({ url: state.host+'usuarios/user_email/'+datos.username, method: 'GET' })
+              .then(resp2 => {
+                commit('datosUsuario',resp2.data)
+              })
+              commit('auth_success', token)
               resolve(resp)
             })
             .catch(err => {
@@ -67,7 +71,6 @@ const actions={
           localStorage.removeItem('access_token')
           delete axios.defaults.headers.common['Authorization']
           commit('logout')
-          
           resolve()
         })
       }

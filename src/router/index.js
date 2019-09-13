@@ -46,9 +46,6 @@ let router=new Router({
         },
       ]
     },
-
-
-
     {
       path: '/usuarios',
       redirect: '/usuarios/',
@@ -57,7 +54,7 @@ let router=new Router({
       children: [
         {
           path: '/',
-          name: 'Usuarios',
+          name: 'Control de Usuarios',
           component: Usuarios,
           meta: { 
             requiresAuth: true
@@ -65,7 +62,7 @@ let router=new Router({
         },
         {
           path: 'roles',
-          name: 'Roles',
+          name: 'Roles de Usuario',
           component: Roles,
           meta: { 
             requiresAuth: true

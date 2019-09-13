@@ -17,11 +17,16 @@ import VueAxios from 'vue-axios'
  
 Vue.use(VueAxios, axios)
 
+// register the plugin on vue
+import Toasted from 'vue-toasted';
+Vue.use(Toasted)
 
 const token = 'Bearer '+localStorage.getItem('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = token
 }
+
+const host='http://localhost:8000/';
 // todo
 // cssVars()
 

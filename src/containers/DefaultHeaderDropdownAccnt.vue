@@ -2,7 +2,7 @@
   <AppHeaderDropdown right no-caret>
     <template slot="header">
       <img
-        src="img/avatars/6.jpg"
+        src="https://content-static.upwork.com/uploads/2014/10/01073427/profilephoto1.jpg"
         class="img-avatar"
         alt="admin@bootstrapmaster.com" />
     </template>\

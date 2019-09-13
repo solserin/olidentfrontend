@@ -78,7 +78,7 @@ export default {
                 })
                 .then(() => {
                     this.$toasted.clear();
-                    this.$router.push("/")
+                    this.$router.push('/');
                 })
                 .catch(err => {
                    this.$toasted.show("Error de usuario y/o contraseña",{

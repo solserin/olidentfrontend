@@ -26,7 +26,6 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = token
 }
 
-const host='http://localhost:8000/';
 // todo
 // cssVars()
 

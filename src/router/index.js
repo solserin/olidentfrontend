@@ -13,8 +13,6 @@ const Dashboard = () => import('@/views/Dashboard')
 const Page404 = () => import('@/views/pages/Page404')
 const Page500 = () => import('@/views/pages/Page500')
 const Login = () => import('@/views/pages/Login')
-const Register = () => import('@/views/pages/Register')
-
 
 
 
@@ -93,16 +91,12 @@ let router=new Router({
           path: 'login',
           name: 'Login',
           component: Login
-        },
-        {
-          path: 'register',
-          name: 'Register',
-          component: Register
         }
       ]
     }
   ]
 })
+
 
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.requiresAuth)) {

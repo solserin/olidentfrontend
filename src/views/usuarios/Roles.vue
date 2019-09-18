@@ -9,8 +9,8 @@
         <b-row>
             <b-col xs="12" sm="12" md="5">
                 <b-input-group class="mb-2 mt-3">
-                    <b-input-group-prepend is-text><b><i class="fa fa-search" aria-hidden="true"></i></b></b-input-group-prepend>
-                    <b-form-input placeholder="Filtrar resultados"></b-form-input>
+                    <b-form-input placeholder="Filtrar resultados" v-model="filter"></b-form-input>
+                    <b-input-group-prepend is-text style="cursor:pointer !important;"><b><i class="fa fa-search" aria-hidden="true"></i></b></b-input-group-prepend>
                 </b-input-group>
             </b-col>
             <b-col xs="12" sm="12" md="2">
@@ -31,16 +31,15 @@
             </b-col>
             <b-col xs="12" sm="12" md="5">
                 <div class="float-right  mt-3">
-                    <b-button v-b-modal.modal-xl pill class="mr-2" variant="primary"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo</b-button>
+                    <b-button v-b-modal.modalNuevo pill class="mr-2" variant="primary"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo</b-button>
                     <b-button pill class="mr-2" variant="outline-danger"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf</b-button>
                     <b-button pill variant="outline-success"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</b-button>
                 </div>
             </b-col>
         </b-row>
-
         <b-row>
             <b-col xs="12">
-                <b-table id="table" :fixed="true" :hover="true" :foot-clone="true" :busy.sync="isBusy" :items="myProvider" :fields="fields" :current-page="currentPage" :per-page="perPage" striped show-empty :emptyText="texto" responsive primary-key="id" class="mt-5">
+                <b-table id="table" :fixed="true" hover :foot-clone="true" :busy.sync="isBusy" :items="myProvider" :fields="fields" :current-page="currentPage" :per-page="perPage" striped show-empty :emptyText="texto" responsive primary-key="id" class="mt-5">
                     <template v-slot:empty="scope">
                         <h4 class="text-center">{{ scope.emptyText }}</h4>
                     </template>
@@ -53,44 +52,19 @@
     </b-card>
     <b-row>
         <div>
-            <b-modal id="modal-xl" size="xl" title="Nuevo Rol de Usuario" header-bg-variant="light">
-                <b-col md="6" offset-md="3">
-                    <b-form-group label-cols-md="4" label="Nivel de Administrador:" label-align-sm="right" label-for="nested-street" label-class="ok">
-                        <b-form-input id="nested-street"></b-form-input>
-                    </b-form-group>
-                </b-col>
-                <b-col xs="12">
-                    <div>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Módulos</th>
-                                    <th scope="col" v-for="permiso in fieldsPermisos" v-bind:key="permiso.id">
-                                        <input type="checkbox" :id="permiso.id" v-on:change="selectAll(permiso.permiso)">{{permiso.permiso}}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="modulo in modulos" v-bind:key="modulo.id">
-                                    <th scope="row">{{modulo.name}}</th>
-                                    <td v-for="permiso in fieldsPermisos" v-bind:key="permiso.id">
-                                        <input type="checkbox" name="permisos[]" :class="permiso.permiso" v-model="itemsPermisos" :value="modulo.id+'_'+permiso.id">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        {{itemsPermisos}}
-                    </div>
-                </b-col>
-            </b-modal>
+            <NuevoRol></NuevoRol>
         </div>
     </b-row>
 </div>
 </template>
 
 <script>
+import NuevoRol from './roles/NuevoRol'
 import axios from 'axios'
 export default {
+    components: {
+        NuevoRol
+    },
     data() {
         return {
             selected: null,
@@ -98,7 +72,7 @@ export default {
             items: [],
             fields: [{
                     key: "id",
-                    label: 'Clave'
+                    label: 'Clave',
                 },
                 {
                     key: "rol",
@@ -121,21 +95,17 @@ export default {
             perPage: 10,
             filter: null,
             rowsTotal: 0,
-            //permisos
-            fieldsPermisos: [],
-            itemsPermisos: [],
-            modulos: [],
-            //checkboxes
-            selectAllAgregar: false
+
         }
     },
     methods: {
         myProvider(ctx) {
-
             this.$store.dispatch('loading');
             this.isBusy = true;
+            let url_api='http://localhost:8000/usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
+            console.log(url_api)
             let promise =
-                axios.get('http://localhost:8000/usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage)
+                axios.get(url_api)
             return promise
                 .then(resp => {
                     var items = resp.data.data.data;
@@ -152,54 +122,8 @@ export default {
                     this.$store.dispatch('error')
                     return [];
                 })
-
-        },
-        getDatosNuevoRol() {
-            //traigo los permisos
-            axios.get('http://localhost:8000/permisos')
-                .then(resp => {
-                    this.fieldsPermisos = resp.data.data
-                })
-                .catch(error => {
-                    console.log(resp)
-                })
-
-            //traigo los modulos
-            axios.get('http://localhost:8000/modulos')
-                .then(resp => {
-                    this.modulos = resp.data.data
-                })
-                .catch(error => {
-                    console.log(resp)
-                })
-        },
-        selectAll: function (n) {
-            //obtengo el tamaño del array de elementos a activar o desactivar
-            var total = document.getElementsByClassName(n).length;
-            var id_activar_todos = 1; //con este checo cual checkbox esta haciendo el cambio
-            if (n == "Agregar") {
-                id_activar_todos = 2;
-            } else if (n == "Modificar") {
-                id_activar_todos = 3;
-            } else if (n == "Eliminar") {
-                id_activar_todos = 4;
-            }
-
-            for (let index = 0; index < total; index++) {
-                if (document.getElementById(id_activar_todos).checked) {
-                    document.getElementsByClassName(n)[index].checked = true;
-                    this.itemsPermisos.push(document.getElementsByClassName(n)[index].value);
-                } else {
-                    document.getElementsByClassName(n)[index].checked = false;
-                    this.itemsPermisos.push(document.getElementsByClassName(n)[index].value);
-                }
-                
-            }
         }
-    },
-    created() {
-        this.getDatosNuevoRol()
-    },
+    }
 
 }
 </script>
@@ -208,13 +132,5 @@ export default {
 .title-crud {
     font-size: 16px;
     font-weight: bold;
-}
-
-.ok {
-    font-weight: bold;
-}
-
-input[type=text] {
-    border-radius: 0px !important;
 }
 </style>

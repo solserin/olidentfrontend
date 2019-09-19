@@ -9,8 +9,8 @@
         <b-row>
             <b-col xs="12" sm="12" md="5">
                 <b-input-group class="mb-2 mt-3">
-                    <b-form-input placeholder="Filtrar resultados" v-model="filter"></b-form-input>
-                    <b-input-group-prepend is-text style="cursor:pointer !important;"><b><i class="fa fa-search" aria-hidden="true"></i></b></b-input-group-prepend>
+                    <b-form-input placeholder="Filtrar resultados" v-model="filter" v-on:keyup.enter="refresh_table"></b-form-input>
+                    <b-input-group-prepend variant="primary" is-text style="cursor:pointer !important;" @click="refresh_table"><b class="text-primary"><i class="fa fa-search" aria-hidden="true"></i></b></b-input-group-prepend>
                 </b-input-group>
             </b-col>
             <b-col xs="12" sm="12" md="2">
@@ -40,11 +40,15 @@
         <b-row>
             <b-col xs="12">
                 <b-table id="table" :fixed="true" hover :foot-clone="true" :busy.sync="isBusy" :items="myProvider" :fields="fields" :current-page="currentPage" :per-page="perPage" striped show-empty :emptyText="texto" responsive primary-key="id" class="mt-5">
-                    <template v-slot:empty="scope">
-                        <h4 class="text-center">{{ scope.emptyText }}</h4>
+                    <template v-slot:table-caption>
+                        Total de Resultados: <strong>{{rowsTotal}} </strong> de <strong>{{totalRows}} </strong> Registros.
                     </template>
+                    
+                    <template v-slot:empty="scope">
+                        <p class="text-center">{{ scope.emptyText }}</p>
+                    </template>
+                    <!-- A virtual composite column -->
                 </b-table>
-                Total de Resultados: <strong>{{rowsTotal}} </strong> de <strong>{{totalRows}} </strong> Registros.
                 <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" first-text="<<" prev-text="<" next-text=">" last-text=">>" class="mt-3 mb-5 justify-content-center">
                 </b-pagination>
             </b-col>
@@ -70,9 +74,11 @@ export default {
             selected: null,
             texto: 'No se ha extraido información de la base de datos',
             items: [],
-            fields: [{
+            fields: [
+                {
                     key: "id",
                     label: 'Clave',
+                    thClass:'text-primary'
                 },
                 {
                     key: "rol",
@@ -85,8 +91,9 @@ export default {
                     class: 'text-center'
                 },
                 {
-                    key: 'ok',
+                    key: 'acciones',
                     label: 'Acciones',
+                    class: 'text-center'
                 },
             ],
             isBusy: false,
@@ -95,17 +102,18 @@ export default {
             perPage: 10,
             filter: null,
             rowsTotal: 0,
-
         }
     },
     methods: {
         myProvider(ctx) {
             this.$store.dispatch('loading');
             this.isBusy = true;
-            let url_api='http://localhost:8000/usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
-            console.log(url_api)
-            let promise =
-                axios.get(url_api)
+            let url_api = 'http://localhost:8000/usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
+            if (this.filter) {
+                //si se esta usando el filtro
+                url_api = 'http://localhost:8000/usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
+            }
+            let promise = axios.get(url_api)
             return promise
                 .then(resp => {
                     var items = resp.data.data.data;
@@ -118,10 +126,14 @@ export default {
                     return items;
                 })
                 .catch(error => {
+                    console.log(error)
                     this.isBusy = false;
                     this.$store.dispatch('error')
                     return [];
                 })
+        },
+        refresh_table() {
+            this.$root.$emit('bv::refresh::table', 'table')
         }
     }
 
@@ -132,5 +144,9 @@ export default {
 .title-crud {
     font-size: 16px;
     font-weight: bold;
+}
+
+#table tr:hover{
+    background-color:#d2edf7 !important;
 }
 </style>

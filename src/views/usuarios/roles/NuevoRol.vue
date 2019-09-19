@@ -37,11 +37,13 @@
             </b-col>
         </b-form>
     </b-modal>
+
 </div>
 </template>
 
 <script>
 import axios from 'axios'
+import {showMsgBoxTwo} from '../../../assets/Funciones/Funciones.js' //funcion de modal de confirm
 export default {
     data() {
         return {
@@ -59,6 +61,8 @@ export default {
         }
     },
     methods: {
+        //funcion importada de modals de confirms
+        showMsgBoxTwo,
         getDatosNuevoRol() {
             //traigo los permisos
             axios.get('http://localhost:8000/permisos')
@@ -107,59 +111,70 @@ export default {
         },
         onSubmit(evt) {
             evt.preventDefault()
-            this.reset_errores();
-            try {
-                this.$store.dispatch('loading');
-                axios.post('http://localhost:8000/roles', this.form)
-                    .then(resp => {
-                        const elem = this.$refs.btnReset
-                        elem.click()
-                        this.$bvModal.hide('modalNuevo');
-                        this.$store.dispatch('success')
-                        this.$toasted.show("El nuevo rol ha sido guardo con éxito", {
-                            iconPack: 'fontawesome',
-                            type: 'success',
-                            theme: 'toasted-primary',
-                            icon: 'check',
-                            duration: 10000,
-                            position: 'top-right',
-                            closeButton:true
-                        });
-                        this.$root.$emit('bv::refresh::table', 'table')
-                    })
-                    .catch(error => {
-                        if (error.response.data['code'] == 422) {
-                            //error de validacion de datos
-                            if (error.response.data.error['rol']) {
-                                this.errors.rol = error.response.data.error.rol[0]
-                            }
-                            if (error.response.data.error['itemsPermisos']) {
-                                this.errors.items = error.response.data.error.itemsPermisos[0]
-                            }
-                        }
+            this.showMsgBoxTwo('¿Desea guardar los datos?','success').then(resp => {
+                if (resp) {
+                    this.reset_errores();
+                    try {
+                        this.$store.dispatch('loading');
+                        axios.post('http://localhost:8000/roles', this.form)
+                            .then(resp => {
+                                this.limpiar_formulario();
+                                this.$bvModal.hide('modalNuevo');
+                                this.$store.dispatch('success')
+                                this.$toasted.show("El nuevo rol se guardó con éxito", {
+                                    iconPack: 'fontawesome',
+                                    type: 'success',
+                                    theme: 'toasted-primary',
+                                    icon: 'check',
+                                    duration: 4000,
+                                    position: 'top-center',
+                                    closeOnSwipe: true,
+                                    keepOnHover: true
+                                });
+                                this.$root.$emit('bv::refresh::table', 'table')
+                            })
+                            .catch(error => {
+                                if (error.response.data['code'] == 422) {
+                                    //error de validacion de datos
+                                    if (error.response.data.error['rol']) {
+                                        this.errors.rol = error.response.data.error.rol[0]
+                                    }
+                                    if (error.response.data.error['itemsPermisos']) {
+                                        this.errors.items = error.response.data.error.itemsPermisos[0]
+                                    }
+                                }
+                                this.$store.dispatch('error')
+                            })
+                    } catch (error) {
                         this.$store.dispatch('error')
-                    })
-            } catch (error) {
-                console.log(error)
-                this.$store.dispatch('error')
-            }
-
+                    }
+                }
+            })
         },
         onReset(evt) {
             evt.preventDefault()
             // Reset our form values
+            this.showMsgBoxTwo().then(resp => {
+                if (resp) {
+                    this.limpiar_formulario();
+                }
+            })
+        },
+        //funcion para quitar los errores de validacion
+        reset_errores() {
+            this.errors.rol = ''
+            this.errors.items = ''
+        },
+        //funcion para limpiar el formulario completo
+        limpiar_formulario() {
             this.form.itemsPermisos = []
             //resetewo los selectores
             let total = document.getElementsByClassName('selectores').length;
             for (let index = 0; index < total; index++) {
                 document.getElementsByClassName('selectores')[index].getElementsByTagName('input')[0].checked = false;
             }
-            this.form.rol = ''
+            this.form.rol = '';
             this.reset_errores();
-        },
-        reset_errores() {
-            this.errors.rol = ''
-            this.errors.items = ''
         }
     },
     created() {

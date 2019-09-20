@@ -43,9 +43,16 @@
                     <template v-slot:table-caption>
                         Total de Resultados: <strong>{{rowsTotal}} </strong> de <strong>{{totalRows}} </strong> Registros.
                     </template>
-                    
                     <template v-slot:empty="scope">
                         <p class="text-center">{{ scope.emptyText }}</p>
+                    </template>
+
+                    <template v-slot:acciones="data">
+                        <div>
+                            <b-button pill variant="primary" size="sm" @click="get_datos_modificar(data.item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></b-button>
+                            <b-button pill class="mr-4 ml-4" variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
+                            <b-button pill size="sm" variant="secondary"><i class="fa fa-search" aria-hidden="true"></i></b-button>
+                        </div>
                     </template>
                     <!-- A virtual composite column -->
                 </b-table>
@@ -56,7 +63,7 @@
     </b-card>
     <b-row>
         <div>
-            <NuevoRol></NuevoRol>
+            <NuevoRol :itemsModificar="form.itemsPermisos" :rolNombre="form.rol" :id_rol="form.id_rol"></NuevoRol>
         </div>
     </b-row>
 </div>
@@ -64,21 +71,28 @@
 
 <script>
 import NuevoRol from './roles/NuevoRol'
+import {
+    showMsgBoxTwo
+} from '../../assets/Funciones/Funciones.js' //funcion de modal de confirm
 import axios from 'axios'
+import {
+    mapGetters
+} from 'vuex'
 export default {
     components: {
         NuevoRol
     },
     data() {
         return {
+            //datos compartidos del componente NuevoRol
             selected: null,
             texto: 'No se ha extraido información de la base de datos',
             items: [],
-            fields: [
-                {
+            fields: [{
                     key: "id",
                     label: 'Clave',
-                    thClass:'text-primary'
+                    thClass: 'text-primary',
+                    class: 'text-center'
                 },
                 {
                     key: "rol",
@@ -102,16 +116,25 @@ export default {
             perPage: 10,
             filter: null,
             rowsTotal: 0,
+            //variable que verifica si se esta modificacondo
+            modificar: false,
+            form: {
+                //permisos
+                itemsPermisos: [],
+                rol: '',
+                id_rol: 0
+            },
         }
     },
     methods: {
+        showMsgBoxTwo,
         myProvider(ctx) {
             this.$store.dispatch('loading');
             this.isBusy = true;
-            let url_api = 'http://localhost:8000/usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
+            let url_api = 'http://localhost:8000/roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
             if (this.filter) {
                 //si se esta usando el filtro
-                url_api = 'http://localhost:8000/usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
+                url_api = 'http://localhost:8000/roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
             }
             let promise = axios.get(url_api)
             return promise
@@ -134,7 +157,88 @@ export default {
         },
         refresh_table() {
             this.$root.$emit('bv::refresh::table', 'table')
+        },
+        get_datos_modificar(item) {
+            this.modificar = true;
+            this.$store.dispatch('loading');
+            this.form.itemsPermisos = []
+            this.form.rol = ''
+            this.form.id_rol = 0
+            try {
+                let datos = axios.get('http://localhost:8000/roles/' + item.id)
+                    .then(resp => {
+                        resp.data.data.forEach(element => {
+                            this.form.itemsPermisos.push(element.modulos_id + ',' + element.permisos_id);
+                        });
+                        this.form.id_rol = item.id
+                        this.form.rol = item.rol
+                        this.$store.dispatch('success')
+                        this.$bvModal.show('modalNuevo')
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        this.$store.dispatch('error')
+                    })
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        eliminar(item) {
+            this.showMsgBoxTwo('¿Desea eliminar este rol?', 'danger').then(resp => {
+                if (resp) {
+                    //si la respuesta es SI
+                    this.$store.dispatch('loading');
+                    try {
+                        let datos = axios.delete('http://localhost:8000/roles/' + item.id)
+                            .then(resp => {
+                                if (resp.data == item.id) {
+                                    //exito
+                                    this.$store.dispatch('success')
+                                    //se elimino todo bien
+                                    this.$toasted.show("El rol: " + item.rol + " ha sido dado de baja", {
+                                        iconPack: 'fontawesome',
+                                        type: 'success',
+                                        theme: 'toasted-primary',
+                                        icon: 'check',
+                                        duration: 5000,
+                                        position: 'top-right',
+                                        closeOnSwipe: true,
+                                        keepOnHover: true
+                                    });
+                                    this.$root.$emit('bv::refresh::table', 'table')
+                                } else {
+                                    //debe regresar -1 si tiene usuarios asociados
+                                    //hubo algun error
+                                    this.$store.dispatch('error')
+                                    this.$toasted.show("Error al eliminar, este rol tiene usuarios asociados.", {
+                                        iconPack: 'fontawesome',
+                                        type: 'error',
+                                        theme: 'toasted-primary',
+                                        icon: 'close',
+                                        duration: 5000,
+                                        position: 'top-right',
+                                        closeOnSwipe: true,
+                                        keepOnHover: true
+                                    });
+                                }
+
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                this.$store.dispatch('error')
+                            })
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+            });
         }
+    },
+    computed: {
+        // mix the getters into computed with object spread operator
+        ...mapGetters([
+            'permisos'
+        ])
     }
 
 }
@@ -146,7 +250,7 @@ export default {
     font-weight: bold;
 }
 
-#table tr:hover{
-    background-color:#d2edf7 !important;
+#table tr:hover {
+    background-color: #d2edf7 !important;
 }
 </style>

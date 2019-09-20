@@ -20,6 +20,8 @@ const Login = () => import('@/views/pages/Login')
 const Roles = () => import('@/views/usuarios/Roles')
 const Usuarios = () => import('@/views/usuarios/Usuarios')
 
+var tiene_permiso_modulo=0;
+
 
 Vue.use(Router)
 
@@ -91,6 +93,7 @@ let router=new Router({
           path: 'login',
           name: 'Login',
           component: Login
+          
         }
       ]
     }
@@ -99,8 +102,39 @@ let router=new Router({
 
 
 router.beforeEach((to, from, next) => {
+
+  //aqui los regreso al dashboard en caso de que ya este logueado
+  if(to.fullPath=='/pages/login'){
+    if (store.getters.isLoggedIn) {
+      next('/dashboard') 
+    }
+  }
+
+
+
   if(to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {
+      if(to.fullPath!="/dashboard"){
+         //verifico que tenga permiso para entrar a ese modulo
+        tiene_permiso_modulo=0;
+        store.getters.permisos.forEach(element => {
+          if(to.fullPath==element.url){
+            tiene_permiso_modulo=tiene_permiso_modulo+1;
+          }
+        });
+        if(tiene_permiso_modulo>0){
+          //puede entrar a la ruta
+          next()
+          return
+        }else{
+          //no puede entrar a la ruta
+          next('/dashboard') 
+        }
+        //verifico que tenga permiso para entrar a ese modulo
+      }else{
+        next()
+        return
+      }
       next()
       return
     }

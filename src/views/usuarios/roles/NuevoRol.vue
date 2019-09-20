@@ -1,6 +1,6 @@
 <template>
 <div>
-    <b-modal id="modalNuevo" size="xl" title="Nuevo Rol de Usuario" header-bg-variant="light" ok-variant="success" no-close-on-backdrop hide-footer>
+    <b-modal @hidden="limpiar_formulario" @close="limpiar_formulario" id="modalNuevo" size="xl" :title="$parent.modificar ? 'Modificar Rol de Usuario':'Nuevo Rol de Usuario'" header-bg-variant="light" no-close-on-backdrop hide-footer>
         <b-form @submit="onSubmit" @reset="onReset">
             <b-col md="6" offset-md="3">
                 <b-form-group label="Nivel de Administrador:" label-for="txtRol" label-class="ok" description="Debe indicar el nombre para identificar el nuevo ROL de usuarios.">
@@ -37,14 +37,38 @@
             </b-col>
         </b-form>
     </b-modal>
-
 </div>
 </template>
 
 <script>
 import axios from 'axios'
-import {showMsgBoxTwo} from '../../../assets/Funciones/Funciones.js' //funcion de modal de confirm
+import {
+    showMsgBoxTwo
+} from '../../../assets/Funciones/Funciones.js' //funcion de modal de confirm
 export default {
+    name: 'ChildComponent',
+    props: {
+        itemsModificar: {
+            type: Array
+        },
+        rolNombre: {
+            type: String
+        },
+         id_rol: {
+            type: Number
+        }
+    },
+    watch: {
+        itemsModificar: function () {
+            this.form.itemsPermisos = this.itemsModificar
+        },
+        rolNombre: function () {
+            this.form.rol = this.rolNombre
+        },
+        id_rol: function () {
+            this.form.id_rol = this.id_rol
+        }
+    },
     data() {
         return {
             fieldsPermisos: [],
@@ -52,12 +76,14 @@ export default {
             form: {
                 //permisos
                 itemsPermisos: [],
-                rol: ''
+                rol: '',
+                id_rol:0
             },
             errors: {
                 rol: '',
                 items: ''
-            }
+            },
+
         }
     },
     methods: {
@@ -111,40 +137,75 @@ export default {
         },
         onSubmit(evt) {
             evt.preventDefault()
-            this.showMsgBoxTwo('¿Desea guardar los datos?','success').then(resp => {
+            this.showMsgBoxTwo('¿Desea guardar los datos?', 'success').then(resp => {
                 if (resp) {
                     this.reset_errores();
                     try {
                         this.$store.dispatch('loading');
-                        axios.post('http://localhost:8000/roles', this.form)
-                            .then(resp => {
-                                this.limpiar_formulario();
-                                this.$bvModal.hide('modalNuevo');
-                                this.$store.dispatch('success')
-                                this.$toasted.show("El nuevo rol se guardó con éxito", {
-                                    iconPack: 'fontawesome',
-                                    type: 'success',
-                                    theme: 'toasted-primary',
-                                    icon: 'check',
-                                    duration: 4000,
-                                    position: 'top-center',
-                                    closeOnSwipe: true,
-                                    keepOnHover: true
-                                });
-                                this.$root.$emit('bv::refresh::table', 'table')
-                            })
-                            .catch(error => {
-                                if (error.response.data['code'] == 422) {
-                                    //error de validacion de datos
-                                    if (error.response.data.error['rol']) {
-                                        this.errors.rol = error.response.data.error.rol[0]
+                        if (!this.$parent.modificar) {
+                            //aqui va el codigo para guardar un nuevo rol
+                            axios.post('http://localhost:8000/roles', this.form)
+                                .then(resp => {
+                                    this.limpiar_formulario();
+                                    this.$bvModal.hide('modalNuevo');
+                                    this.$store.dispatch('success')
+                                    this.$toasted.show("El nuevo rol se guardó con éxito", {
+                                        iconPack: 'fontawesome',
+                                        type: 'success',
+                                        theme: 'toasted-primary',
+                                        icon: 'check',
+                                        duration: 4000,
+                                        position: 'top-center',
+                                        closeOnSwipe: true,
+                                        keepOnHover: true
+                                    });
+                                    this.$root.$emit('bv::refresh::table', 'table')
+                                })
+                                .catch(error => {
+                                    if (error.response.data['code'] == 422) {
+                                        //error de validacion de datos
+                                        if (error.response.data.error['rol']) {
+                                            this.errors.rol = error.response.data.error.rol[0]
+                                        }
+                                        if (error.response.data.error['itemsPermisos']) {
+                                            this.errors.items = error.response.data.error.itemsPermisos[0]
+                                        }
                                     }
-                                    if (error.response.data.error['itemsPermisos']) {
-                                        this.errors.items = error.response.data.error.itemsPermisos[0]
+                                    this.$store.dispatch('error')
+                                })
+                        } else {
+                            //aqui va el codigo de modificar
+                            axios.put('http://localhost:8000/roles/'+this.form.id_rol,
+                                this.form)
+                                .then(resp => {
+                                    this.limpiar_formulario();
+                                    this.$bvModal.hide('modalNuevo');
+                                    this.$store.dispatch('success')
+                                    this.$toasted.show("El nuevo rol se actualizó con éxito", {
+                                        iconPack: 'fontawesome',
+                                        type: 'success',
+                                        theme: 'toasted-primary',
+                                        icon: 'check',
+                                        duration: 4000,
+                                        position: 'top-center',
+                                        closeOnSwipe: true,
+                                        keepOnHover: true
+                                    });
+                                    this.$root.$emit('bv::refresh::table', 'table')
+                                })
+                                .catch(error => {
+                                    if (error.response.data['code'] == 422) {
+                                        //error de validacion de datos
+                                        if (error.response.data.error['rol']) {
+                                            this.errors.rol = error.response.data.error.rol[0]
+                                        }
+                                        if (error.response.data.error['itemsPermisos']) {
+                                            this.errors.items = error.response.data.error.itemsPermisos[0]
+                                        }
                                     }
-                                }
-                                this.$store.dispatch('error')
-                            })
+                                    this.$store.dispatch('error')
+                                })
+                        }
                     } catch (error) {
                         this.$store.dispatch('error')
                     }
@@ -167,15 +228,16 @@ export default {
         },
         //funcion para limpiar el formulario completo
         limpiar_formulario() {
+            this.$parent.modificar = false
             this.form.itemsPermisos = []
+            this.form.rol = 0;
             //resetewo los selectores
             let total = document.getElementsByClassName('selectores').length;
             for (let index = 0; index < total; index++) {
                 document.getElementsByClassName('selectores')[index].getElementsByTagName('input')[0].checked = false;
             }
-            this.form.rol = '';
             this.reset_errores();
-        }
+        },
     },
     created() {
         this.getDatosNuevoRol()

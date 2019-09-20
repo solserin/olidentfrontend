@@ -103,7 +103,8 @@ export default {
       computed: {
     // mix the getters into computed with object spread operator
     ...mapGetters([
-      'authStatus'
+      'authStatus',
+      'rol'
     ])
   }
 }

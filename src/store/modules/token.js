@@ -6,14 +6,16 @@ const state={
     token: localStorage.getItem('access_token') || '',
     user:[],
     host:'http://localhost:8000/',
-    menu:[]
+    menu:[],
+    permisos:[]
 };
 
 const getters={
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     user: state => state.user,
-    menu:state=>state.menu
+    menu:state=>state.menu,
+    permisos:state=>state.permisos,
 };
 
 const mutations={
@@ -38,7 +40,9 @@ const mutations={
       },
       getPerfil(state,menu){
         state.menu=menu
-
+      },
+      getUsuarioPermisos(state,permisos){
+        state.permisos=permisos
       }
 };
 
@@ -47,7 +51,7 @@ const actions={
         return new Promise((resolve, reject) => {
           var datos={
             client_id:1,
-            client_secret:'4r6xNH7MYlNRf1YFstb6oFsI87uuY2nlcBA6K1Ft',
+            client_secret:'z42KCeZis6W6BrwlPbFVRJC5iKeZ3WgCkKZzrLhE',
             grant_type:'password',
             username:data.email,
             password:data.password
@@ -81,6 +85,7 @@ const actions={
            return axios.post(state.host+'usuarios/loadPerfil/'+id)
             .then(res=>{
                 const data=res.data.data;
+                commit('getUsuarioPermisos',res.data.data)
                 //obtengo los todos los modulos pero falta agruparlos
                 let modulos=[]
                 let id_modulos=0
@@ -175,8 +180,7 @@ const actions={
                     temporal=[]
                 });
                 commit('getPerfil',menu)
-                
-    
+              
             })
             .catch(err=>{
                 console.log(err)

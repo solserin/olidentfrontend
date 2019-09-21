@@ -17,15 +17,15 @@
                 <i class="icon-bell"></i>
                 <b-badge pill variant="danger">9</b-badge>
             </b-nav-item>
-            <b-nav-item class="d-md-down-none">
+            <!--<b-nav-item class="d-md-down-none">
                 <i class="icon-list"></i>
             </b-nav-item>
             <b-nav-item class="d-md-down-none">
                 <i class="icon-location-pin"></i>
-            </b-nav-item>
+            </b-nav-item>-->
             <DefaultHeaderDropdownAccnt />
         </b-navbar-nav>
-        <AsideToggler class="d-none d-lg-block" />
+        <!--<AsideToggler class="d-none d-lg-block" />-->
         <AsideToggler class="d-lg-none" mobile />
     </AppHeader>
     <div class="app-body">

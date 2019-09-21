@@ -1,6 +1,6 @@
 <template>
 <div>
-    <b-modal @hidden="limpiar_formulario" @close="limpiar_formulario" id="modalNuevo" size="xl" :title="$parent.modificar ? 'Modificar Rol de Usuario':'Nuevo Rol de Usuario'" header-bg-variant="light" no-close-on-backdrop hide-footer>
+    <b-modal @hidden="limpiar_formulario" @close="limpiar_formulario" id="modalNuevo" size="xl" :title="$parent.modificar ? 'Modificar Rol de Usuario':'Nuevo Rol de Usuario'" no-close-on-backdrop hide-footer>
         <b-form @submit="onSubmit" @reset="onReset">
             <b-col md="6" offset-md="3">
                 <b-form-group label="Nivel de Administrador:" label-for="txtRol" label-class="ok" description="Debe indicar el nombre para identificar el nuevo ROL de usuarios.">
@@ -30,8 +30,8 @@
                     </table>
                     <div class="text-danger text-center" v-if="errors.items">{{errors.items}}</div>
                     <div class="float-right mt-5">
-                        <b-button type="reset" variant="danger" ref="btnReset"><i class="fa fa-times" aria-hidden="true"></i> Limpiar</b-button>
-                        <b-button type="submit" variant="primary" class="ml-2"><i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar</b-button>
+                        <b-button squared type="reset" variant="danger" ref="btnReset"><i class="fa fa-times" aria-hidden="true"></i> Limpiar</b-button>
+                        <b-button squared type="submit" variant="primary" class="ml-4"><i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar</b-button>
                     </div>
                 </div>
             </b-col>
@@ -43,7 +43,7 @@
 <script>
 import axios from 'axios'
 import {
-    showMsgBoxTwo
+    modalConfirmar
 } from '../../../assets/Funciones/Funciones.js' //funcion de modal de confirm
 export default {
     name: 'ChildComponent',
@@ -88,7 +88,7 @@ export default {
     },
     methods: {
         //funcion importada de modals de confirms
-        showMsgBoxTwo,
+        modalConfirmar,
         getDatosNuevoRol() {
             //traigo los permisos
             axios.get('http://localhost:8000/permisos')
@@ -137,7 +137,7 @@ export default {
         },
         onSubmit(evt) {
             evt.preventDefault()
-            this.showMsgBoxTwo('¿Desea guardar los datos?', 'success').then(resp => {
+            this.modalConfirmar('Guardar información del rol', 'success').then(resp => {
                 if (resp) {
                     this.reset_errores();
                     try {
@@ -215,7 +215,7 @@ export default {
         onReset(evt) {
             evt.preventDefault()
             // Reset our form values
-            this.showMsgBoxTwo().then(resp => {
+            this.modalConfirmar().then(resp => {
                 if (resp) {
                     this.limpiar_formulario();
                 }
@@ -228,9 +228,9 @@ export default {
         },
         //funcion para limpiar el formulario completo
         limpiar_formulario() {
-            this.$parent.modificar = false
-            this.form.itemsPermisos = []
-            this.form.rol = 0;
+            this.$parent.modificar = false;
+            this.form.itemsPermisos = [];
+            this.form.rol = '';
             //resetewo los selectores
             let total = document.getElementsByClassName('selectores').length;
             for (let index = 0; index < total; index++) {
@@ -249,8 +249,15 @@ export default {
 .ok {
     font-weight: bold;
 }
-
 input[type=text] {
     border-radius: 0px !important;
+}
+#modalNuevo .modal-header{
+    background-color: #5c6873 !important;
+    border-radius: 0px !important;
+    color:#fff !important;
+}
+#modalNuevo .close{
+     color:#fff;
 }
 </style>

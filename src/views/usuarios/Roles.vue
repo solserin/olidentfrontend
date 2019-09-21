@@ -32,8 +32,8 @@
             <b-col xs="12" sm="12" md="5">
                 <div class="float-right  mt-3">
                     <b-button v-b-modal.modalNuevo pill class="mr-2" variant="primary"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo</b-button>
-                    <b-button pill class="mr-2" variant="outline-danger"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf</b-button>
-                    <b-button pill variant="outline-success"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</b-button>
+                    <b-button pill  variant="outline-danger" @click="mostrarPdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf</b-button>
+                    <b-button pill variant="outline-success" hidden><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</b-button>
                 </div>
             </b-col>
         </b-row>
@@ -46,12 +46,11 @@
                     <template v-slot:empty="scope">
                         <p class="text-center">{{ scope.emptyText }}</p>
                     </template>
-
                     <template v-slot:acciones="data">
                         <div>
                             <b-button pill variant="primary" size="sm" @click="get_datos_modificar(data.item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></b-button>
-                            <b-button pill class="mr-4 ml-4" variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
-                            <b-button pill size="sm" variant="secondary"><i class="fa fa-search" aria-hidden="true"></i></b-button>
+                            <b-button pill class="ml-4" variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
+                            <b-button hidden pill size="sm" variant="secondary"><i class="fa fa-search" aria-hidden="true"></i></b-button>
                         </div>
                     </template>
                     <!-- A virtual composite column -->
@@ -64,6 +63,7 @@
     <b-row>
         <div>
             <NuevoRol :itemsModificar="form.itemsPermisos" :rolNombre="form.rol" :id_rol="form.id_rol"></NuevoRol>
+            <modalPdfs :url_pdf="url"></modalPdfs>
         </div>
     </b-row>
 </div>
@@ -71,8 +71,9 @@
 
 <script>
 import NuevoRol from './roles/NuevoRol'
+import modalPdfs from './roles/pdf'
 import {
-    showMsgBoxTwo
+    modalConfirmar
 } from '../../assets/Funciones/Funciones.js' //funcion de modal de confirm
 import axios from 'axios'
 import {
@@ -80,10 +81,12 @@ import {
 } from 'vuex'
 export default {
     components: {
-        NuevoRol
+        NuevoRol,
+        modalPdfs
     },
     data() {
         return {
+            url:'',
             //datos compartidos del componente NuevoRol
             selected: null,
             texto: 'No se ha extraido información de la base de datos',
@@ -127,7 +130,7 @@ export default {
         }
     },
     methods: {
-        showMsgBoxTwo,
+        modalConfirmar,
         myProvider(ctx) {
             this.$store.dispatch('loading');
             this.isBusy = true;
@@ -184,7 +187,7 @@ export default {
             }
         },
         eliminar(item) {
-            this.showMsgBoxTwo('¿Desea eliminar este rol?', 'danger').then(resp => {
+            this.modalConfirmar('Eliminar este rol', 'danger').then(resp => {
                 if (resp) {
                     //si la respuesta es SI
                     this.$store.dispatch('loading');
@@ -232,6 +235,9 @@ export default {
                     }
                 }
             });
+        },
+        mostrarPdf(){
+            this.url='http://localhost:8000/roles_reporte'
         }
     },
     computed: {
@@ -253,4 +259,55 @@ export default {
 #table tr:hover {
     background-color: #d2edf7 !important;
 }
+
+
+#confirmar .modal-dialog .modal-header{
+    background-color: #ffffff !important;
+    border-radius: 0px !important;
+    color:#5f5f5f;
+    border:none !important;
+}
+
+#confirmar .modal-dialog .modal-header h5{
+    position:absolute;
+    padding-top:90px;
+    min-width:100% !important;
+    margin-left:27%;
+    font-size:24px;
+}
+
+
+#confirmar .modal-dialog .modal-footer{
+    border-radius: 0px !important;
+    border:none !important;
+}
+#confirmar .modal-dialog .close{
+     color:#5f5f5f;
+}
+
+#confirmar .modal-dialog .modal-body{
+     font-size:18px;
+     border:none !important;
+     text-align:center;
+     margin-top:80px;
+     color:#5f5f5f !important;
+}
+
+#confirmar .modal-dialog .modal-header::before{
+    font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f059";
+    font-size:80px;
+    position:absolute !important;
+    margin-left:39% !important;
+    margin-top:-5%;
+}
+
+#confirmar .modal-dialog .modal-footer button{
+     margin-top:5px;
+     border-radius: 0px !important;
+     font-weight:bold;
+     padding:10px 40px 10px 40px;
+     margin-right:auto !important;
+     margin-left:auto !important;
+}
+
 </style>

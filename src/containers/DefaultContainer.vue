@@ -3,7 +3,7 @@
     <AppHeader fixed>
         <SidebarToggler class="d-lg-none" display="md" mobile />
         <b-link class="navbar-brand" to="#">
-            <img class="navbar-brand-full" src="https://www.sitio.solserin.com/assets/images/website/logo_de_solserin.png" width="89" height="25" alt="CoreUI Logo">
+            <img class="navbar-brand-full" :src="datosEmpresa.logo" width="89" height="25" alt="CoreUI Logo">
             <img class="navbar-brand-minimized" src="http://www.iconarchive.com/download/i54037/danleech/simple/facebook.ico" width="30" height="30" alt="CoreUI Logo">
         </b-link>
         <SidebarToggler class="d-md-down-none" display="lg" :defaultOpen=true />
@@ -13,7 +13,7 @@
             <b-nav-item class="px-3">Settings</b-nav-item>
         </b-navbar-nav>-->
         <b-navbar-nav class="ml-auto">
-            <b-nav-item class="d-md-down-none">
+            <b-nav-item class="d-md-down-none" hidden>
                 <i class="icon-bell"></i>
                 <b-badge pill variant="danger">9</b-badge>
             </b-nav-item>
@@ -39,7 +39,7 @@
         <main class="main">
             <Breadcrumb :list="list" />
             <div class="container-fluid">
-                <loading v-if="status==='loading'" :active.sync="isLoading"></loading>
+                <loading v-if="status==='loading'" :active.sync="isLoading" loader="Bars" :color="color" :height="height" :width="width" :opacity="opacity"></loading>
                 <router-view></router-view>
             </div>
         </main>
@@ -109,7 +109,12 @@ export default {
     data() {
         return {
             nav: [],
-            isLoading: true
+            isLoading: true,
+            //configuracion de loading
+            width: 150,
+            height: 100,
+            color: '#20a8d8',
+            opacity: 0.6
         }
     },
     computed: {
@@ -123,7 +128,8 @@ export default {
         ...mapGetters([
             'user',
             'menu',
-            'status'
+            'status',
+            'datosEmpresa'
         ])
     },
     created() {

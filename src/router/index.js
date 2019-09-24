@@ -15,14 +15,13 @@ const Page500 = () => import('@/views/pages/Page500')
 const Login = () => import('@/views/pages/Login')
 
 
-
 //Componentes para el control de usuarios
-const Roles = () => import('@/views/usuarios/Roles')
+const Roles = () => import('@/views/usuarios/roles/Roles')
 const Usuarios = () => import('@/views/usuarios/Usuarios')
 
+//Componentes para el control de la empresa
+const Empresa = () => import('@/views/empresa/Empresa')
 var tiene_permiso_modulo=0;
-
-
 Vue.use(Router)
 
 let router=new Router({
@@ -46,6 +45,7 @@ let router=new Router({
         },
       ]
     },
+    //usuarios
     {
       path: '/usuarios',
       redirect: '/usuarios/',
@@ -68,6 +68,24 @@ let router=new Router({
             requiresAuth: true
           }
         },
+      ]
+    },
+
+    //empresa
+    {
+      path: '/empresa',
+      redirect: '/empresa/',
+      name: 'Empresa',
+      component: DefaultContainer,
+      children: [
+        {
+          path: '/',
+          name: 'Datos de la empresa',
+          component: Empresa,
+          meta: { 
+            requiresAuth: true
+          }
+        }
       ]
     },
     

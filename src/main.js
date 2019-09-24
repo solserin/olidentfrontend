@@ -33,6 +33,25 @@ if (token) {
 
 Vue.use(BootstrapVue)
 
+Vue.prototype.$hostname = 'http://localhost:8000/'
+
+const plugin = {
+  install (Vue,options) {
+    //verirfica si el usuario tiene permiso de hacer alguna accion en el sistema y si no tiene para no mostrarle la opcion
+      Vue.prototype.$permiso=function (id_modulo,id_permiso) {
+        var tiene_permiso=false;
+        store.getters.permisos.forEach(element => {
+          if(element.modulo_id==id_modulo && element.permiso_id==id_permiso){
+            tiene_permiso=true;
+          }
+        });
+        //verifica si tiene el permiso para ver cierta parte del modulo y si no retorna falso
+        return tiene_permiso;
+    }
+  }
+}
+Vue.use(plugin)
+
 /* eslint-disable no-new */
 new Vue({
   store:store,

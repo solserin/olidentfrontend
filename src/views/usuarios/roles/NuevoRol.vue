@@ -3,7 +3,7 @@
     <b-modal @hidden="limpiar_formulario" @close="limpiar_formulario" id="modalNuevo" size="xl" :title="$parent.modificar ? 'Modificar Rol de Usuario':'Nuevo Rol de Usuario'" no-close-on-backdrop hide-footer>
         <b-form @submit="onSubmit" @reset="onReset">
             <b-col md="6" offset-md="3">
-                <b-form-group label="Nivel de Administrador:" label-for="txtRol" label-class="ok" description="Debe indicar el nombre para identificar el nuevo ROL de usuarios.">
+                <b-form-group label="Nivel de Administrador:" label-for="txtRol" label-class="labels" description="Debe indicar el nombre para identificar el nuevo ROL de usuarios.">
                     <b-form-input id="txtRol" v-model="form.rol" required></b-form-input>
                     <div class="text-danger text-center" v-if="errors.rol">{{errors.rol}}</div>
                 </b-form-group>
@@ -91,7 +91,7 @@ export default {
         modalConfirmar,
         getDatosNuevoRol() {
             //traigo los permisos
-            axios.get('http://localhost:8000/permisos')
+            axios.get(this.$hostname+'permisos')
                 .then(resp => {
                     this.fieldsPermisos = resp.data.data
                 })
@@ -99,7 +99,7 @@ export default {
                     console.log(error)
                 })
             //traigo los modulos
-            axios.get('http://localhost:8000/modulos')
+            axios.get(this.$hostname+'modulos')
                 .then(resp => {
                     this.modulos = resp.data.data
                 })
@@ -144,7 +144,7 @@ export default {
                         this.$store.dispatch('loading');
                         if (!this.$parent.modificar) {
                             //aqui va el codigo para guardar un nuevo rol
-                            axios.post('http://localhost:8000/roles', this.form)
+                            axios.post(this.$hostname+'roles', this.form)
                                 .then(resp => {
                                     this.limpiar_formulario();
                                     this.$bvModal.hide('modalNuevo');
@@ -175,7 +175,7 @@ export default {
                                 })
                         } else {
                             //aqui va el codigo de modificar
-                            axios.put('http://localhost:8000/roles/'+this.form.id_rol,
+                            axios.put(this.$hostname+'roles/'+this.form.id_rol,
                                 this.form)
                                 .then(resp => {
                                     this.limpiar_formulario();
@@ -246,17 +246,12 @@ export default {
 </script>
 
 <style lang="css">
-.ok {
-    font-weight: bold;
-}
-input[type=text] {
-    border-radius: 0px !important;
-}
 #modalNuevo .modal-header{
     background-color: #5c6873 !important;
     border-radius: 0px !important;
     color:#fff !important;
 }
+
 #modalNuevo .close{
      color:#fff;
 }

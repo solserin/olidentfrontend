@@ -1,11 +1,8 @@
 <template>
 <div>
-    <b-row class="mb-3">
-        <b-col cols="12" xs="12">
-            <span class="title-crud">Roles de Usuario</span>
-        </b-col>
-    </b-row>
-    <b-card no-header style="border-radius:0;">
+
+    <b-card style="border-radius:0;">
+        <div slot="header"><i class='fa fa-users'></i> Roles de Usuario</div>
         <b-row>
             <b-col xs="12" sm="12" md="5">
                 <b-input-group class="mb-2 mt-3">
@@ -31,8 +28,8 @@
             </b-col>
             <b-col xs="12" sm="12" md="5">
                 <div class="float-right  mt-3">
-                    <b-button v-b-modal.modalNuevo pill class="mr-2" variant="primary"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo</b-button>
-                    <b-button pill  variant="outline-danger" @click="mostrarPdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf</b-button>
+                    <b-button v-b-modal.modalNuevo pill class="mr-2" variant="primary" v-if="permisos_por_modulo.agregar"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo</b-button>
+                    <b-button  pill variant="outline-danger" @click="mostrarPdf" v-if="permisos_por_modulo.consultar"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf</b-button>
                     <b-button pill variant="outline-success" hidden><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</b-button>
                 </div>
             </b-col>
@@ -48,8 +45,8 @@
                     </template>
                     <template v-slot:acciones="data">
                         <div>
-                            <b-button pill variant="primary" size="sm" @click="get_datos_modificar(data.item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></b-button>
-                            <b-button pill class="ml-4" variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
+                            <b-button v-if="permisos_por_modulo.modificar" pill variant="primary" size="sm" @click="get_datos_modificar(data.item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></b-button>
+                            <b-button v-if="permisos_por_modulo.eliminar" pill class="ml-4" variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
                             <b-button hidden pill size="sm" variant="secondary"><i class="fa fa-search" aria-hidden="true"></i></b-button>
                         </div>
                     </template>
@@ -70,11 +67,12 @@
 </template>
 
 <script>
-import NuevoRol from './roles/NuevoRol'
-import modalPdfs from './roles/pdf'
+import NuevoRol from './NuevoRol'
+import modalPdfs from './pdf'
 import {
     modalConfirmar
-} from '../../assets/Funciones/Funciones.js' //funcion de modal de confirm
+} from '../../../assets/Funciones/Funciones' //funcion de modal de confirm
+
 import axios from 'axios'
 import {
     mapGetters
@@ -86,7 +84,7 @@ export default {
     },
     data() {
         return {
-            url:'',
+            url: '',
             //datos compartidos del componente NuevoRol
             selected: null,
             texto: 'No se ha extraido información de la base de datos',
@@ -127,6 +125,13 @@ export default {
                 rol: '',
                 id_rol: 0
             },
+            //permisos del usuario
+            permisos_por_modulo: {
+                agregar: false,
+                consultar: false,
+                modificar: false,
+                eliminar: false
+            }
         }
     },
     methods: {
@@ -134,10 +139,10 @@ export default {
         myProvider(ctx) {
             this.$store.dispatch('loading');
             this.isBusy = true;
-            let url_api = 'http://localhost:8000/roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
+            let url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
             if (this.filter) {
                 //si se esta usando el filtro
-                url_api = 'http://localhost:8000/roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
+                url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
             }
             let promise = axios.get(url_api)
             return promise
@@ -168,7 +173,7 @@ export default {
             this.form.rol = ''
             this.form.id_rol = 0
             try {
-                let datos = axios.get('http://localhost:8000/roles/' + item.id)
+                let datos = axios.get(this.$hostname + 'roles/' + item.id)
                     .then(resp => {
                         resp.data.data.forEach(element => {
                             this.form.itemsPermisos.push(element.modulos_id + ',' + element.permisos_id);
@@ -192,7 +197,7 @@ export default {
                     //si la respuesta es SI
                     this.$store.dispatch('loading');
                     try {
-                        let datos = axios.delete('http://localhost:8000/roles/' + item.id)
+                        let datos = axios.delete(this.$hostname + 'roles/' + item.id)
                             .then(resp => {
                                 if (resp.data == item.id) {
                                     //exito
@@ -236,78 +241,27 @@ export default {
                 }
             });
         },
-        mostrarPdf(){
-            this.url='http://localhost:8000/roles_reporte'
-        }
+        mostrarPdf() {
+            this.url = this.$hostname + 'roles_reporte'
+        },
+        //checa si tiene permisos para ver esa parte del sistema
+
     },
     computed: {
         // mix the getters into computed with object spread operator
         ...mapGetters([
             'permisos'
         ])
-    }
-
+    },
+    created() {
+        this.permisos_por_modulo.consultar = this.$permiso(2, 1);
+        this.permisos_por_modulo.agregar = this.$permiso(2, 2);
+        this.permisos_por_modulo.modificar = this.$permiso(2, 3);
+        this.permisos_por_modulo.eliminar = this.$permiso(2, 4);
+    },
 }
 </script>
 
 <style lang="css">
-.title-crud {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-#table tr:hover {
-    background-color: #d2edf7 !important;
-}
-
-
-#confirmar .modal-dialog .modal-header{
-    background-color: #ffffff !important;
-    border-radius: 0px !important;
-    color:#5f5f5f;
-    border:none !important;
-}
-
-#confirmar .modal-dialog .modal-header h5{
-    position:absolute;
-    padding-top:90px;
-    min-width:100% !important;
-    margin-left:27%;
-    font-size:24px;
-}
-
-
-#confirmar .modal-dialog .modal-footer{
-    border-radius: 0px !important;
-    border:none !important;
-}
-#confirmar .modal-dialog .close{
-     color:#5f5f5f;
-}
-
-#confirmar .modal-dialog .modal-body{
-     font-size:18px;
-     border:none !important;
-     text-align:center;
-     margin-top:80px;
-     color:#5f5f5f !important;
-}
-
-#confirmar .modal-dialog .modal-header::before{
-    font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f059";
-    font-size:80px;
-    position:absolute !important;
-    margin-left:39% !important;
-    margin-top:-5%;
-}
-
-#confirmar .modal-dialog .modal-footer button{
-     margin-top:5px;
-     border-radius: 0px !important;
-     font-weight:bold;
-     padding:10px 40px 10px 40px;
-     margin-right:auto !important;
-     margin-left:auto !important;
-}
 
 </style>

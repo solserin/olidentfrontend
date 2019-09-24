@@ -7,7 +7,8 @@ const state={
     user:[],
     host:'http://localhost:8000/',
     menu:[],
-    permisos:[]
+    permisos:[],
+    datosEmpresa:[]
 };
 
 const getters={
@@ -16,6 +17,7 @@ const getters={
     user: state => state.user,
     menu:state=>state.menu,
     permisos:state=>state.permisos,
+    datosEmpresa:state=>state.datosEmpresa,
 };
 
 const mutations={
@@ -43,6 +45,9 @@ const mutations={
       },
       getUsuarioPermisos(state,permisos){
         state.permisos=permisos
+      },
+      getEmpresaDatos(state,datos){
+        state.datosEmpresa=datos
       }
 };
 
@@ -51,7 +56,7 @@ const actions={
         return new Promise((resolve, reject) => {
           var datos={
             client_id:1,
-            client_secret:'z42KCeZis6W6BrwlPbFVRJC5iKeZ3WgCkKZzrLhE',
+            client_secret:'22ct0vYUrE8NLiCyF3vUxLzgCJ18Q5g3UskgAaXc',
             grant_type:'password',
             username:data.email,
             password:data.password
@@ -66,6 +71,7 @@ const actions={
               axios({ url: state.host+'usuarios/user_email/'+datos.username, method: 'GET' })
               .then(resp2 => {
                 dispatch('fillPerfil',resp2.data.data.id)
+                dispatch('getDatosEmpresa')
                 .then(()=>{
                   commit('auth_success', token)
                   resolve(resp)
@@ -121,11 +127,11 @@ const actions={
                    }
                    if(id_grupo==0){
                        id_grupo=item['grupo_id']
-                       grupos.push({'id':id_grupo,'index':index,'grupo':item['grupo']})
+                       grupos.push({'id':id_grupo,'index':index,'grupo':item['grupo'],'icon':item['grupo_icon']})
                    }else{
                        if(id_grupo!=item['grupo_id']){
                           id_grupo=item['grupo_id']
-                          grupos.push({'id':id_grupo,'index':index,'grupo':item['grupo']})
+                          grupos.push({'id':id_grupo,'index':index,'grupo':item['grupo'],'icon':item['grupo_icon']})
                        }
                    }
                 });
@@ -169,7 +175,7 @@ const actions={
                                 {
                                     'name': itemGrupo['grupo'],
                                     'url': itemModulo['url'],
-                                    'icon': itemModulo['icon'],
+                                    'icon': itemGrupo['icon'],
                                     'children':childrens
                                 }
                         }
@@ -187,8 +193,17 @@ const actions={
 
             })
         
-      }
-      ,
+      },
+      getDatosEmpresa({ commit }) {
+        return axios.get(state.host+'empresas/1')
+         .then(res=>{
+             const data=res.data.data;
+             commit('getEmpresaDatos',res.data.data)
+         })
+         .catch(err=>{
+             console.log(err)
+         })
+   },
       logout({ commit }) {
         return new Promise((resolve, reject) => {
           commit('auth_request')

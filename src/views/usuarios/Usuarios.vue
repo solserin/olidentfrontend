@@ -51,15 +51,15 @@
                     </template>
                     <template v-slot:status="data">
                         <div>
-                           <b-badge variant="success" v-if="data.item.status=='1'">Activo</b-badge>
-                           <b-badge variant="danger" v-if="data.item.status=='0'">Inactivo</b-badge>
+                            <b-badge variant="success" v-if="data.item.status=='1'">Activo</b-badge>
+                            <b-badge variant="danger" v-if="data.item.status=='0'">Inactivo</b-badge>
                         </div>
                     </template>
-                     <template v-slot:imagen="data">
+                    <template v-slot:imagen="data">
                         <div>
                             <b-img :src="data.item.imagen" width="35" rounded="circle" alt="Circle image"></b-img>
                         </div>
-                    </template>  
+                    </template>
                     <!-- A virtual composite column -->
                 </b-table>
                 <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" first-text="<<" prev-text="<" next-text=">" last-text=">>" class="mt-3 mb-5 justify-content-center">
@@ -69,7 +69,7 @@
     </b-card>
     <b-row>
         <div>
-            <NuevoUser :datosModificar="form.datosModificar"  :id_usuario="form.id_usuario"></NuevoUser>
+            <NuevoUser :datosModificar="form.datosModificar" :id_usuario="form.id_usuario"></NuevoUser>
             <modalPdfs :url_pdf="url"></modalPdfs>
         </div>
     </b-row>
@@ -94,6 +94,7 @@ export default {
     },
     data() {
         return {
+            cargar: false,
             url: '',
             //datos compartidos del componente NuevoRol
             selected: null,
@@ -120,7 +121,7 @@ export default {
                     label: 'Usuario',
                     class: 'text-center'
                 },
-                 {
+                {
                     key: 'rol.rol',
                     label: 'Rol',
                     class: 'text-center'
@@ -161,33 +162,36 @@ export default {
     methods: {
         modalConfirmar,
         myProvider(ctx) {
-            this.$store.dispatch('loading');
-            this.isBusy = true;
-            let url_api = this.$hostname + 'usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
-            if (this.filter) {
-                //si se esta usando el filtro
-                url_api = this.$hostname + 'usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
+            if (this.cargar) {
+                this.$store.dispatch('loading');
+                this.isBusy = true;
+                let url_api = this.$hostname + 'usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
+                if (this.filter) {
+                    //si se esta usando el filtro
+                    url_api = this.$hostname + 'usuarios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
+                }
+                let promise = axios.get(url_api)
+                return promise
+                    .then(resp => {
+                        var items = resp.data.data.data;
+                        this.items = resp.data.data;
+                        this.currentPage = resp.data.data.current_page;
+                        this.totalRows = resp.data.data.total;
+                        this.rowsTotal = resp.data.data.data.length;
+                        this.isBusy = false;
+                        this.$store.dispatch('success')
+                        return items;
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        this.isBusy = false;
+                        this.$store.dispatch('error')
+                        return [];
+                    })
             }
-            let promise = axios.get(url_api)
-            return promise
-                .then(resp => {
-                    var items = resp.data.data.data;
-                    this.items = resp.data.data;
-                    this.currentPage = resp.data.data.current_page;
-                    this.totalRows = resp.data.data.total;
-                    this.rowsTotal = resp.data.data.data.length;
-                    this.isBusy = false;
-                    this.$store.dispatch('success')
-                    return items;
-                })
-                .catch(error => {
-                    console.log(error)
-                    this.isBusy = false;
-                    this.$store.dispatch('error')
-                    return [];
-                })
         },
         refresh_table() {
+            this.cargar=true;
             this.$root.$emit('bv::refresh::table', 'table')
         },
         get_datos_modificar(item) {
@@ -285,5 +289,3 @@ export default {
 <style lang="css">
 
 </style>
-
-

@@ -22,6 +22,11 @@ const Perfil = () => import('@/views/usuarios/Perfil')
 
 //Componentes para el control de la empresa
 const Empresa = () => import('@/views/empresa/Empresa')
+
+//Componentes para el control de servicios de la empresa
+const Servicios = () => import('@/views/servicios/Servicios')
+
+
 var tiene_permiso_modulo=0;
 Vue.use(Router)
 
@@ -91,7 +96,7 @@ let router=new Router({
     //empresa
     {
       path: '/empresa',
-      redirect: '/empresa/',
+      redirect: '/empresa',
       name: 'Empresa',
       component: DefaultContainer,
       children: [
@@ -99,6 +104,24 @@ let router=new Router({
           path: '/',
           name: 'Datos de la empresa',
           component: Empresa,
+          meta: { 
+            requiresAuth: true
+          }
+        }
+      ]
+    },
+
+     //servicios
+     {
+      path: '/catalogos/',
+      redirect: '/',
+      name: 'Catalogos',
+      component: DefaultContainer,
+      children: [
+        {
+          path: 'servicios',
+          name: 'Servicios de la clinica',
+          component: Servicios,
           meta: { 
             requiresAuth: true
           }
@@ -144,8 +167,6 @@ router.beforeEach((to, from, next) => {
       next('/dashboard') 
     }
   }
-
-
 
   if(to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {

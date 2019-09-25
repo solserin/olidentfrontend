@@ -4,7 +4,7 @@
         <SidebarToggler class="d-lg-none" display="md" mobile />
         <b-link class="navbar-brand" to="#">
             <img class="navbar-brand-full" :src="datosEmpresa.logo" width="89" height="25" alt="CoreUI Logo">
-            <img class="navbar-brand-minimized" src="http://www.iconarchive.com/download/i54037/danleech/simple/facebook.ico" width="30" height="30" alt="CoreUI Logo">
+            <img class="navbar-brand-minimized" src="https://cdn3.iconfinder.com/data/icons/seo-glyph-2/24/gear-setting-512.png" width="30" height="30" alt="CoreUI Logo">
         </b-link>
         <SidebarToggler class="d-md-down-none" display="lg" :defaultOpen=true />
         <!--<b-navbar-nav class="d-md-down-none">

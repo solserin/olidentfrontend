@@ -55,6 +55,11 @@
                            <b-badge variant="danger" v-if="data.item.status=='0'">Inactivo</b-badge>
                         </div>
                     </template>
+                     <template v-slot:imagen="data">
+                        <div>
+                            <b-img :src="data.item.imagen" width="35" rounded="circle" alt="Circle image"></b-img>
+                        </div>
+                    </template>  
                     <!-- A virtual composite column -->
                 </b-table>
                 <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" first-text="<<" prev-text="<" next-text=">" last-text=">>" class="mt-3 mb-5 justify-content-center">
@@ -101,6 +106,11 @@ export default {
                     class: 'text-center'
                 },
                 {
+                    key: "imagen",
+                    label: 'Imagen',
+                    class: 'text-center'
+                },
+                {
                     key: "name",
                     label: 'Nombre',
                     class: 'text-center'
@@ -108,11 +118,6 @@ export default {
                 {
                     key: 'email',
                     label: 'Usuario',
-                    class: 'text-center'
-                },
-                {
-                    key: 'created_at',
-                    label: 'Agregado',
                     class: 'text-center'
                 },
                  {

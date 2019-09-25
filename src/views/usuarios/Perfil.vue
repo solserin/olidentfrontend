@@ -17,7 +17,7 @@
                                                     <b-card-text>
                                                         {{permisos[0].rol}}
                                                     </b-card-text>
-                                                    <b-card-text class="small text-muted">Last updated 3 mins ago</b-card-text>
+                                                    
                                                     <div class="text-danger text-center" v-if="error.imagen">{{error.imagen}}</div>
                                                     <div class=" mt-2">
 

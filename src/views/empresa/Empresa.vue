@@ -1,7 +1,6 @@
 <template>
 <div class="animated fadeIn">
     <b-row>
-
         <b-col xs="12">
             <b-card>
                 <div slot="header"><i class='fa fa-building-o'></i> Datos de la empresa</div>
@@ -13,16 +12,18 @@
                                     <b-row>
                                         <b-col xs="12" sm="12" md="12" lg="4">
                                             <div class="text-center" v-if="form.logo.length > 0">
-                                                <b-img rounded :src="form.logo" style="max-height:200px;" fluid alt="Responsive image"></b-img>
-                                                <div class="text-danger text-center" v-if="error.logo">{{error.logo}}</div>
-                                            </div>
-                                            <div class=" mt-5">
-                                                <b-form-group label="Logo de la empresa:" label-for="frmFile" description="Seleccione el logotipo de la empresa.">
-                                                    <b-form-file id="frmFile" ref="frmFile" browse-text="Abrir" placeholder="Seleccione el nuevo logotipo" squared v-model="form.imagen" @change="display" accept="image/*"></b-form-file>
-                                                </b-form-group>
-                                                <div class="text-center mt-1" v-if="form.logo!=datosEmpresa.logo">
-                                                    <b-button squared type="button" variant="warning" @click="form.logo=datosEmpresa.logo"><i class="fa fa-backward" aria-hidden="true"></i> Regresar</b-button>
-                                                </div>
+                                                <b-card :title="form.nombre" :img-src="form.logo" style="max-width: 25rem;" class="mr-auto ml-auto pl-3 pr-3 pt-3 pb-1" img-alt="Image" img-top>
+                                                    <b-card-text>
+                                                        {{form.email}}
+                                                    </b-card-text>
+                                                    <div class="text-danger text-center" v-if="error.logo">{{error.logo}}</div>
+                                                    <div class=" mt-2">
+                                                        <b-form-file id="frmFile" ref="frmFile" browse-text="Abrir" placeholder="Seleccionar" squared v-model="form.logo" @change="display" accept="image/*"></b-form-file>
+                                                        <div class="text-center mt-1" v-if="form.logo!=datosEmpresa.logo">
+                                                            <b-button squared type="button" variant="warning" @click="form.logo=datosEmpresa.logo"><i class="fa fa-backward" aria-hidden="true"></i> Regresar</b-button>
+                                                        </div>
+                                                    </div>
+                                                </b-card>
                                             </div>
                                         </b-col>
                                         <b-col xs="12" sm="12" md="12" lg="8">
@@ -99,7 +100,7 @@
                                 </b-form>
                             </div>
                         </b-tab>
-    
+
                     </b-tabs>
                 </div>
             </b-card>

@@ -18,6 +18,7 @@ const Login = () => import('@/views/pages/Login')
 //Componentes para el control de usuarios
 const Roles = () => import('@/views/usuarios/roles/Roles')
 const Usuarios = () => import('@/views/usuarios/Usuarios')
+const Perfil = () => import('@/views/usuarios/Perfil')
 
 //Componentes para el control de la empresa
 const Empresa = () => import('@/views/empresa/Empresa')
@@ -39,6 +40,22 @@ let router=new Router({
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+      ]
+    },
+    {
+      path: '/perfil',
+      redirect: '/perfil/',
+      name: 'Perfil',
+      component: DefaultContainer,
+      children: [
+        {
+          path: '/perfil',
+          name: 'PerfilUsuario',
+          component: Perfil,
           meta: { 
             requiresAuth: true
           }
@@ -67,7 +84,7 @@ let router=new Router({
           meta: { 
             requiresAuth: true
           }
-        },
+        }
       ]
     },
 
@@ -132,7 +149,7 @@ router.beforeEach((to, from, next) => {
 
   if(to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {
-      if(to.fullPath!="/dashboard"){
+      if(to.fullPath!="/dashboard" && to.fullPath!="/perfil"){
          //verifico que tenga permiso para entrar a ese modulo
         tiene_permiso_modulo=0;
         store.getters.permisos.forEach(element => {

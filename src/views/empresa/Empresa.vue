@@ -99,9 +99,7 @@
                                 </b-form>
                             </div>
                         </b-tab>
-                        <b-tab title="Valores Fijos">
-                            <p>I'm the second tab</p>
-                        </b-tab>
+    
                     </b-tabs>
                 </div>
             </b-card>
@@ -204,7 +202,6 @@ export default {
                             })
                             .catch(error => {
                                 if (error.response.data['code'] == 422) {
-                                    console.log(error.response)
                                     //error de validacion de datos
                                     if (error.response.data.error['imagen']) {
                                         this.error.logo = error.response.data.error.logo[0]

@@ -56,7 +56,7 @@ const actions={
         return new Promise((resolve, reject) => {
           var datos={
             client_id:1,
-            client_secret:'22ct0vYUrE8NLiCyF3vUxLzgCJ18Q5g3UskgAaXc',
+            client_secret:'pxG1ofxurIcgTf4dfkRxSJgyUJmrgtCsNFD8G60j',
             grant_type:'password',
             username:data.email,
             password:data.password
@@ -76,7 +76,7 @@ const actions={
                   commit('auth_success', token)
                   resolve(resp)
                 })
-                commit('datosUsuario',resp2.data)
+                commit('datosUsuario',resp2.data.data)
               })
             })
             .catch(err => {
@@ -212,7 +212,10 @@ const actions={
           commit('logout')
           resolve()
         })
-      }
+      },
+      ActualizarUser({ commit },datos) {
+        commit('datosUsuario',datos)
+   },
 };
 
 export default{

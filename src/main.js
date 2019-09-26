@@ -28,6 +28,11 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = token
 }
 
+
+import numeral from 'numeral';
+import numFormat from 'vue-filter-number-format';
+ 
+Vue.filter('numFormat', numFormat(numeral));
 // todo
 // cssVars()
 

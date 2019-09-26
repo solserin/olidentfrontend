@@ -1,8 +1,6 @@
 <template>
 <div>
-
-    <b-card style="border-radius:0;">
-        <div slot="header"><i class='fa fa-users'></i> Roles de Usuario</div>
+    <div class="mt-3 mb-3">
         <b-row>
             <b-col xs="12" sm="12" md="5">
                 <b-input-group class="mb-2 mt-3">
@@ -29,14 +27,14 @@
             <b-col xs="12" sm="12" md="5">
                 <div class="float-right  mt-3">
                     <b-button v-b-modal.modalNuevo pill class="mr-2" variant="primary" v-if="permisos_por_modulo.agregar"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo</b-button>
-                    <b-button pill variant="outline-danger" @click="mostrarPdf" v-if="permisos_por_modulo.consultar"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf</b-button>
+                    <b-button  pill variant="outline-danger" @click="mostrarPdf" v-if="permisos_por_modulo.consultar"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf</b-button>
                     <b-button pill variant="outline-success" hidden><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</b-button>
                 </div>
             </b-col>
         </b-row>
         <b-row>
             <b-col xs="12">
-                <b-table id="table" :fixed="true" hover :foot-clone="true" :busy.sync="isBusy" :items="myProvider" :fields="fields" :current-page="currentPage" :per-page="perPage" striped show-empty :emptyText="texto" responsive primary-key="id" class="mt-5">
+                <b-table id="table" stacked="lg" responsive hover :foot-clone="true" :busy.sync="isBusy" :items="myProvider" :fields="fields" :current-page="currentPage" :per-page="perPage" striped show-empty :emptyText="texto" primary-key="id" class="mt-5">
                     <template v-slot:table-caption>
                         Total de Resultados: <strong>{{rowsTotal}} </strong> de <strong>{{totalRows}} </strong> Registros.
                     </template>
@@ -50,28 +48,54 @@
                             <b-button hidden pill size="sm" variant="secondary"><i class="fa fa-search" aria-hidden="true"></i></b-button>
                         </div>
                     </template>
+                    <template v-slot:precio_normal="data">
+                        <div>
+                            <div v-if="data.item.tipo_precio_id=='1'">
+                                ${{ data.item.precio_normal | numFormat('0,000.00')}}
+                            </div>
+                            <div v-if="data.item.tipo_precio_id=='2'">
+                                CITA PREVIA
+                            </div>
+                        </div>
+                    </template>
+                    <template v-slot:descuento_poliza="data">
+                        <div v-if="data.item.descuento_poliza!='100'">
+                            <div v-if="data.item.tipo_precio_id=='1'">
+                                $ {{precio_poliza(data.item.precio_normal,data.item.descuento_poliza) | numFormat('0,000.00')}}
+                            </div>
+                            <div v-if="data.item.tipo_precio_id=='2'">
+                                CITA PREVIA - {{data.item.descuento_poliza}} %
+                            </div>
+                        </div>
+                        <div v-else>
+                            <strong>Gratis</strong>
+                        </div>
+                    </template>
                     <!-- A virtual composite column -->
                 </b-table>
                 <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" first-text="<<" prev-text="<" next-text=">" last-text=">>" class="mt-3 mb-5 justify-content-center">
                 </b-pagination>
             </b-col>
         </b-row>
-    </b-card>
-    <b-row>
-        <div>
-            <NuevoRol :itemsModificar="form.itemsPermisos" :rolNombre="form.rol" :id_rol="form.id_rol"></NuevoRol>
-            <modalPdfs :url_pdf="url"></modalPdfs>
-        </div>
-    </b-row>
+        <b-row>
+        </b-row>
+        <b-row>
+            <div>
+                <AgregarModificar :datosModificar="form.datosModificar" :id_servicio="form.id_servicio"></AgregarModificar>
+                <modalPdfs :url_pdf="url"></modalPdfs>
+            </div>
+        </b-row>
+    </div>
 </div>
 </template>
 
 <script>
-import NuevoRol from './NuevoRol'
-import modalPdfs from '../../pdf'
+import ListaServicios from '../servicios/ListaServicios'
+import AgregarModificar from '../servicios/AgregarModificarServicio'
+import modalPdfs from '../pdf'
 import {
     modalConfirmar
-} from '../../../assets/Funciones/Funciones' //funcion de modal de confirm
+} from '../../assets/Funciones/Funciones' //funcion de modal de confirm
 
 import axios from 'axios'
 import {
@@ -79,8 +103,9 @@ import {
 } from 'vuex'
 export default {
     components: {
-        NuevoRol,
-        modalPdfs
+        AgregarModificar,
+        modalPdfs,
+        ListaServicios
     },
     data() {
         return {
@@ -96,14 +121,25 @@ export default {
                     thClass: 'text-primary',
                     class: 'text-center'
                 },
+
                 {
-                    key: "rol",
-                    label: 'Rol',
+                    key: "servicio",
+                    label: 'Servicio',
                     class: 'text-center'
                 },
                 {
-                    key: 'usuarios_count',
-                    label: 'Total de Usuarios',
+                    key: 'precio_normal',
+                    label: 'Precio Normal',
+                    class: 'text-center'
+                },
+                {
+                    key: 'descuento_poliza',
+                    label: 'Precio con Póliza',
+                    class: 'text-center'
+                },
+                {
+                    key: 'tipo.tipo',
+                    label: 'Tipo',
                     class: 'text-center'
                 },
                 {
@@ -122,9 +158,8 @@ export default {
             modificar: false,
             form: {
                 //permisos
-                itemsPermisos: [],
-                rol: '',
-                id_rol: 0
+                datosModificar: [],
+                id_servicio: 0
             },
             //permisos del usuario
             permisos_por_modulo: {
@@ -141,10 +176,10 @@ export default {
             if (this.cargar) {
                 this.$store.dispatch('loading');
                 this.isBusy = true;
-                let url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
+                let url_api = this.$hostname + 'servicios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
                 if (this.filter) {
                     //si se esta usando el filtro
-                    url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
+                    url_api = this.$hostname + 'servicios?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
                 }
                 let promise = axios.get(url_api)
                 return promise
@@ -167,23 +202,19 @@ export default {
             }
         },
         refresh_table() {
-            this.cargar=true;
+            this.cargar = true;
             this.$root.$emit('bv::refresh::table', 'table')
         },
         get_datos_modificar(item) {
             this.modificar = true;
             this.$store.dispatch('loading');
-            this.form.itemsPermisos = []
-            this.form.rol = ''
-            this.form.id_rol = 0
+            this.form.datosModificar = []
+            this.form.id_servicio = 0
             try {
-                let datos = axios.get(this.$hostname + 'roles/' + item.id)
+                let datos = axios.get(this.$hostname + 'servicios/' + item.id)
                     .then(resp => {
-                        resp.data.data.forEach(element => {
-                            this.form.itemsPermisos.push(element.modulos_id + ',' + element.permisos_id);
-                        });
-                        this.form.id_rol = item.id
-                        this.form.rol = item.rol
+                        this.form.datosModificar.push(resp.data.data)
+                        this.form.id_servicio = item.id
                         this.$store.dispatch('success')
                         this.$bvModal.show('modalNuevo')
                     })
@@ -196,18 +227,18 @@ export default {
             }
         },
         eliminar(item) {
-            this.modalConfirmar('Eliminar este rol', 'danger').then(resp => {
+            this.modalConfirmar('Eliminar este servicio', 'danger').then(resp => {
                 if (resp) {
                     //si la respuesta es SI
                     this.$store.dispatch('loading');
                     try {
-                        let datos = axios.delete(this.$hostname + 'roles/' + item.id)
+                        let datos = axios.delete(this.$hostname + 'servicios/' + item.id)
                             .then(resp => {
                                 if (resp.data == item.id) {
                                     //exito
                                     this.$store.dispatch('success')
                                     //se elimino todo bien
-                                    this.$toasted.show("El rol: " + item.rol + " ha sido dado de baja", {
+                                    this.$toasted.show("El servico: " + item.servicio + " ha sido dado de baja", {
                                         iconPack: 'fontawesome',
                                         type: 'success',
                                         theme: 'toasted-primary',
@@ -222,7 +253,7 @@ export default {
                                     //debe regresar -1 si tiene usuarios asociados
                                     //hubo algun error
                                     this.$store.dispatch('error')
-                                    this.$toasted.show("Error al eliminar, este rol tiene usuarios asociados.", {
+                                    this.$toasted.show("Error al eliminar, por favor reintente.", {
                                         iconPack: 'fontawesome',
                                         type: 'error',
                                         theme: 'toasted-primary',
@@ -236,7 +267,6 @@ export default {
 
                             })
                             .catch(error => {
-                                console.log(error)
                                 this.$store.dispatch('error')
                             })
                     } catch (error) {
@@ -246,22 +276,24 @@ export default {
             });
         },
         mostrarPdf() {
-            this.url = this.$hostname + 'roles_reporte'
+            this.url = this.$hostname + 'servicios/servicios_reporte'
         },
-        //checa si tiene permisos para ver esa parte del sistema
-
+        //calcula el precio de poliza
+        precio_poliza(precio_normal, descuento_poliza) {
+            return precio_normal * ((100 - descuento_poliza) / 100);
+        }
     },
     computed: {
         // mix the getters into computed with object spread operator
         ...mapGetters([
             'permisos'
-        ])
+        ]),
     },
     created() {
-        this.permisos_por_modulo.consultar = this.$permiso(2, 1);
-        this.permisos_por_modulo.agregar = this.$permiso(2, 2);
-        this.permisos_por_modulo.modificar = this.$permiso(2, 3);
-        this.permisos_por_modulo.eliminar = this.$permiso(2, 4);
+        this.permisos_por_modulo.consultar = this.$permiso(3, 1);
+        this.permisos_por_modulo.agregar = this.$permiso(3, 2);
+        this.permisos_por_modulo.modificar = this.$permiso(3, 3);
+        this.permisos_por_modulo.eliminar = this.$permiso(3, 4);
     },
 }
 </script>
@@ -269,3 +301,4 @@ export default {
 <style lang="css">
 
 </style>
+

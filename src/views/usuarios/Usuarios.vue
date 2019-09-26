@@ -78,7 +78,7 @@
 
 <script>
 import NuevoUser from '../usuarios/NuevoUsuario'
-import modalPdfs from './../usuarios/roles/pdf'
+import modalPdfs from '../pdf'
 import {
     modalConfirmar
 } from '../../assets/Funciones/Funciones' //funcion de modal de confirm

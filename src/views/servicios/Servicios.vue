@@ -7,7 +7,7 @@
                 <ListaServicios></ListaServicios>
             </b-tab>
             <b-tab title="Tipo de Servicio">
-              dddd
+              <Listatipos></Listatipos>
             </b-tab>
         </b-tabs>
     </b-card>
@@ -16,6 +16,7 @@
 
 <script>
 import ListaServicios from '../servicios/ListaServicios'
+import Listatipos from '../servicios/tipos/ListaTipos'
 
 import axios from 'axios'
 import {
@@ -23,7 +24,8 @@ import {
 } from 'vuex'
 export default {
     components: {
-        ListaServicios
+        ListaServicios,
+        Listatipos
     },
     data() {
         return {}

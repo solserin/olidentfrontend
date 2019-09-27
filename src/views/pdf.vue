@@ -64,8 +64,18 @@ export default {
                 this.$bvModal.show('modalPdf')
                 //fileLink.click();
             }).catch(error => {
+                this.resetear_pdf()
+                this.$toasted.show("Ha ocurrido un error en el servidor por favor reintente", {
+                    iconPack: 'fontawesome',
+                    type: 'error',
+                    theme: 'toasted-primary',
+                    icon: 'close',
+                    duration: 4000,
+                    position: 'top-center',
+                    closeOnSwipe: true,
+                    keepOnHover: true
+                });
                 this.$store.dispatch('error');
-                console.log(error)
             })
         },
         resetear_pdf() {

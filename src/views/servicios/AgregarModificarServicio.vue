@@ -4,7 +4,7 @@
         <b-form @submit="onSubmit" @reset="onReset">
             <b-col md="12">
                 <b-form-group label-cols-lg="3" label="Servicio:" label-for="txtServicio" label-class="labels" description="Indique el nombre del servicio.">
-                    <b-form-input id="txtServicio" v-model="form.servicio"></b-form-input>
+                    <b-form-input required id="txtServicio" v-model="form.servicio"></b-form-input>
                     <div class="text-danger text-center" v-if="errors.servicio">{{errors.servicio}}</div>
                 </b-form-group>
             </b-col>
@@ -31,7 +31,7 @@
 
             <b-col md="12">
                 <b-form-group label-cols-lg="3" label="Precio Normal:" label-for="txtPrecio" label-class="labels" description="Ingrese el precio del servicio al público.">
-                    <b-form-input id="txtPrecio" v-model="form.precio_normal" type="text"></b-form-input>
+                    <b-form-input required id="txtPrecio" v-model="form.precio_normal" type="text"></b-form-input>
                     <div class="text-danger text-center" v-if="errors.precio_normal">{{errors.precio_normal}}</div>
                 </b-form-group>
             </b-col>
@@ -99,6 +99,7 @@ export default {
     watch: {
         datosModificar: function () {
             if (this.datosModificar.length > 0) {
+                this.getTiposServicio();
                 this.form.servicio = this.datosModificar[0].servicio
                 this.form.descripcion = this.datosModificar[0].descripcion
                 this.form.precio_normal = this.datosModificar[0].precio_normal
@@ -107,7 +108,6 @@ export default {
                 this.form.tipo_id = this.datosModificar[0].tipo_id
                 this.form.id_servicio = this.datosModificar[0].id_servicio
             }
-
         },
         id_servicio: function () {
             this.form.id_servicio = this.id_servicio

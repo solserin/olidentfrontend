@@ -143,7 +143,7 @@ export default {
         },
         onSubmit(evt) {
             evt.preventDefault()
-            this.modalConfirmar('Actualizar la información de la empresa', 'success').then(resp => {
+            this.modalConfirmar('Actualizar la información de perfíl', 'success').then(resp => {
                 if (resp) {
                     this.$store.dispatch('loading')
                     try {

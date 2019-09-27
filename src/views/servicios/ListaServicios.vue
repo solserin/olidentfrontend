@@ -109,7 +109,7 @@ export default {
     },
     data() {
         return {
-            cargar: false,
+            cargar: true,
             url: '',
             //datos compartidos del componente NuevoRol
             selected: null,
@@ -194,7 +194,6 @@ export default {
                         return items;
                     })
                     .catch(error => {
-                        console.log(error)
                         this.isBusy = false;
                         this.$store.dispatch('error')
                         return [];
@@ -238,7 +237,7 @@ export default {
                                     //exito
                                     this.$store.dispatch('success')
                                     //se elimino todo bien
-                                    this.$toasted.show("El servico: " + item.servicio + " ha sido dado de baja", {
+                                    this.$toasted.show("El servicio: " + item.servicio + " ha sido dado de baja", {
                                         iconPack: 'fontawesome',
                                         type: 'success',
                                         theme: 'toasted-primary',
@@ -290,10 +289,10 @@ export default {
         ]),
     },
     created() {
-        this.permisos_por_modulo.consultar = this.$permiso(3, 1);
-        this.permisos_por_modulo.agregar = this.$permiso(3, 2);
-        this.permisos_por_modulo.modificar = this.$permiso(3, 3);
-        this.permisos_por_modulo.eliminar = this.$permiso(3, 4);
+        this.permisos_por_modulo.consultar = this.$permiso(4, 1);
+        this.permisos_por_modulo.agregar = this.$permiso(4, 2);
+        this.permisos_por_modulo.modificar = this.$permiso(4, 3);
+        this.permisos_por_modulo.eliminar = this.$permiso(4, 4);
     },
 }
 </script>

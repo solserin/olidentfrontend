@@ -183,7 +183,6 @@ export default {
                         return items;
                     })
                     .catch(error => {
-                        console.log(error)
                         this.isBusy = false;
                         this.$store.dispatch('error')
                         return [];

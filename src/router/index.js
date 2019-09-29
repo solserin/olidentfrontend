@@ -28,6 +28,9 @@ const Empresa = () => import('@/views/empresa/Empresa')
 const Servicios = () => import('@/views/servicios/Servicios')
 //catalogo de vendedores
 const Vendedores = () => import('@/views/catalogos/vendedores/Grupos')
+
+//catalogo de rutas
+const Rutas = () => import('@/views/catalogos/rutas/Rutas')
 //fin catalogos
 
 
@@ -138,6 +141,14 @@ let router=new Router({
           path: 'vendedores',
           name: 'Vendedores de polizas',
           component: Vendedores,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'rutas',
+          name: 'Rutas de cobro',
+          component: Rutas,
           meta: { 
             requiresAuth: true
           }

@@ -154,7 +154,6 @@ export default {
         },
         getTiposServicio() {
             //traigo los permisos
-            this.$store.dispatch('loading')
             axios.get(this.$hostname + 'tipos_servicios/get_tipos')
                 .then(resp => {
                     this.$store.dispatch('success')

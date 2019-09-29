@@ -39,7 +39,20 @@
                         <option value="0">Inactivo</option>
 
                     </b-form-select>
-                    <div class="text-danger text-center" v-if="errors.rol_id">{{errors.rol_id}}</div>
+                </b-form-group>
+            </b-col>
+            <b-col md="12">
+                <b-form-group label-cols-lg="3" label="Grupo de vendedor:" label-for="cmbGrupoVendedor" label-class="labels" description="Seleccione si este usuario pertenece a algun grupo de vendedores.">
+                    <b-form-select v-model="form.grupos_vendedores_id" id="cmbGrupoVendedor">
+                        <!-- This slot appears above the options from 'options' prop -->
+                        <template v-slot:first>
+                            <option :value="null" disabled>-- Selecione 1 Grupo de Vendedor--</option>
+                        </template>
+                        <!-- These options will appear after the ones from 'options' prop -->
+                        <option v-for="grupo in grupos_vendedores" v-bind:key="grupo.id" :value="grupo.id">{{grupo.grupo}}</option>
+
+                    </b-form-select>
+                    <div class="text-danger text-center" v-if="errors.grupos_vendedores_id">{{errors.grupos_vendedores_id}}</div>
                 </b-form-group>
             </b-col>
             <b-col md="12">
@@ -92,11 +105,15 @@ export default {
     watch: {
         datosModificar: function () {
             if (this.datosModificar.length > 0) {
+                //obtengo los roles que existen para crear un usuario
+                this.getRoles()
+                this.getGruposVendedores()
                 this.form.nombre = this.datosModificar[0].name
                 this.form.usuario = this.datosModificar[0].email
                 this.form.rol_id = this.datosModificar[0].roles_id
                 this.form.estado = this.datosModificar[0].status
                 this.form.telefono = this.datosModificar[0].telefono
+                this.form.grupos_vendedores_id = this.datosModificar[0].grupos_vendedores_id
             }
 
         },
@@ -107,10 +124,12 @@ export default {
     data() {
         return {
             roles: [],
+            grupos_vendedores: [],
             form: {
                 nombre: '',
                 usuario: '',
                 rol_id: 1,
+                grupos_vendedores_id: 1,
                 estado: 1,
                 telefono: '',
                 password: '',
@@ -121,6 +140,7 @@ export default {
                 nombre: '',
                 usuario: '',
                 rol_id: '',
+                grupos_vendedores_id: '',
                 estado: '',
                 telefono: '',
                 password: '',
@@ -137,6 +157,16 @@ export default {
             axios.get(this.$hostname + 'roles/get_roles')
                 .then(resp => {
                     this.roles = resp.data.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        getGruposVendedores() {
+            //traigo los permisos
+            axios.get(this.$hostname + 'grupos_vendedores/get_agregar_modificar_lista')
+                .then(resp => {
+                    this.grupos_vendedores = resp.data.data
                 })
                 .catch(error => {
                     console.log(error)
@@ -257,6 +287,7 @@ export default {
             this.errors.telefono = ''
             this.errors.password = ''
             this.errors.password_repetir = ''
+            this.errors.grupos_vendedores_id = ''
         },
         //funcion para limpiar el formulario completo
         limpiar_formulario() {
@@ -268,12 +299,13 @@ export default {
             this.form.telefono = ''
             this.form.password = ''
             this.form.password_repetir = ''
+            this.form.grupos_vendedores_id = 1
             this.reset_errores();
         },
     },
     created() {
-        //obtengo los roles que existen para crear un usuario
         this.getRoles()
+        this.getGruposVendedores()
     },
 }
 </script>

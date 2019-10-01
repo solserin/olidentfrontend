@@ -22,48 +22,46 @@
                                         </b-form-group>
                                     </b-col>
                                     <b-col xs="12" md="6">
-                                        <b-form-group label="Fecha Afiliación:" label-for="txtNombre" label-class="labels">
-                                            <b-form-input type="text" id="txtNombre" required></b-form-input>
+                                        <b-form-group label="Fecha Afiliación:" label-for="txtFecha" label-class="labels">
+                                            <datepicker @input="formato_fecha($event)" name="uniquename" v-model="date" :language="es" format="dd MMMM yyyy">
+                                            </datepicker>
                                         </b-form-group>
                                     </b-col>
                                     <b-col xs="12" md="6">
-                                        <b-form-group label="Tipo de Póliza:" label-for="cmbEstado" label-class="labels">
-                                            <b-form-select id="cmbEstado">
+                                        <b-form-group label="Tipo de Póliza:" label-for="cmbTipoPoliza" label-class="labels">
+                                            <b-form-select id="cmbTipoPoliza" v-model="form.tipo_poliza_id">
                                                 <!-- This slot appears above the options from 'options' prop -->
                                                 <template v-slot:first>
-                                                    <option :value="null" disabled>-- Selecione 1 Estado--</option>
+                                                    <option value="" disabled>-- Selecione 1 Póliza--</option>
                                                 </template>
                                                 <!-- These options will appear after the ones from 'options' prop -->
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
+                                                 <option v-for="tipo in tipos_poliza" v-bind:key="tipo.id" :value="tipo.id">{{tipo.tipo}}</option>
+
+                                            </b-form-select>
+                                        </b-form-group>
+                                    </b-col>
+                                   <b-col xs="12" md="6">
+                                        <b-form-group label="Ruta de Cobro:" label-for="cmbRutas" label-class="labels">
+                                            <b-form-select id="cmbRutas" v-model="form.ruta_id">
+                                                <!-- This slot appears above the options from 'options' prop -->
+                                                <template v-slot:first>
+                                                    <option value="" disabled>-- Selecione 1 Ruta--</option>
+                                                </template>
+                                                <!-- These options will appear after the ones from 'options' prop -->
+                                                 <option v-for="ruta in rutas_cobro" v-bind:key="ruta.id" :value="ruta.id">{{ruta.ruta}}</option>
 
                                             </b-form-select>
                                         </b-form-group>
                                     </b-col>
                                     <b-col xs="12" md="6">
-                                        <b-form-group label="Asignar a ruta de cobro:" label-for="cmbEstado" label-class="labels">
-                                            <b-form-select id="cmbEstado">
+                                        <b-form-group label="Vendido por:" label-for="cmbVendedor" label-class="labels">
+                                            <b-form-select id="cmbVendedor" v-model="form.vendedor_id">
                                                 <!-- This slot appears above the options from 'options' prop -->
                                                 <template v-slot:first>
-                                                    <option :value="null" disabled>-- Selecione 1 Estado--</option>
+                                                    <option value="" disabled>-- Selecione 1 Vendedor--</option>
                                                 </template>
                                                 <!-- These options will appear after the ones from 'options' prop -->
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
-
-                                            </b-form-select>
-                                        </b-form-group>
-                                    </b-col>
-                                    <b-col xs="12" md="6">
-                                        <b-form-group label="Vendido por:" label-for="cmbEstado" label-class="labels">
-                                            <b-form-select id="cmbEstado">
-                                                <!-- This slot appears above the options from 'options' prop -->
-                                                <template v-slot:first>
-                                                    <option :value="null" disabled>-- Selecione 1 Estado--</option>
-                                                </template>
-                                                <!-- These options will appear after the ones from 'options' prop -->
-                                                <option value="1">Activo</option>
-                                                <option value="0">Inactivo</option>
+                                                 <option v-for="vendedor in vendedores" v-bind:key="vendedor.id" :value="vendedor.id">{{vendedor.name}}</option>
 
                                             </b-form-select>
                                         </b-form-group>
@@ -176,7 +174,7 @@
                                                 <b-form-input id="txtNombre" required></b-form-input>
                                             </td>
                                         </tr>
-                                         <tr>
+                                        <tr>
                                             <th scope="row">1</th>
                                             <td>
                                                 <b-form-input id="txtNombre" required></b-form-input>
@@ -185,7 +183,7 @@
                                                 <b-form-input id="txtNombre" required></b-form-input>
                                             </td>
                                         </tr>
-                                         <tr>
+                                        <tr>
                                             <th scope="row">1</th>
                                             <td>
                                                 <b-form-input id="txtNombre" required></b-form-input>
@@ -194,7 +192,7 @@
                                                 <b-form-input id="txtNombre" required></b-form-input>
                                             </td>
                                         </tr>
-                                         <tr>
+                                        <tr>
                                             <th scope="row">1</th>
                                             <td>
                                                 <b-form-input id="txtNombre" required></b-form-input>
@@ -211,7 +209,7 @@
                 </b-col>
                 <b-col xs="12" lg="3" class="sin-padding">
                     <div class="info-venta pt-4 pl-4 pr-4">
-                        h
+
                     </div>
                 </b-col>
             </b-row>
@@ -219,12 +217,75 @@
     </b-form>
 </div>
 </template>
+
 <script>
+import axios from 'axios'
+import Datepicker from 'vuejs-datepicker';
+import moment from 'moment'
+import {
+    es
+} from 'vuejs-datepicker/dist/locale';
 export default {
+    components: {
+        Datepicker
+    },
     data() {
         return {
-
+            date: '',
+            es: es,
+            tipos_poliza: [],
+            vendedores: [],
+            rutas_cobro: [],
+            localidades: [],
+            form: {
+                fecha_afiliacion: '',
+                //id del tipo de poliza
+                tipo_poliza_id:'',
+                //id ruta
+                ruta_id:'',
+                vendedor_id:''
+            }
         }
+    },
+    methods: {
+        formato_fecha(event) {
+            this.form.fecha_afiliacion = moment(event).format('YYYY-MM-DD');
+        },
+        getTiposPoliza() {
+            //traigo los tipos de poliza
+            axios.get(this.$hostname + 'tipos_polizas')
+                .then(resp => {
+                    this.tipos_poliza = resp.data.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+         getRutasCobros() {
+            //traigo las rutas de cobro disponibles
+            axios.get(this.$hostname + 'rutas/get_rutas_disponibles')
+                .then(resp => {
+                    this.rutas_cobro = resp.data.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        getVendedores() {
+            //traigo los usuarios que pueden vender
+            axios.get(this.$hostname + 'usuarios/vendedores')
+                .then(resp => {
+                    this.vendedores = resp.data.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+    },
+    created() {
+        this.getTiposPoliza()
+        this.getRutasCobros()
+        this.getVendedores()
     },
 }
 </script>

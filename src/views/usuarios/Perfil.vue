@@ -185,6 +185,7 @@ export default {
                             })
                             .catch(error => {
                                 if (error.response.data['code'] == 422) {
+                                    console.log(error.response)
                                     //error de validacion de datos
                                     if (error.response.data.error['imagen']) {
                                         this.error.imagen = error.response.data.error.imagen[0]

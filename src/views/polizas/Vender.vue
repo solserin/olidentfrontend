@@ -205,6 +205,10 @@
                                         Vender
                                     </b-button>
                                 </div>
+                                <div>
+                                <b-button @click="mostrarPdf"
+                                    >ver</b-button>
+                                </div>
                             </b-list-group>
                         </div>
                     </div>
@@ -212,6 +216,7 @@
             </b-row>
         </b-card>
     </b-form>
+     <modalPdfs :url_pdf="url"></modalPdfs>
 </div>
 </template>
 
@@ -230,13 +235,16 @@ import Autocomplete from 'vuejs-auto-complete'
 import {
     es
 } from 'vuejs-datepicker/dist/locale';
+import modalPdfs from '../pdf'
 export default {
     components: {
         Datepicker,
         Autocomplete,
+        modalPdfs,
     },
     data() {
         return {
+            url: '',
             //datos para llenar el formulario
             date: '',
             es: es,
@@ -384,7 +392,7 @@ export default {
                         //aqui va el codigo para guardar un nuevo rol
                         axios.post(this.$hostname + 'polizas', this.form)
                             .then(resp => {
-                                this.limpiar_formulario();
+                                //this.limpiar_formulario();
                                 this.$store.dispatch('success')
                                 this.$toasted.show("La póliza se guardo correctamente", {
                                     iconPack: 'fontawesome',
@@ -506,6 +514,9 @@ export default {
                 this.form.beneficiarios[index].nombre = ''
                 this.form.beneficiarios[index].edad = ''
             }
+        },
+        mostrarPdf() {
+            this.url = this.$hostname + 'polizas/nota_venta'
         },
     },
     created() {

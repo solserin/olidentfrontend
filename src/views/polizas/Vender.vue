@@ -200,14 +200,20 @@
                                     <strong>Saldo restante:</strong> <span style="float:right;" class="text-success" v-if="restante"> ${{ this.restante | numFormat('0,000.00')}}</span>
                                 </b-list-group-item>
                                 <div>
-                                    <b-button squared type="submit" variant="success" class="mt-3 boton-vender">
-                                        <i class="fa fa-database" aria-hidden="true"></i>
-                                        Vender
+                                    <b-button squared type="submit" variant="warning" class="mt-3 boton-vender">
+                                        <i class="fa fa-database mr-2" aria-hidden="true"></i>
+                                        <strong >Vender</strong>
                                     </b-button>
                                 </div>
-                                <div>
-                                <b-button @click="mostrarPdf"
-                                    >ver</b-button>
+                                <div class="mt-5 text-center" v-if="this.num_poliza">
+                                    <h4 class="pb-2">Reportes póliza: {{num_poliza}}</h4>
+                                    <h6 class="pb-2 text-danger">Última póliza capturada</h6>
+                                    <b-button @click="mostrarPoliza" class="mr-4" pill variant="success" size="md">
+                                       <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Reporte
+                                    </b-button>
+                                    <b-button @click="tarjetaCobranza" class="ml-4" pill variant="primary " size="md">
+                                        <i class="fa fa-usd" aria-hidden="true"></i> Pagos
+                                    </b-button>
                                 </div>
                             </b-list-group>
                         </div>
@@ -244,6 +250,9 @@ export default {
     },
     data() {
         return {
+            num_poliza: '',
+            venta_id: '',
+
             url: '',
             //datos para llenar el formulario
             date: '',
@@ -392,7 +401,10 @@ export default {
                         //aqui va el codigo para guardar un nuevo rol
                         axios.post(this.$hostname + 'polizas', this.form)
                             .then(resp => {
-                                //this.limpiar_formulario();
+                                this.num_poliza=this.form.num_poliza    
+                                this.venta_id=resp.data
+                                this.mostrarPoliza()
+                                this.limpiar_formulario();
                                 this.$store.dispatch('success')
                                 this.$toasted.show("La póliza se guardo correctamente", {
                                     iconPack: 'fontawesome',
@@ -515,8 +527,11 @@ export default {
                 this.form.beneficiarios[index].edad = ''
             }
         },
-        mostrarPdf() {
-            this.url = this.$hostname + 'polizas/nota_venta'
+        mostrarPoliza() {
+            this.url =this.$hostname +'polizas/nota_venta?venta_id='+this.venta_id+'&poliza_id='+this.num_poliza
+        },
+        tarjetaCobranza() {
+            this.url =this.$hostname +'polizas/tarjeta_cobranza?venta_id='+this.venta_id+'&poliza_id='+this.num_poliza
         },
     },
     created() {

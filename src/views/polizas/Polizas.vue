@@ -41,10 +41,58 @@
                     <template v-slot:empty="scope">
                         <p class="text-center">{{ scope.emptyText }}</p>
                     </template>
+                    <template v-slot:beneficiarios="data">
+                        <p class="text-center">{{ data.item.beneficiarios[0].nombre }}</p>
+                    </template>
+                    <template v-slot:estado_servicio="data">
+                        <div>
+                            <b-badge variant="success" v-if="data.item.estado_servicio=='1'">Activo</b-badge>
+                            <b-badge variant="danger" v-if="data.item.estado_servicio=='0'">Inactivo</b-badge>
+                        </div>
+                    </template>
+                    <template v-slot:row-details="row">
+                        <b-card style="border-radius:0;">
+                            <b-row>
+                                <b-col xs="12">
+                                    <table class="table text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Núm. Venta</th>
+                                                <th scope="col">Vendedor</th>
+                                                <th scope="col">Fecha</th>
+                                                 <th scope="col">Tipo Póliza</th>
+                                                <th scope="col">Total</th>
+                                                <th scope="col">Abonado</th>
+                                                <th scope="col">restante</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(venta,index) in row.item.ventas" v-bind:key="venta.id"  v-bind:index="index">
+                                                <th scope="row">{{index+1}}</th>
+                                                <td>{{venta.id}}</td>
+                                                <td>{{venta.vendedor_id}}</td>
+                                                <td>{{venta.fecha_venta}}</td>
+                                                <td>{{venta.tipo_polizas_id}}</td>
+                                                <td>$ {{ venta.total | numFormat('0,000.00')}}</td>
+                                                <td>$ {{ venta.abonado | numFormat('0,000.00')}}</td>
+                                                <td>$ {{ venta.restante | numFormat('0,000.00')}}</td>
+                                               
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </b-col>
+                            </b-row>
+                        </b-card>
+                    </template>
+
                     <template v-slot:acciones="data">
                         <div>
-                            <b-button v-if="permisos_por_modulo.modificar" pill variant="primary" size="sm" @click="get_datos_modificar(data.item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></b-button>
-                            <b-button v-if="permisos_por_modulo.eliminar" pill class="ml-4" variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
+                            <b-button pill size="sm" variant="secondary" @click="data.toggleDetails">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </b-button>
+                            <b-button v-if="permisos_por_modulo.modificar" pill class="mr-3 ml-3" variant="primary" size="sm" @click="get_datos_modificar(data.item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></b-button>
+                            <b-button v-if="permisos_por_modulo.eliminar" pill variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
                             <b-button hidden pill size="sm" variant="secondary"><i class="fa fa-search" aria-hidden="true"></i></b-button>
                         </div>
                     </template>
@@ -82,26 +130,41 @@ export default {
     },
     data() {
         return {
-            cargar: false,
+            cargar: true,
             url: '',
             //datos compartidos del componente NuevoRol
             selected: null,
             texto: 'No se ha extraido información de la base de datos',
             items: [],
             fields: [{
-                    key: "id",
-                    label: 'Clave',
+                    key: "num_poliza",
+                    label: 'Póliza',
                     thClass: 'text-primary',
                     class: 'text-center'
                 },
                 {
-                    key: "rol",
-                    label: 'Rol',
+                    key: "beneficiarios",
+                    label: 'Titular',
                     class: 'text-center'
                 },
                 {
-                    key: 'usuarios_count',
-                    label: 'Total de Usuarios',
+                    key: 'fecha_afiliacion',
+                    label: 'Fecha de afiliación',
+                    class: 'text-center'
+                },
+                {
+                    key: 'total_ventas',
+                    label: 'Total de ventas',
+                    class: 'text-center'
+                },
+                {
+                    key: 'ruta.ruta',
+                    label: 'Ruta',
+                    class: 'text-center'
+                },
+                {
+                    key: 'estado_servicio',
+                    label: 'Estado Actual',
                     class: 'text-center'
                 },
                 {
@@ -139,7 +202,8 @@ export default {
             if (this.cargar) {
                 this.$store.dispatch('loading');
                 this.isBusy = true;
-                let url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
+                let url_api = this.$hostname + 'polizas?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
+                //let url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
                 if (this.filter) {
                     //si se esta usando el filtro
                     url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
@@ -165,7 +229,7 @@ export default {
             }
         },
         refresh_table() {
-            this.cargar=true;
+            this.cargar = true;
             this.$root.$emit('bv::refresh::table', 'table')
         },
         get_datos_modificar(item) {
@@ -247,10 +311,10 @@ export default {
             this.url = this.$hostname + 'roles_reporte'
         },
         //checa si tiene permisos para ver esa parte del sistema
-        urlIr: function () {   
-          //window.open(this.$hostname_frontend+'polizas/vender', "_blank");
-          this.$router.push('/polizas/vender');    
-      }
+        urlIr: function () {
+            //window.open(this.$hostname_frontend+'polizas/vender', "_blank");
+            this.$router.push('/polizas/vender');
+        }
     },
     computed: {
         // mix the getters into computed with object spread operator

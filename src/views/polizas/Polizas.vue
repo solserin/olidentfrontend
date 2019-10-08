@@ -1,6 +1,5 @@
 <template>
 <div>
-
     <b-card style="border-radius:0;">
         <div slot="header"><i class="fa fa-archive" aria-hidden="true"></i> Control de Pólizas</div>
         <b-row>
@@ -34,7 +33,7 @@
         </b-row>
         <b-row>
             <b-col xs="12">
-                <b-table id="table" :fixed="true" hover :foot-clone="true" :busy.sync="isBusy" :items="myProvider" :fields="fields" :current-page="currentPage" :per-page="perPage" striped show-empty :emptyText="texto" responsive primary-key="id" class="mt-5">
+                <b-table id="table" stacked="lg" responsive :fixed="true" hover :foot-clone="true" :busy.sync="isBusy" :items="myProvider" :fields="fields" :current-page="currentPage" :per-page="perPage" striped show-empty :emptyText="texto" responsive primary-key="id" class="mt-5">
                     <template v-slot:table-caption>
                         Total de Resultados: <strong>{{rowsTotal}} </strong> de <strong>{{totalRows}} </strong> Registros.
                     </template>
@@ -46,7 +45,7 @@
                     </template>
                     <template v-slot:estado_servicio="data">
                         <div>
-                            <b-badge variant="success" v-if="data.item.estado_servicio=='1'">Activo</b-badge>
+                            <b-badge variant="success" v-if="data.item.estado_servicio>='1'">Activo</b-badge>
                             <b-badge variant="danger" v-if="data.item.estado_servicio=='0'">Inactivo</b-badge>
                         </div>
                     </template>
@@ -54,30 +53,49 @@
                         <b-card style="border-radius:0;">
                             <b-row>
                                 <b-col xs="12">
+                                    <h6 class="text-primary text-center">Ventas de esta póliza</h6>
                                     <table class="table text-center">
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
-                                                <th scope="col">Núm. Venta</th>
-                                                <th scope="col">Vendedor</th>
+                                                <th scope="col" hidden>Núm. Venta</th>
+                                                <th scope="col" hidden>Vendedor</th>
+                                                <th scope="col">Tipo Venta</th>
                                                 <th scope="col">Fecha</th>
-                                                 <th scope="col">Tipo Póliza</th>
+                                                <th scope="col">Vencimiento</th>
+                                                <th scope="col">Tipo Póliza</th>
                                                 <th scope="col">Total</th>
                                                 <th scope="col">Abonado</th>
                                                 <th scope="col">restante</th>
+                                                <th scope="col">Acciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(venta,index) in row.item.ventas" v-bind:key="venta.id"  v-bind:index="index">
+                                            <tr v-for="(venta,index) in row.item.ventas" v-bind:key="venta.id" v-bind:index="index">
                                                 <th scope="row">{{index+1}}</th>
-                                                <td>{{venta.id}}</td>
-                                                <td>{{venta.vendedor_id}}</td>
+                                                <td hidden>{{venta.id}}</td>
+                                                <td hidden>{{venta.name.toLowerCase().charAt(0).toUpperCase() + venta.name.toLowerCase().slice(1)}}</td>
+                                                <td>{{venta.tipoVenta}}</td>
                                                 <td>{{venta.fecha_venta}}</td>
-                                                <td>{{venta.tipo_polizas_id}}</td>
+                                                <td>{{venta.fecha_vencimiento}}</td>
+                                                <td>{{venta.tipo}}</td>
                                                 <td>$ {{ venta.total | numFormat('0,000.00')}}</td>
                                                 <td>$ {{ venta.abonado | numFormat('0,000.00')}}</td>
-                                                <td>$ {{ venta.restante | numFormat('0,000.00')}}</td>
-                                               
+                                                <td>${{ venta.restante | numFormat('0,000.00')}}</td>
+                                                <td>
+                                                    <b-button class="mr-2" pill size="sm" variant="secondary" @click="mostrarPoliza(venta.id,venta.polizas_id)">
+                                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf
+                                                    </b-button>
+                                                    <b-button class="mr-2" pill size="sm" variant="primary" v-if="index==0" @click="editar(venta.id)">
+                                                        <i class="fa fa-edit" aria-hidden="true"></i> Editar
+                                                    </b-button>
+                                                    <b-button class="mr-2" pill size="sm" variant="success" @click="pagos(venta.id)">
+                                                        <i class="fa fa-dollar" aria-hidden="true"></i> Pagos
+                                                    </b-button>
+                                                    <b-button pill size="sm" variant="danger" v-if="index==0">
+                                                        <i class="fa fa-trash" aria-hidden="true"></i> Cancelar
+                                                    </b-button>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -85,15 +103,14 @@
                             </b-row>
                         </b-card>
                     </template>
-
                     <template v-slot:acciones="data">
                         <div>
-                            <b-button pill size="sm" variant="secondary" @click="data.toggleDetails">
-                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            <b-button pill size="sm" class="mr-1 mt-1 mb-1" variant="primary" @click="data.toggleDetails">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i> Detalles
                             </b-button>
-                            <b-button v-if="permisos_por_modulo.modificar" pill class="mr-3 ml-3" variant="primary" size="sm" @click="get_datos_modificar(data.item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></b-button>
-                            <b-button v-if="permisos_por_modulo.eliminar" pill variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
-                            <b-button hidden pill size="sm" variant="secondary"><i class="fa fa-search" aria-hidden="true"></i></b-button>
+                            <b-button pill size="sm" class="ml-1 mt-1 mb-1" variant="success" @click="renovar(data.item.num_poliza)">
+                                <i class="fa fa-dollar" aria-hidden="true"></i> Renovar
+                            </b-button>
                         </div>
                     </template>
                     <!-- A virtual composite column -->
@@ -132,6 +149,8 @@ export default {
         return {
             cargar: true,
             url: '',
+            num_poliza: '',
+            venta_id: '',
             //datos compartidos del componente NuevoRol
             selected: null,
             texto: 'No se ha extraido información de la base de datos',
@@ -169,7 +188,7 @@ export default {
                 },
                 {
                     key: 'acciones',
-                    label: 'Acciones',
+                    label: 'Desgloce',
                     class: 'text-center'
                 },
             ],
@@ -307,13 +326,25 @@ export default {
                 }
             });
         },
-        mostrarPdf() {
-            this.url = this.$hostname + 'roles_reporte'
+        mostrarPoliza(venta_id, poliza_num) {
+            this.url = this.$hostname + 'polizas/nota_venta?venta_id=' + venta_id + '&poliza_id=' + poliza_num
         },
         //checa si tiene permisos para ver esa parte del sistema
         urlIr: function () {
             //window.open(this.$hostname_frontend+'polizas/vender', "_blank");
             this.$router.push('/polizas/vender');
+        },
+        pagos(venta) {
+            window.open(this.$hostname_frontend + 'polizas/pagos/' + venta, "_blank");
+            //this.$router.push('/polizas/pagos/'+venta);
+        },
+        editar(venta_id) {
+            window.open(this.$hostname_frontend + 'polizas/editar_afiliacion/' + venta_id, "_blank");
+            //this.$router.push('/polizas/pagos/'+venta);
+        },
+        renovar(poliza_id) {
+            window.open(this.$hostname_frontend + 'polizas/renovar/' + poliza_id, "_blank");
+            //this.$router.push('/polizas/pagos/'+venta);
         }
     },
     computed: {

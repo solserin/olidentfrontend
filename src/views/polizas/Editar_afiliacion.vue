@@ -10,9 +10,10 @@
                     <div class="text-danger text-center" v-if="errors.usuario_registro_id">{{errors.usuario_registro_id}}</div>
                     <div class=" pl-4">
                         <h5 class=" mt-4 text-primary text-center"><i class="fa fa-cart-plus" aria-hidden="true"></i>
-                            Detalles de la Póliza</h5>
+                            Detalles de la Póliza
+                        </h5>
                         <p class="text-center">
-                            El siguiente formulario le permite capturar los datos de una <strong>Nueva</strong> póliza.
+                            El siguiente formulario le permite <strong>Editar</strong> los datos de una póliza.
                         </p>
                     </div>
                     <div class=" pt-2 pl-4 pr-4">
@@ -20,7 +21,7 @@
                         <b-row>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Núm. Póliza (*):" label-for="txtNumPoliza" label-class="labels">
-                                    <b-form-input required maxlength="6" v-model="form.num_poliza" type="text" id="txtNumPoliza"></b-form-input>
+                                    <b-form-input readonly required maxlength="6" v-model="form.num_poliza" type="text" id="txtNumPoliza"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.num_poliza">{{errors.num_poliza}}</div>
                                 </b-form-group>
                             </b-col>
@@ -57,7 +58,7 @@
                                     <div class="text-danger text-center" v-if="errors.ruta_id">{{errors.ruta_id}}</div>
                                 </b-form-group>
                             </b-col>
-                            <b-col xs="12" md="6">
+                            <b-col xs="12" md="12">
                                 <b-form-group label="Vendido por (*):" label-for="cmbVendedor" label-class="labels">
                                     <b-form-select required id="cmbVendedor" v-model="form.vendedor_id">
                                         <!-- This slot appears above the options from 'options' prop -->
@@ -71,12 +72,12 @@
                                 </b-form-group>
                             </b-col>
 
-                            <b-col xs="12" md="6">
+                            <!--<b-col xs="12" md="6">
                                 <b-form-group label="Abono Inicial (*):" label-for="txtAbono" label-class="labels">
                                     <b-form-input required maxlength="4" v-model="form.abono" type="text" id="txtAbono"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.abono">{{errors.abono}}</div>
                                 </b-form-group>
-                            </b-col>
+                            </b-col>-->
                         </b-row>
 
                         <h5 class="nombre-tab pb-4 text-success">Información del Titular</h5>
@@ -113,7 +114,7 @@
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Comunidad (*):" label-for="txtComunidad" label-class="labels">
-                                    <autocomplete required ref="autocomplete" v-model="form.localidad_id" source="http://localhost:8000/rutas/localidad?filter=" results-property="data" :results-display="formattedDisplay" @clear="form.localidad_id='';localidad=''" @nothingSelected="form.localidad_id=''" @selected="addDistributionGroup" placeholder="Buscar Comunidad" name="txtLocalidad">
+                                    <autocomplete initialDisplay="Ignore este dato si no desea modificarlo." required ref="autocomplete" v-model="form.localidad_id" source="http://localhost:8000/rutas/localidad?filter=" results-property="data" :results-display="formattedDisplay" @clear="form.localidad_id='';localidad=''" @nothingSelected="form.localidad_id=''" @selected="addDistributionGroup" placeholder="Buscar Comunidad" name="txtLocalidad">
                                         <template v-slot:noResults>
                                             <strong>Sin </strong>resultados.
                                         </template>
@@ -193,23 +194,17 @@
                                 <b-list-group-item>
                                     <strong>Costo:</strong> <span style="float:right;" class="text-primary" v-if="form.tipo_poliza_id.precio"> ${{ form.tipo_poliza_id.precio | numFormat('0,000.00')}}</span>
                                 </b-list-group-item>
-                                <b-list-group-item>
-                                    <strong>Abono inicial:</strong> <span style="float:right;" class="text-primary" v-if="form.abono">${{ form.abono | numFormat('0,000.00')}}</span>
-                                </b-list-group-item>
-                                <b-list-group-item>
-                                    <strong>Saldo restante:</strong> <span style="float:right;" class="text-success" v-if="restante"> ${{ this.restante | numFormat('0,000.00')}}</span>
-                                </b-list-group-item>
                                 <div>
-                                    <b-button squared type="submit" variant="success" class="mt-3 boton-vender">
-                                        <i class="fa fa-database mr-2" aria-hidden="true"></i>
-                                        <strong >Vender</strong>
+                                    <b-button squared type="submit" variant="primary" class="mt-3 boton-vender">
+                                        <i class="fa fa-edit mr-2" aria-hidden="true"></i>
+                                        <strong>Actualizar</strong>
                                     </b-button>
                                 </div>
                                 <div class="mt-5 text-center" v-if="this.num_poliza">
                                     <h4 class="pb-2">Reportes póliza: {{num_poliza}}</h4>
                                     <h6 class="pb-2 text-danger">Última póliza capturada</h6>
                                     <b-button @click="mostrarPoliza" class="mr-4" pill variant="success" size="md">
-                                       <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Reporte
+                                        <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Reporte
                                     </b-button>
                                     <b-button @click="tarjetaCobranza" class="ml-4" pill variant="primary " size="md">
                                         <i class="fa fa-usd" aria-hidden="true"></i> Pagos
@@ -222,7 +217,7 @@
             </b-row>
         </b-card>
     </b-form>
-     <modalPdfs :url_pdf="url"></modalPdfs>
+    <modalPdfs :url_pdf="url"></modalPdfs>
 </div>
 </template>
 
@@ -250,6 +245,8 @@ export default {
     },
     data() {
         return {
+            //datos iniciales del autocomplete de localidades
+            localidad_inicial: '',
             num_poliza: '',
             venta_id: '',
             url: '',
@@ -264,7 +261,7 @@ export default {
             LimpiarForm: [],
             //datos que se van a mandar guardar
             form: {
-                usuario_registro_id:'',
+                usuario_registro_id: '',
                 num_poliza: '',
                 fecha_afiliacion: '',
                 //id del tipo de poliza
@@ -280,7 +277,7 @@ export default {
                 email: '',
                 telefono: '',
                 ocupacion: '',
-                edad:'',
+                edad: '',
                 numero: '',
                 cp: '',
                 localidad_id: '',
@@ -308,7 +305,7 @@ export default {
                 ]
             },
             errors: {
-                usuario_registro_id:'',
+                usuario_registro_id: '',
                 num_poliza: '',
                 fecha_afiliacion: '',
                 //id del tipo de poliza
@@ -324,7 +321,7 @@ export default {
                 email: '',
                 telefono: '',
                 ocupacion: '',
-                edad:'',
+                edad: '',
                 numero: '',
                 cp: '',
                 localidad_id: '',
@@ -384,6 +381,49 @@ export default {
                     console.log(error)
                 })
         },
+        getVentaDatos() {
+            //traigo los usuarios que pueden vender
+            axios.get(this.$hostname + 'ventas/' + this.$route.params.venta_id)
+                .then(resp => {
+                    this.form.num_poliza = resp.data.polizas_id
+                    //this.form.fecha_afiliacion=resp.data['poliza_origen'].fecha_afiliacion
+                    //console.log(this.form.tipo_poliza_id)
+                    this.form.tipo_poliza_id = resp.data['tipo_poliza']
+                    //id ruta
+                    let ruta_opcion = {
+                        "id": resp.data['poliza_origen'].id,
+                        "ruta":resp.data['poliza_origen'].ruta,
+                        "descripcion": resp.data['poliza_origen'].descripcion,
+                        "cobrador_id": resp.data['poliza_origen'].cobrador_id,
+                        "status": resp.data['poliza_origen'].status,
+                    };
+                    this.form.ruta_id = ruta_opcion
+                    this.form.vendedor_id = resp.data['vendedor']
+                    //titular y beneficiarios
+                    this.form.titular = resp.data['beneficiarios'][0].nombre;
+                    this.form.colonia = resp.data['beneficiarios'][0].colonia;
+                    this.form.calle = resp.data['beneficiarios'][0].calle;
+                    this.form.email = resp.data['beneficiarios'][0].email;
+                    this.form.telefono = resp.data['beneficiarios'][0].telefono;
+                    this.form.ocupacion = resp.data['beneficiarios'][0].ocupacion;
+                    this.form.edad = resp.data['beneficiarios'][0].edad;
+                    this.form.numero = resp.data['beneficiarios'][0].numero;
+                    this.form.cp = resp.data['beneficiarios'][0].cp;
+                    this.form.localidad_id = resp.data['beneficiarios'][0].localidad_id;
+                    this.localidad_inicial = resp.data['beneficiarios'][0].localidad;
+
+                    for (let index = 0; index < resp.data.num_beneficiarios; index++) {
+                        this.form.beneficiarios[index].nombre = resp.data['beneficiarios'][index].nombre;
+                        this.form.beneficiarios[index].edad = resp.data['beneficiarios'][index].edad;
+                    }
+
+                    //this.form.ruta_id=resp.data['poliza_origen'].rutas_id
+                    //this.form.vendedor_id= resp.resp.data['vendedor'].id
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
         formattedDisplay(result) {
             return result.municipio.nombre + ' [' + result.nombre + ']'
         },
@@ -400,8 +440,8 @@ export default {
                         //aqui va el codigo para guardar un nuevo rol
                         axios.post(this.$hostname + 'polizas', this.form)
                             .then(resp => {
-                                this.num_poliza=this.form.num_poliza    
-                                this.venta_id=resp.data
+                                this.num_poliza = this.form.num_poliza
+                                this.venta_id = resp.data
                                 this.mostrarPoliza()
                                 this.limpiar_formulario();
                                 this.$store.dispatch('success')
@@ -527,26 +567,27 @@ export default {
             }
         },
         mostrarPoliza() {
-            this.url =this.$hostname +'polizas/nota_venta?venta_id='+this.venta_id+'&poliza_id='+this.num_poliza
+            this.url = this.$hostname + 'polizas/nota_venta?venta_id=' + this.venta_id + '&poliza_id=' + this.num_poliza
         },
         tarjetaCobranza() {
-            this.url =this.$hostname +'polizas/tarjeta_cobranza?venta_id='+this.venta_id+'&poliza_id='+this.num_poliza
+            this.url = this.$hostname + 'polizas/tarjeta_cobranza?venta_id=' + this.venta_id + '&poliza_id=' + this.num_poliza
         },
     },
     created() {
-        this.form.usuario_registro_id=this.user.id
+        this.form.usuario_registro_id = this.user.id
         this.$store.dispatch('success')
         this.getTiposPoliza()
         this.getRutasCobros()
         this.getVendedores()
+        this.getVentaDatos()
     },
     computed: {
         restante: function () {
-                return this.form.tipo_poliza_id.precio - this.form.abono;
-            },
-            ...mapGetters([
-                'user'
-            ]),
+            return this.form.tipo_poliza_id.precio - this.form.abono;
+        },
+        ...mapGetters([
+            'user'
+        ]),
     }
 }
 </script>

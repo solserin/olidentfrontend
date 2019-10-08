@@ -37,6 +37,8 @@ const Rutas = () => import('@/views/catalogos/rutas/Rutas')
 //Componentes para el control de servicios de las polizas
 const Polizas = () => import('@/views/polizas/Polizas')
 const Vender = () => import('@/views/polizas/Vender')
+const Editar = () => import('@/views/polizas/Editar_afiliacion')
+const Pagos = () => import('@/views/polizas/Pagos')
 
 
 var tiene_permiso_modulo=0;
@@ -178,6 +180,30 @@ let router=new Router({
           meta: { 
             requiresAuth: true
           }
+        },
+        {
+          path: 'editar_afiliacion/:venta_id',
+          name: 'Actualizar pólizas',
+          component: Editar,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'renovar/:poliza_id',
+          name: 'Renovar pólizas',
+          component: Vender,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'pagos/:id',
+          name: 'Pagos pólizas',
+          component: Pagos,
+          meta: { 
+            requiresAuth: true
+          }
         }
       ]
     },
@@ -207,6 +233,11 @@ let router=new Router({
           
         }
       ]
+    },
+    {
+      path: '*',
+      redirect: '/pages/404',
+      name: 'Error not found',
     }
   ]
 })
@@ -232,14 +263,11 @@ router.beforeEach((to, from, next) => {
           }
         });
         //hasta aqui verifico que tenga acceso a las rutas estaticas
-
         //aqui comienzo a validad las rutas de polizas
         //fin de validacion de rutas de polizas
-
-
         //estas rutas son para rutas sin necesidad de crear un modulo aparte
         //validacion para rutas de polizas vender (permiso agregar en polizas)
-        if(to.path=='/polizas/vender'){
+        if(to.path=='/polizas/vender' || to.path=='/polizas/renovar'||  to.path=='/polizas/editar_afiliacion'){
           store.getters.permisos.forEach(element => {
             //checo si tiene permiso al modulo y al permiso
             if(element.modulo_id==5 && element.permiso_id==2){
@@ -249,9 +277,25 @@ router.beforeEach((to, from, next) => {
           });
         }
 
-        if(to.params.id){
+        if(to.path=='/polizas/pagos'){
+          store.getters.permisos.forEach(element => {
+            //checo si tiene permiso al modulo y al permiso
+            if(element.modulo_id==5 && element.permiso_id==2){
+              tiene_permiso_modulo=1;
+              return;
+            }
+          });
+        }
+
+        //checo que existe el paramtro de la ruta
+        if(to.params.id || to.params.poliza_id || to.params.venta_id){
           tiene_permiso_modulo=1;
         }
+
+
+        
+
+       
         //fin de validacion de ruta para vender
 
         //aqui dependiendo de las rutas de arribadecido si puede proseguir o nor

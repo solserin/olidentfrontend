@@ -27,8 +27,10 @@
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Fecha Afiliación (*):" label-for="txtFecha" label-class="labels">
-                                    <datepicker @input="formato_fecha($event)" name="uniquename" v-model="date" :language="es" format="dd MMMM yyyy">
+                                    <datepicker :value="date"  @input="formato_fecha($event)" name="uniquename"  :language="es" format="dd MMMM yyyy">
                                     </datepicker>
+                                    {{date}}
+                                    {{form.fecha_afiliacion}}
                                     <div class="text-danger text-center" v-if="errors.fecha_afiliacion">{{errors.fecha_afiliacion}}</div>
                                 </b-form-group>
                             </b-col>
@@ -245,13 +247,14 @@ export default {
     },
     data() {
         return {
+            date:'',
             //datos iniciales del autocomplete de localidades
             localidad_inicial: '',
             num_poliza: '',
             venta_id: '',
             url: '',
             //datos para llenar el formulario
-            date: '',
+           // date: '',
             es: es,
             tipos_poliza: [],
             vendedores: [],
@@ -386,6 +389,7 @@ export default {
             axios.get(this.$hostname + 'ventas/' + this.$route.params.venta_id)
                 .then(resp => {
                     this.form.num_poliza = resp.data.polizas_id
+                    this.date= new Date(2019,10,12)
                     //this.form.fecha_afiliacion=resp.data['poliza_origen'].fecha_afiliacion
                     //console.log(this.form.tipo_poliza_id)
                     this.form.tipo_poliza_id = resp.data['tipo_poliza']

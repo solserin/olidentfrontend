@@ -16,12 +16,11 @@
                         </p>
                     </div>
                     <div class=" pt-2 pl-4 pr-4">
-                        <h5 class="nombre-tab pb-4 text-success">Información del pago</h5>
-                        <b-row>
+                        <h5 class="nombre-tab pb-4 text-success" v-if="pagos[0]['restante']>0">Información del pago</h5>
+                        <b-row v-if="pagos[0]['restante']>0">
                             <b-col xs="12" md="4">
                                 <b-form-group label="Fecha de pago (*):" label-for="txtFecha" label-class="labels">
-                                    <datepicker @input="formato_fecha($event)" name="uniquename" v-model="date" :language="es" format="dd MMMM yyyy">
-                                    </datepicker>
+                                    <date-picker readonly="readonly" v-model="form.fecha_abono" :config="options"></date-picker>
                                     <div class="text-danger text-center" v-if="errors.fecha_abono">{{errors.fecha_abono}}</div>
                                 </b-form-group>
                             </b-col>
@@ -99,7 +98,7 @@
                         </div>
                     </div>
                 </b-col>
-                <b-col xs="12" lg="3" class="sin-padding">
+                <b-col xs="12" lg="3" class="sin-padding" >
                     <div class="info-venta pt-4 pl-4 pr-4">
                         <h5 class="nombre-tab pb-4 text-center"> <i class="fa fa-usd" aria-hidden="true"></i> Resumen de Pago </h5>
                         <div class="divider"></div>
@@ -117,7 +116,7 @@
                                 <b-list-group-item>
                                     <strong>Vendedor:</strong> <span style="float:right;" class="text-primary" v-if="pagos.length"> {{pagos[0]['vendedor']['name'].toLowerCase().charAt(0).toUpperCase() + pagos[0]['vendedor']['name'].toLowerCase().slice(1)}}</span>
                                 </b-list-group-item>
-                                <b-list-group-item>
+                                <b-list-group-item v-if="pagos[0]['restante']>0">
                                     <strong>Cobrador:</strong> <span style="float:right;" class="text-primary" v-if="form.cobrador_id"> {{form.cobrador_id['name'].toLowerCase().charAt(0).toUpperCase() + form.cobrador_id['name'].toLowerCase().slice(1)}}</span>
                                 </b-list-group-item>
                                 <b-list-group-item>
@@ -125,12 +124,15 @@
                                         <div v-if="pagos[0]['restante']==0">
                                             <h6>Pagado</h6>
                                         </div>
+                                        <div v-else-if="pagos[0]['restante']<0">
+                                            <h6>Saldo sobrante: $ {{ pagos[0]['restante'] | numFormat('0,000.00')}} </h6>
+                                        </div>
                                         <div v-else>
                                             $ {{ pagos[0]['restante'] | numFormat('0,000.00')}}
                                         </div>
                                     </span>
                                 </b-list-group-item>
-                                <div>
+                                <div v-if="pagos[0]['restante']>0">
                                     <b-button squared type="submit" variant="success" class="mt-3 boton-vender">
                                         <i class="fa fa-database mr-2" aria-hidden="true"></i>
                                         <strong>Pagar</strong>
@@ -155,17 +157,11 @@ import {
 import {
     modalConfirmar
 } from '../../assets/Funciones/Funciones'
-import Datepicker from 'vuejs-datepicker';
 import moment from 'moment'
-import Vue from 'vue'
 
-import {
-    es
-} from 'vuejs-datepicker/dist/locale';
 import modalPdfs from '../pdf'
 export default {
     components: {
-        Datepicker,
         modalPdfs,
     },
     data() {
@@ -173,8 +169,14 @@ export default {
             abonado: 0,
             url: '',
             //datos para llenar el formulario
-            date: '',
-            es: es,
+            options: {
+                format: 'YYYY-MM-DD',
+                locale: 'es',
+                useCurrent: true,
+                showClear: true,
+                showClose: true,
+                ignoreReadonly: true
+            },
             abono_id: '',
             cobradores: [],
             LimpiarForm: [],
@@ -334,6 +336,7 @@ export default {
         limpiar_formulario() {
             this.reset_errores();
             this.form.abono = ''
+            this.form.fecha_abono = ''
             this.form.cobrador_id = ''
         },
         //calcula restante

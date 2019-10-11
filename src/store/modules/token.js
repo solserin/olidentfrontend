@@ -56,7 +56,7 @@ const actions={
         return new Promise((resolve, reject) => {
           var datos={
             client_id:1,
-            client_secret:'BLrCNVINLG7iNbuOoiDNOQET3awS8nZKHZK8nDMW',
+            client_secret:'7hRY9FChED1V9MoophirT8KwNfnESypjHLmOP4ZU',
             grant_type:'password',
             username:data.email,
             password:data.password

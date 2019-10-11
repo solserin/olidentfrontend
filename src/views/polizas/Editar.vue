@@ -1,8 +1,32 @@
 <template>
 <div>
-    <!--<b-card style="border-radius:0;">
-        <div slot="header"><i class="fa fa-folder-open-o" aria-hidden="true"></i> Formulario de Venta</div>
-    </b-card>-->
+    <b-modal @hidden="limpiar_buscador" @close="limpiar_buscador" id="modalBuscador" size="lg" title="Buscar Póliza" no-close-on-backdrop hide-footer>
+        <b-col md="12">
+            <b-row>
+                <b-col xs="12" sm="3" md="3">
+                    <b-form-group label="Núm. Póliza (*):" label-for="txtNumBuscador" label-class="labels">
+                        <b-form-input v-on:keyup.enter="getVentaDatos(buscador.num_poliza)" maxlength="6" v-model="buscador.num_poliza" type="text" id="txtNumBuscador"></b-form-input>
+                        <div class="text-danger text-center" v-if="errors.num_poliza">{{errors.num_poliza}}</div>
+                    </b-form-group>
+                </b-col>
+                <b-col xs="12" md="9">
+                    <b-form-group label="Titular" label-for="txtComunidad" label-class="labels">
+                        <autocomplete ref="autocomplete" v-model="buscador.num_poliza" :source="this.$hostname+'polizas/beneficiario?filter='" results-property="data" :results-display="formattedDisplayBeneficiario" results-value="polizas_id" @clear="buscador.num_poliza='';buscador.titular=''" @nothingSelected="buscador.num_poliza=''" @selected="addDistributionGroupBeneficiario" placeholder="Buscar Titular" name="txtTitularBuscar">
+                            <template v-slot:noResults>
+                                <strong>Sin </strong>resultados.
+                            </template>
+                        </autocomplete>
+                        <div class="text-danger text-center" v-if="errors.localidad_id">{{errors.localidad_id}}</div>
+                    </b-form-group>
+                </b-col>
+            </b-row>
+            <b-row>
+                <b-col xs="12" class="text-center" v-if="buscador.num_poliza">
+                    <b-button class="mt-4 mb-4" squared variant="primary" @click="getVentaDatos(buscador.num_poliza)"><i class="fa fa-search" aria-hidden="true"></i> Cargar Datos</b-button>
+                </b-col>
+            </b-row>
+        </b-col>
+    </b-modal>
     <b-form @submit="onSubmit">
         <b-card style="border-radius:0; " class="quitar-padding">
             <b-row style="margin:0px !important;">
@@ -17,7 +41,16 @@
                         </p>
                     </div>
                     <div class=" pt-2 pl-4 pr-4">
-                        <h5 class="nombre-tab pb-4 text-success">Información de la Póliza</h5>
+                        <b-row>
+                            <b-col>
+                                <h5 class="nombre-tab pb-4 text-success">
+                                    Información de la Póliza
+                                    <b-button v-b-modal.modalBuscador squared size="sm" variant="secondary" style="background-color: #6c757d; float:right; color:#fff; font-size:18px;">
+                                        <img src="../../assets/images/consultar.png" style=" max-width: 35px !important;"> Buscar Póliza
+                                    </b-button>
+                                </h5>
+                            </b-col>
+                        </b-row>
                         <b-row>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Núm. Póliza (*):" label-for="txtNumPoliza" label-class="labels">
@@ -26,12 +59,9 @@
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="6">
-                                <b-form-group label="Fecha Afiliación (*):" label-for="txtFecha" label-class="labels">
-                                    <datepicker :value="date"  @input="formato_fecha($event)" name="uniquename"  :language="es" format="dd MMMM yyyy">
-                                    </datepicker>
-                                    {{date}}
-                                    {{form.fecha_afiliacion}}
-                                    <div class="text-danger text-center" v-if="errors.fecha_afiliacion">{{errors.fecha_afiliacion}}</div>
+                                <b-form-group label="Fecha Venta (*):" label-for="txtFecha" label-class="labels">
+                                    <date-picker readonly="readonly" v-model="form.fecha_venta" :config="options"></date-picker>
+                                    <div class="text-danger text-center" v-if="errors.fecha_venta">{{errors.fecha_venta}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="6">
@@ -182,19 +212,21 @@
                         <div class="mt-4">
                             <b-list-group flush>
                                 <b-list-group-item>
-                                    <strong>Núm. Póliza:</strong> <span style="float:right;" class="text-primary"> {{form.num_poliza}}</span>
+                                    <strong>Núm. Póliza:</strong> <span style="float:right;" class="text-primary"> <strong>{{form.num_poliza}}</strong></span>
                                 </b-list-group-item>
                                 <b-list-group-item>
-                                    <strong>Póliza:</strong><span style="float:right;" class="text-primary">{{form.tipo_poliza_id.tipo}}</span>
+                                    <strong>Póliza:</strong><span style="float:right;" class="text-primary"><strong>{{form.tipo_poliza_id.tipo}}</strong></span>
                                 </b-list-group-item>
                                 <b-list-group-item>
-                                    <strong>Ruta de cobro:</strong> <span style="float:right;" class="text-primary"> {{form.ruta_id.ruta}}</span>
+                                    <div class="text-center"><strong class="text-center">Ruta de cobro:</strong></div>
+                                    <div class="text-primary text-center"> <strong>{{form.ruta_id.ruta}}</strong></div>
                                 </b-list-group-item>
                                 <b-list-group-item>
-                                    <strong>Vendedor:</strong> <span style="float:right;" class="text-primary"> {{form.vendedor_id.name}}</span>
+                                    <div class="text-center"><strong class="text-center">Vendedor:</strong></div>
+                                    <div class="text-primary text-center"> <strong>{{form.vendedor_id.name}}</strong></div>
                                 </b-list-group-item>
                                 <b-list-group-item>
-                                    <strong>Costo:</strong> <span style="float:right;" class="text-primary" v-if="form.tipo_poliza_id.precio"> ${{ form.tipo_poliza_id.precio | numFormat('0,000.00')}}</span>
+                                    <strong>Costo:</strong> <span style="float:right;" class="text-primary" v-if="form.tipo_poliza_id.precio"> <strong>${{ form.tipo_poliza_id.precio | numFormat('0,000.00')}}</strong></span>
                                 </b-list-group-item>
                                 <div>
                                     <b-button squared type="submit" variant="primary" class="mt-3 boton-vender">
@@ -204,11 +236,11 @@
                                 </div>
                                 <div class="mt-5 text-center" v-if="this.num_poliza">
                                     <h4 class="pb-2">Reportes póliza: {{num_poliza}}</h4>
-                                    <h6 class="pb-2 text-danger">Última póliza capturada</h6>
+                                    <h6 class="pb-2 text-danger">Última póliza modificada</h6>
                                     <b-button @click="mostrarPoliza" class="mr-4" pill variant="success" size="md">
                                         <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Reporte
                                     </b-button>
-                                    <b-button @click="tarjetaCobranza" class="ml-4" pill variant="primary " size="md">
+                                    <b-button @click="pagos" class="ml-4" pill variant="primary " size="md">
                                         <i class="fa fa-usd" aria-hidden="true"></i> Pagos
                                     </b-button>
                                 </div>
@@ -231,44 +263,50 @@ import {
 import {
     modalConfirmar
 } from '../../assets/Funciones/Funciones'
-import Datepicker from 'vuejs-datepicker';
 import moment from 'moment'
-import Vue from 'vue'
 import Autocomplete from 'vuejs-auto-complete'
-import {
-    es
-} from 'vuejs-datepicker/dist/locale';
 import modalPdfs from '../pdf'
 export default {
     components: {
-        Datepicker,
         Autocomplete,
         modalPdfs,
     },
     data() {
         return {
-            date:'',
+            options: {
+                format: 'YYYY-MM-DD',
+                locale: 'es',
+                useCurrent: true,
+                showClear: true,
+                showClose: true,
+                ignoreReadonly: true
+            },
             //datos iniciales del autocomplete de localidades
             localidad_inicial: '',
             num_poliza: '',
             venta_id: '',
             url: '',
             //datos para llenar el formulario
-           // date: '',
-            es: es,
             tipos_poliza: [],
             vendedores: [],
             rutas_cobro: [],
             localidades: [],
             localidad: '',
             LimpiarForm: [],
+            buscador: {
+                num_poliza: '',
+                titular: '',
+                titulares: [],
+            },
             //datos que se van a mandar guardar
             form: {
                 usuario_registro_id: '',
                 num_poliza: '',
-                fecha_afiliacion: '',
+                fecha_venta: '',
                 //id del tipo de poliza
                 tipo_poliza_id: '',
+                //tipo de ventas
+                tipo_ventas_id: '',
                 //id ruta
                 ruta_id: '',
                 vendedor_id: '',
@@ -305,12 +343,13 @@ export default {
                         nombre: '',
                         edad: ''
                     }
-                ]
+                ],
+                status_venta: ''
             },
             errors: {
                 usuario_registro_id: '',
                 num_poliza: '',
-                fecha_afiliacion: '',
+                fecha_venta: '',
                 //id del tipo de poliza
                 tipo_poliza_id: '',
                 //id ruta
@@ -352,7 +391,7 @@ export default {
     methods: {
         modalConfirmar,
         formato_fecha(event) {
-            this.form.fecha_afiliacion = moment(event).format('YYYY-MM-DD');
+            this.form.fecha_venta = moment(event).format('YYYY-MM-DD');
         },
         getTiposPoliza() {
             //traigo los tipos de poliza
@@ -384,144 +423,202 @@ export default {
                     console.log(error)
                 })
         },
-        getVentaDatos() {
+        getVentaDatos(num_poliza) {
             //traigo los usuarios que pueden vender
-            axios.get(this.$hostname + 'ventas/' + this.$route.params.venta_id)
+            this.$store.dispatch('loading')
+            axios.get(this.$hostname + 'ventas/' + num_poliza)
                 .then(resp => {
-                    this.form.num_poliza = resp.data.polizas_id
-                    this.date= new Date(2019,10,12)
-                    //this.form.fecha_afiliacion=resp.data['poliza_origen'].fecha_afiliacion
-                    //console.log(this.form.tipo_poliza_id)
-                    this.form.tipo_poliza_id = resp.data['tipo_poliza']
-                    //id ruta
-                    let ruta_opcion = {
-                        "id": resp.data['poliza_origen'].id,
-                        "ruta":resp.data['poliza_origen'].ruta,
-                        "descripcion": resp.data['poliza_origen'].descripcion,
-                        "cobrador_id": resp.data['poliza_origen'].cobrador_id,
-                        "status": resp.data['poliza_origen'].status,
-                    };
-                    this.form.ruta_id = ruta_opcion
-                    this.form.vendedor_id = resp.data['vendedor']
-                    //titular y beneficiarios
-                    this.form.titular = resp.data['beneficiarios'][0].nombre;
-                    this.form.colonia = resp.data['beneficiarios'][0].colonia;
-                    this.form.calle = resp.data['beneficiarios'][0].calle;
-                    this.form.email = resp.data['beneficiarios'][0].email;
-                    this.form.telefono = resp.data['beneficiarios'][0].telefono;
-                    this.form.ocupacion = resp.data['beneficiarios'][0].ocupacion;
-                    this.form.edad = resp.data['beneficiarios'][0].edad;
-                    this.form.numero = resp.data['beneficiarios'][0].numero;
-                    this.form.cp = resp.data['beneficiarios'][0].cp;
-                    this.form.localidad_id = resp.data['beneficiarios'][0].localidad_id;
-                    this.localidad_inicial = resp.data['beneficiarios'][0].localidad;
-
-                    for (let index = 0; index < resp.data.num_beneficiarios; index++) {
-                        this.form.beneficiarios[index].nombre = resp.data['beneficiarios'][index].nombre;
-                        this.form.beneficiarios[index].edad = resp.data['beneficiarios'][index].edad;
+                    //valido que tenga datos la respuesta
+                    if (resp.data) {
+                        if (resp.data.status==1) {
+                            this.venta_id = resp.data.id
+                            this.form.num_poliza = resp.data.polizas_id
+                            this.form.fecha_venta = resp.data.fecha_venta
+                            //this.form.fecha_afiliacion=resp.data['poliza_origen'].fecha_afiliacion
+                            //console.log(this.form.tipo_poliza_id)
+                            this.form.tipo_poliza_id = resp.data['tipo_poliza']
+                            //id ruta
+                            let ruta_opcion = {
+                                "id": resp.data['poliza_origen'].id,
+                                "ruta": resp.data['poliza_origen'].ruta,
+                                "descripcion": resp.data['poliza_origen'].descripcion,
+                                "cobrador_id": resp.data['poliza_origen'].cobrador_id,
+                                "status": resp.data['poliza_origen'].status,
+                            };
+                            this.form.ruta_id = ruta_opcion
+                            this.form.vendedor_id = resp.data['vendedor']
+                            //titular y beneficiarios
+                            this.form.titular = resp.data['beneficiarios'][0].nombre;
+                            this.form.colonia = resp.data['beneficiarios'][0].colonia;
+                            this.form.calle = resp.data['beneficiarios'][0].calle;
+                            this.form.email = resp.data['beneficiarios'][0].email;
+                            this.form.telefono = resp.data['beneficiarios'][0].telefono;
+                            this.form.ocupacion = resp.data['beneficiarios'][0].ocupacion;
+                            this.form.edad = resp.data['beneficiarios'][0].edad;
+                            this.form.numero = resp.data['beneficiarios'][0].numero;
+                            this.form.cp = resp.data['beneficiarios'][0].cp;
+                            this.form.localidad_id = resp.data['beneficiarios'][0].localidad_id;
+                            this.localidad_inicial = resp.data['beneficiarios'][0].localidad;
+                            //aqui le pongo cinco beneficiarios por default
+                            //deberia ser (resp.data.num_beneficiarios+1)
+                            if (this.form.beneficiarios.length > 1) {
+                                for (let index = 1; index < 5; index++) {
+                                    this.form.beneficiarios[index - 1].nombre = resp.data['beneficiarios'][index].nombre;
+                                    this.form.beneficiarios[index - 1].edad = resp.data['beneficiarios'][index].edad;
+                                }
+                            }
+                            this.form.status_venta = resp.data.status;
+                            this.$bvModal.hide('modalBuscador');
+                        } else {
+                            this.$bvModal.hide('modalBuscador');
+                            this.$toasted.show("Esta póliza está cancelada, no puede modificarse.", {
+                                iconPack: 'fontawesome',
+                                type: 'error',
+                                theme: 'toasted-primary',
+                                icon: 'close',
+                                duration: 4000,
+                                position: 'top-center',
+                                closeOnSwipe: true,
+                                keepOnHover: true
+                            });
+                        }
+                    } else {
+                        this.$bvModal.hide('modalBuscador');
+                        this.buscador.num_poliza = ''
+                        this.$toasted.show("No se encontró esta póliza, reintente con otro número.", {
+                            iconPack: 'fontawesome',
+                            type: 'error',
+                            theme: 'toasted-primary',
+                            icon: 'close',
+                            duration: 4000,
+                            position: 'top-center',
+                            closeOnSwipe: true,
+                            keepOnHover: true
+                        });
                     }
-
-                    //this.form.ruta_id=resp.data['poliza_origen'].rutas_id
-                    //this.form.vendedor_id= resp.resp.data['vendedor'].id
+                    this.$store.dispatch('success')
                 })
                 .catch(error => {
                     console.log(error)
+                    this.$store.dispatch('error')
                 })
         },
         formattedDisplay(result) {
             return result.municipio.nombre + ' [' + result.nombre + ']'
         },
+        formattedDisplayBeneficiario(result) {
+            return 'Núm. Póliza ( ' + result.polizas_id + ' ) [Titular: ' + result.nombre + ' Calle ' + result.calle + ', #' + result.numero + ', Col. ' + result.colonia + ']'
+        },
         addDistributionGroup(group) {
             this.localidad = group.display
         },
+        addDistributionGroupBeneficiario(group) {
+            this.buscador.titular = group.display
+        },
         onSubmit(evt) {
             evt.preventDefault()
-            this.modalConfirmar('Guardar venta de póliza', 'success').then(resp => {
+            this.modalConfirmar('Modificar venta de póliza', 'success').then(resp => {
                 if (resp) {
                     this.reset_errores();
                     try {
-                        this.$store.dispatch('loading');
-                        //aqui va el codigo para guardar un nuevo rol
-                        axios.post(this.$hostname + 'polizas', this.form)
-                            .then(resp => {
-                                this.num_poliza = this.form.num_poliza
-                                this.venta_id = resp.data
-                                this.mostrarPoliza()
-                                this.limpiar_formulario();
-                                this.$store.dispatch('success')
-                                this.$toasted.show("La póliza se guardo correctamente", {
-                                    iconPack: 'fontawesome',
-                                    type: 'success',
-                                    theme: 'toasted-primary',
-                                    icon: 'check',
-                                    duration: 6000,
-                                    position: 'top-right',
-                                    closeOnSwipe: true,
-                                    keepOnHover: true
-                                });
-                            })
-                            .catch(error => {
-                                if (error.response.data['code'] == 422) {
-                                    //error de validacion de datos
-                                    if (error.response.data.error['usuario_registro_id']) {
-                                        this.errors.usuario_registro_id = error.response.data.error['usuario_registro_id'][0]
+                        if (this.form.status_venta == 1) {
+                            this.$store.dispatch('loading');
+                            //aqui va el codigo para guardar un nuevo rol
+                            axios.put(this.$hostname + 'polizas/' + this.venta_id, this.form)
+                                .then(resp => {
+                                    console.log(resp.data)
+                                    if (resp.data != -1) {
+                                        this.num_poliza = this.form.num_poliza
+                                        this.mostrarPoliza()
+                                        this.limpiar_formulario();
+                                        this.$store.dispatch('success')
+                                        this.$toasted.show("La póliza se modificó correctamente", {
+                                            iconPack: 'fontawesome',
+                                            type: 'success',
+                                            theme: 'toasted-primary',
+                                            icon: 'check',
+                                            duration: 6000,
+                                            position: 'top-right',
+                                            closeOnSwipe: true,
+                                            keepOnHover: true
+                                        });
+                                    } else {
+                                        this.$store.dispatch('success')
+                                        this.$toasted.show("Esta póliza está cancelada, no puede modificarse.", {
+                                            iconPack: 'fontawesome',
+                                            type: 'error',
+                                            theme: 'toasted-primary',
+                                            icon: 'close',
+                                            duration: 4000,
+                                            position: 'top-center',
+                                            closeOnSwipe: true,
+                                            keepOnHover: true
+                                        });
                                     }
-                                    if (error.response.data.error['num_poliza']) {
-                                        this.errors.num_poliza = error.response.data.error['num_poliza'][0]
-                                    }
-                                    if (error.response.data.error['fecha_afiliacion']) {
-                                        this.errors.fecha_afiliacion = error.response.data.error['fecha_afiliacion'][0]
-                                    }
-                                    if (error.response.data.error['tipo_poliza_id']) {
-                                        this.errors.tipo_poliza_id = error.response.data.error['tipo_poliza_id'][0]
-                                    }
-                                    if (error.response.data.error['ruta_id']) {
-                                        this.errors.ruta_id = error.response.data.error['ruta_id'][0]
-                                    }
-                                    if (error.response.data.error['vendedor_id']) {
-                                        this.errors.vendedor_id = error.response.data.error['vendedor_id'][0]
-                                    }
-                                    if (error.response.data.error['titular']) {
-                                        this.errors.titular = error.response.data.error['titular'][0]
-                                    }
-                                    if (error.response.data.error['abono']) {
-                                        this.errors.abono = error.response.data.error['abono'][0]
-                                    }
-                                    if (error.response.data.error['colonia']) {
-                                        this.errors.colonia = error.response.data.error['colonia'][0]
-                                    }
-                                    if (error.response.data.error['calle']) {
-                                        this.errors.calle = error.response.data.error['calle'][0]
-                                    }
-                                    if (error.response.data.error['email']) {
-                                        this.errors.email = error.response.data.error['email'][0]
-                                    }
-                                    if (error.response.data.error['telefono']) {
-                                        this.errors.telefono = error.response.data.error['telefono'][0]
-                                    }
-                                    if (error.response.data.error['edad']) {
-                                        this.errors.edad = error.response.data.error['edad'][0]
-                                    }
-                                    if (error.response.data.error['numero']) {
-                                        this.errors.numero = error.response.data.error['numero'][0]
-                                    }
-                                    if (error.response.data.error['cp']) {
-                                        this.errors.cp = error.response.data.error['cp'][0]
-                                    }
-                                    if (error.response.data.error['localidad_id']) {
-                                        this.errors.localidad_id = error.response.data.error['localidad_id'][0]
-                                    }
-                                    for (let index = 0; index < 4; index++) {
-                                        if (error.response.data.error['beneficiarios.' + index + '.nombre']) {
-                                            this.errors.beneficiarios[index].nombre = error.response.data.error['beneficiarios.' + index + '.nombre'][0]
+                                })
+                                .catch(error => {
+                                    if (error.response.data['code'] == 422) {
+                                        //error de validacion de datos
+                                        if (error.response.data.error['usuario_registro_id']) {
+                                            this.errors.usuario_registro_id = error.response.data.error['usuario_registro_id'][0]
                                         }
-                                        if (error.response.data.error['beneficiarios.' + index + '.edad']) {
-                                            this.errors.beneficiarios[index].edad = error.response.data.error['beneficiarios.' + index + '.edad'][0]
+                                        if (error.response.data.error['num_poliza']) {
+                                            this.errors.num_poliza = error.response.data.error['num_poliza'][0]
+                                        }
+                                        if (error.response.data.error['fecha_venta']) {
+                                            this.errors.fecha_venta = error.response.data.error['fecha_venta'][0]
+                                        }
+                                        if (error.response.data.error['tipo_poliza_id']) {
+                                            this.errors.tipo_poliza_id = error.response.data.error['tipo_poliza_id'][0]
+                                        }
+                                        if (error.response.data.error['ruta_id']) {
+                                            this.errors.ruta_id = error.response.data.error['ruta_id'][0]
+                                        }
+                                        if (error.response.data.error['vendedor_id']) {
+                                            this.errors.vendedor_id = error.response.data.error['vendedor_id'][0]
+                                        }
+                                        if (error.response.data.error['titular']) {
+                                            this.errors.titular = error.response.data.error['titular'][0]
+                                        }
+                                        if (error.response.data.error['abono']) {
+                                            this.errors.abono = error.response.data.error['abono'][0]
+                                        }
+                                        if (error.response.data.error['colonia']) {
+                                            this.errors.colonia = error.response.data.error['colonia'][0]
+                                        }
+                                        if (error.response.data.error['calle']) {
+                                            this.errors.calle = error.response.data.error['calle'][0]
+                                        }
+                                        if (error.response.data.error['email']) {
+                                            this.errors.email = error.response.data.error['email'][0]
+                                        }
+                                        if (error.response.data.error['telefono']) {
+                                            this.errors.telefono = error.response.data.error['telefono'][0]
+                                        }
+                                        if (error.response.data.error['edad']) {
+                                            this.errors.edad = error.response.data.error['edad'][0]
+                                        }
+                                        if (error.response.data.error['numero']) {
+                                            this.errors.numero = error.response.data.error['numero'][0]
+                                        }
+                                        if (error.response.data.error['cp']) {
+                                            this.errors.cp = error.response.data.error['cp'][0]
+                                        }
+                                        if (error.response.data.error['localidad_id']) {
+                                            this.errors.localidad_id = error.response.data.error['localidad_id'][0]
+                                        }
+                                        for (let index = 0; index < 4; index++) {
+                                            if (error.response.data.error['beneficiarios.' + index + '.nombre']) {
+                                                this.errors.beneficiarios[index].nombre = error.response.data.error['beneficiarios.' + index + '.nombre'][0]
+                                            }
+                                            if (error.response.data.error['beneficiarios.' + index + '.edad']) {
+                                                this.errors.beneficiarios[index].edad = error.response.data.error['beneficiarios.' + index + '.edad'][0]
+                                            }
                                         }
                                     }
-                                }
-                                this.$store.dispatch('error')
-                            })
+                                    this.$store.dispatch('error')
+                                })
+                        }
                     } catch (error) {
                         this.$store.dispatch('error')
                     }
@@ -530,7 +627,7 @@ export default {
         },
         reset_errores() {
             this.errors.num_poliza = ''
-            this.errors.fecha_afiliacion = ''
+            this.errors.fecha_venta = ''
             this.errors.tipo_poliza_id = ''
             this.errors.ruta_id = ''
             this.errors.vendedor_id = ''
@@ -550,6 +647,7 @@ export default {
         },
         limpiar_formulario() {
             this.form.num_poliza = ''
+            this.form.fecha_venta = ''
             this.form.tipo_poliza_id = ''
             this.form.ruta_id = ''
             this.form.vendedor_id = ''
@@ -570,11 +668,15 @@ export default {
                 this.form.beneficiarios[index].edad = ''
             }
         },
+        limpiar_buscador() {
+            this.buscador.num_poliza = ''
+        },
         mostrarPoliza() {
             this.url = this.$hostname + 'polizas/nota_venta?venta_id=' + this.venta_id + '&poliza_id=' + this.num_poliza
         },
-        tarjetaCobranza() {
-            this.url = this.$hostname + 'polizas/tarjeta_cobranza?venta_id=' + this.venta_id + '&poliza_id=' + this.num_poliza
+        pagos(venta) {
+            window.open(this.$hostname_frontend + 'ventas/pagos/' + this.venta_id, "_blank");
+            //this.$router.push('/polizas/pagos/'+venta);
         },
     },
     created() {
@@ -583,7 +685,7 @@ export default {
         this.getTiposPoliza()
         this.getRutasCobros()
         this.getVendedores()
-        this.getVentaDatos()
+        //this.getVentaDatos()
     },
     computed: {
         restante: function () {
@@ -681,4 +783,20 @@ export default {
 .boton-vender {
     min-width: 100%;
 }
+
+#modalBuscador .modal-header {
+    background-color: #5c6873 !important;
+    border-radius: 0px !important;
+    color: #fff !important;
+}
+
+#modalBuscador .modal-content {
+    border-radius: 0px;
+    border: none;
+}
+
+#modalBuscador .close {
+    color: #fff;
+}
+
 </style>

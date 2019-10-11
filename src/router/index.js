@@ -36,8 +36,10 @@ const Rutas = () => import('@/views/catalogos/rutas/Rutas')
 
 //Componentes para el control de servicios de las polizas
 const Polizas = () => import('@/views/polizas/Polizas')
+const Ventas = () => import('@/views/polizas/Ventas')
 const Vender = () => import('@/views/polizas/Vender')
-const Editar = () => import('@/views/polizas/Editar_afiliacion')
+const Editar = () => import('@/views/polizas/Editar')
+const Renovar = () => import('@/views/polizas/Renovar')
 const Pagos = () => import('@/views/polizas/Pagos')
 
 
@@ -160,15 +162,15 @@ let router=new Router({
 
     //polizas
     {
-      path: '/polizas/',
-      redirect: '/polizas',
-      name: 'Polizas',
+      path: '/ventas/',
+      redirect: '/ventas',
+      name: 'Ventas',
       component: DefaultContainer,
       children: [
         {
           path: '/',
-          name: 'Control de pólizas',
-          component: Polizas,
+          name: 'Control de ventas',
+          component: Ventas,
           meta: { 
             requiresAuth: true
           }
@@ -182,7 +184,7 @@ let router=new Router({
           }
         },
         {
-          path: 'editar_afiliacion/:venta_id',
+          path: 'editar',
           name: 'Actualizar pólizas',
           component: Editar,
           meta: { 
@@ -190,9 +192,9 @@ let router=new Router({
           }
         },
         {
-          path: 'renovar/:poliza_id',
+          path: 'renovar',
           name: 'Renovar pólizas',
-          component: Vender,
+          component: Renovar,
           meta: { 
             requiresAuth: true
           }
@@ -267,7 +269,7 @@ router.beforeEach((to, from, next) => {
         //fin de validacion de rutas de polizas
         //estas rutas son para rutas sin necesidad de crear un modulo aparte
         //validacion para rutas de polizas vender (permiso agregar en polizas)
-        if(to.path=='/polizas/vender' || to.path=='/polizas/renovar'||  to.path=='/polizas/editar_afiliacion'){
+        if(to.path=='/ventas/vender' ||  to.path=='/ventas/editar' ||  to.path=='/ventas/renovar'){
           store.getters.permisos.forEach(element => {
             //checo si tiene permiso al modulo y al permiso
             if(element.modulo_id==5 && element.permiso_id==2){
@@ -288,7 +290,7 @@ router.beforeEach((to, from, next) => {
         }
 
         //checo que existe el paramtro de la ruta
-        if(to.params.id || to.params.poliza_id || to.params.venta_id){
+        if(to.params.id){
           tiene_permiso_modulo=1;
         }
 

@@ -62,7 +62,7 @@
 .labels {
     font-weight: bold;
 }
-input[type=text],input[type=email],input[type=password],select {
+input[type=text],input[type=email],input[type=password],select,input[type=text]:read-only {
     border-radius: 0px !important;
     display: block;
     width: 100%;

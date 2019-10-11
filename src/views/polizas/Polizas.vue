@@ -6,7 +6,11 @@
             <b-col xs="12" sm="12" md="5">
                 <b-input-group class="mb-2 mt-3">
                     <b-form-input placeholder="Filtrar resultados" v-model="filter" v-on:keyup.enter="refresh_table"></b-form-input>
-                    <b-input-group-prepend variant="primary" is-text style="cursor:pointer !important;" @click="refresh_table"><b class="text-primary"><i class="fa fa-search" aria-hidden="true"></i></b></b-input-group-prepend>
+                    <b-input-group-prepend variant="primary" is-text style="cursor:pointer !important;" @click="refresh_table">
+                        <b class="text-primary">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </b>
+                    </b-input-group-prepend>
                 </b-input-group>
             </b-col>
             <b-col xs="12" sm="12" md="2">
@@ -27,7 +31,7 @@
             </b-col>
             <b-col xs="12" sm="12" md="5">
                 <div class="float-right  mt-3">
-                    <b-button pill class="mr-2" variant="success" v-if="permisos_por_modulo.agregar" @click="urlIr()"><i class="fa fa-usd" aria-hidden="true"></i> Vender</b-button>
+                    <b-button squared class="mr-2" variant="success" v-if="permisos_por_modulo.agregar" @click="urlIr()"><i class="fa fa-usd" aria-hidden="true"></i> Vender</b-button>
                 </div>
             </b-col>
         </b-row>
@@ -46,7 +50,7 @@
                     <template v-slot:estado_servicio="data">
                         <div>
                             <b-badge variant="success" v-if="data.item.estado_servicio>='1'">Activo</b-badge>
-                            <b-badge variant="danger" v-if="data.item.estado_servicio=='0'">Inactivo</b-badge>
+                            <b-badge variant="danger" v-if="data.item.estado_servicio=='0'">Vencido</b-badge>
                         </div>
                     </template>
                     <template v-slot:row-details="row">
@@ -67,11 +71,12 @@
                                                 <th scope="col">Total</th>
                                                 <th scope="col">Abonado</th>
                                                 <th scope="col">restante</th>
+                                                <th scope="col">Estado</th>
                                                 <th scope="col">Acciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(venta,index) in row.item.ventas" v-bind:key="venta.id" v-bind:index="index">
+                                            <tr :class="[venta.status?'':'eliminado']" v-for="(venta,index) in row.item.ventas" v-bind:key="venta.id" v-bind:index="index">
                                                 <th scope="row">{{index+1}}</th>
                                                 <td hidden>{{venta.id}}</td>
                                                 <td hidden>{{venta.name.toLowerCase().charAt(0).toUpperCase() + venta.name.toLowerCase().slice(1)}}</td>
@@ -81,18 +86,30 @@
                                                 <td>{{venta.tipo}}</td>
                                                 <td>$ {{ venta.total | numFormat('0,000.00')}}</td>
                                                 <td>$ {{ venta.abonado | numFormat('0,000.00')}}</td>
-                                                <td>${{ venta.restante | numFormat('0,000.00')}}</td>
+                                                <td>
+                                                    <div v-if="venta.restante<=0">
+                                                        <b-badge variant="success">Pagado</b-badge>
+                                                    </div>
+                                                    <div v-else>
+                                                        ${{ venta.restante | numFormat('0,000.00')}}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <b-badge variant="success" v-if="venta.status==1 && venta.estado_venta==1">Activo</b-badge>
+                                                    <b-badge variant="danger" v-if="venta.estado_venta==0">Vencido</b-badge>
+                                                    <b-badge variant="danger" v-if="venta.status==0">Cancelado</b-badge>
+                                                </td>
                                                 <td>
                                                     <b-button class="mr-2" pill size="sm" variant="secondary" @click="mostrarPoliza(venta.id,venta.polizas_id)">
                                                         <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf
                                                     </b-button>
-                                                    <b-button class="mr-2" pill size="sm" variant="primary" v-if="index==0" @click="editar(venta.id)">
+                                                    <b-button class="mr-2" pill size="sm" variant="primary" v-if="index==0 && venta.estado_venta==1" @click="editar(venta.id)">
                                                         <i class="fa fa-edit" aria-hidden="true"></i> Editar
                                                     </b-button>
                                                     <b-button class="mr-2" pill size="sm" variant="success" @click="pagos(venta.id)">
                                                         <i class="fa fa-dollar" aria-hidden="true"></i> Pagos
                                                     </b-button>
-                                                    <b-button pill size="sm" variant="danger" v-if="index==0">
+                                                    <b-button pill size="sm" variant="danger" v-if="index==0 && venta.estado_venta==1 && venta.status==1">
                                                         <i class="fa fa-trash" aria-hidden="true"></i> Cancelar
                                                     </b-button>
                                                 </td>
@@ -108,7 +125,7 @@
                             <b-button pill size="sm" class="mr-1 mt-1 mb-1" variant="primary" @click="data.toggleDetails">
                                 <i class="fa fa-caret-down" aria-hidden="true"></i> Detalles
                             </b-button>
-                            <b-button pill size="sm" class="ml-1 mt-1 mb-1" variant="success" @click="renovar(data.item.num_poliza)">
+                            <b-button v-if="data.item.estado_servicio==0" pill size="sm" class="ml-1 mt-1 mb-1" variant="success" @click="renovar(data.item.num_poliza)">
                                 <i class="fa fa-dollar" aria-hidden="true"></i> Renovar
                             </b-button>
                         </div>
@@ -276,7 +293,7 @@ export default {
                 console.log(error)
             }
         },
-        eliminar(item) {
+        renovar_poliza(item) {
             this.modalConfirmar('Eliminar este rol', 'danger').then(resp => {
                 if (resp) {
                     //si la respuesta es SI
@@ -331,8 +348,8 @@ export default {
         },
         //checa si tiene permisos para ver esa parte del sistema
         urlIr: function () {
-            //window.open(this.$hostname_frontend+'polizas/vender', "_blank");
-            this.$router.push('/polizas/vender');
+            window.open(this.$hostname_frontend + 'polizas/vender', "_blank");
+            //this.$router.push('/polizas/vender');
         },
         pagos(venta) {
             window.open(this.$hostname_frontend + 'polizas/pagos/' + venta, "_blank");
@@ -363,5 +380,8 @@ export default {
 </script>
 
 <style lang="css">
-
+.eliminado {
+    text-decoration: line-through;
+    color: red;
+}
 </style>

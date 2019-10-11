@@ -27,6 +27,12 @@ const token = 'Bearer '+localStorage.getItem('access_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = token
 }
+const $ = require('jquery')
+// Lo declaramos globalmente
+window.$ = $
+import datePicker from 'vue-bootstrap-datetimepicker';
+import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+Vue.use(datePicker);
 
 
 import numeral from 'numeral';

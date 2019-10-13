@@ -1,19 +1,40 @@
 <template>
 <div>
     <b-card style="border-radius:0;">
-        <div slot="header"><i class="fa fa-archive" aria-hidden="true"></i> Control de Pólizas</div>
+        <div slot="header"><i class="fa fa-search" aria-hidden="true"></i> Consultar Pagos</div>
         <b-row>
-            <b-col xs="12" sm="12" md="5">
+            <b-col xs="12" sm="12" md="3">
+                <b-input-group class="mt-3">
+                    <b-input-group-prepend is-text><b><i class="fa fa-search" aria-hidden="true"></i></b></b-input-group-prepend>
+                    <b-form-select v-model="parametro_busqueda">
+                        <!-- This slot appears above the options from 'options' prop -->
+                        <template v-slot:first>
+                            <option :value="null" disabled>-- Parámetro de búsqueda --</option>
+                        </template>
+                        <!-- These options will appear after the ones from 'options' prop -->
+                        <option value="0">Todos</option>
+                        <option value="1">Número de Póliza</option>
+                        <option value="2">Nombre de Titular</option>
+                    </b-form-select>
+                </b-input-group>
+            </b-col>
+            <b-col xs="12" sm="12" md="4">
                 <b-input-group class="mb-2 mt-3">
-                    <b-form-input placeholder="Filtrar resultados" v-model="filter" v-on:keyup.enter="refresh_table"></b-form-input>
-                    <b-input-group-prepend variant="primary" is-text style="cursor:pointer !important;" @click="refresh_table">
+                    <b-form-input id="txtFilter" :disabled="isDisabled" placeholder="Ingrese el parámetro de búsqueda" v-model="filter" v-on:keyup.enter="refresh_table"></b-form-input>
+                    <!--<b-input-group-prepend v-if="!isDisabled" variant="primary" is-text style="cursor:pointer !important;" @click="refresh_table">
                         <b class="text-primary">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </b>
                     </b-input-group-prepend>
+                    -->
                 </b-input-group>
             </b-col>
             <b-col xs="12" sm="12" md="2">
+                <div class="mt-3">
+                    <b-button style="float:right;" squared variant="primary" v-if="permisos_por_modulo.agregar" @click="refresh_table"><i class="fa fa-search" aria-hidden="true"></i> Mostrar</b-button>
+                </div>
+            </b-col>
+            <b-col xs="12" sm="12" md="3">
                 <b-input-group class="mt-3">
                     <b-input-group-prepend is-text><b><i class="fa fa-filter" aria-hidden="true"></i></b></b-input-group-prepend>
                     <b-form-select v-model="perPage">
@@ -28,11 +49,6 @@
                         <option value="50">Mostrar 50</option>
                     </b-form-select>
                 </b-input-group>
-            </b-col>
-            <b-col xs="12" sm="12" md="5">
-                <div class="float-right  mt-3">
-                    <b-button squared class="mr-2" variant="success" v-if="permisos_por_modulo.agregar" @click="urlIr()"><i class="fa fa-usd" aria-hidden="true"></i> Vender</b-button>
-                </div>
             </b-col>
         </b-row>
         <b-row>
@@ -50,7 +66,7 @@
                     <template v-slot:estado_servicio="data">
                         <div>
                             <b-badge variant="success" v-if="data.item.estado_servicio>='1'">Activo</b-badge>
-                            <b-badge variant="danger" v-if="data.item.estado_servicio=='0'">Vencido</b-badge>
+                            <b-badge variant="danger" v-if="data.item.estado_servicio=='0'">Sin servicio</b-badge>
                         </div>
                     </template>
                     <template v-slot:row-details="row">
@@ -100,17 +116,11 @@
                                                     <b-badge variant="danger" v-if="venta.status==0">Cancelado</b-badge>
                                                 </td>
                                                 <td>
-                                                    <b-button class="mr-2" pill size="sm" variant="secondary" @click="mostrarPoliza(venta.id,venta.polizas_id)">
+                                                    <b-button class="mr-2" squared size="sm" variant="secondary" @click="mostrarPoliza(venta.id,venta.polizas_id)">
                                                         <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf
                                                     </b-button>
-                                                    <b-button class="mr-2" pill size="sm" variant="primary" v-if="index==0 && venta.estado_venta==1" @click="editar(venta.id)">
-                                                        <i class="fa fa-edit" aria-hidden="true"></i> Editar
-                                                    </b-button>
-                                                    <b-button class="mr-2" pill size="sm" variant="success" @click="pagos(venta.id)">
+                                                    <b-button class="mr-2" squared size="sm" variant="success" @click="pagos(venta.id)">
                                                         <i class="fa fa-dollar" aria-hidden="true"></i> Pagos
-                                                    </b-button>
-                                                    <b-button pill size="sm" variant="danger" v-if="index==0 && venta.estado_venta==1 && venta.status==1">
-                                                        <i class="fa fa-trash" aria-hidden="true"></i> Cancelar
                                                     </b-button>
                                                 </td>
                                             </tr>
@@ -122,11 +132,8 @@
                     </template>
                     <template v-slot:acciones="data">
                         <div>
-                            <b-button pill size="sm" class="mr-1 mt-1 mb-1" variant="primary" @click="data.toggleDetails">
+                            <b-button squared size="sm" class="mr-1 mt-1 mb-1" variant="secondary" @click="data.toggleDetails">
                                 <i class="fa fa-caret-down" aria-hidden="true"></i> Detalles
-                            </b-button>
-                            <b-button v-if="data.item.estado_servicio==0" pill size="sm" class="ml-1 mt-1 mb-1" variant="success" @click="renovar(data.item.num_poliza)">
-                                <i class="fa fa-dollar" aria-hidden="true"></i> Renovar
                             </b-button>
                         </div>
                     </template>
@@ -213,6 +220,7 @@ export default {
             totalRows: 0,
             currentPage: 1,
             perPage: 10,
+            parametro_busqueda: 0,
             filter: null,
             rowsTotal: 0,
             //variable que verifica si se esta modificacondo
@@ -238,11 +246,11 @@ export default {
             if (this.cargar) {
                 this.$store.dispatch('loading');
                 this.isBusy = true;
-                let url_api = this.$hostname + 'polizas?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
-                //let url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage
-                if (this.filter) {
-                    //si se esta usando el filtro
-                    url_api = this.$hostname + 'roles?page=' + ctx.currentPage + '&per_page=' + ctx.perPage + '&filter=' + this.filter
+                //aqui valido cual es el parametro de busqueda
+                let url_api = this.$hostname + 'polizas?page=' + ctx.currentPage + '&per_page=' + ctx.perPage+'&parametro='+this.parametro_busqueda
+                //revisando el filtro
+                if (this.parametro_busqueda > 0) {
+                        url_api = this.$hostname + 'polizas?page=' + ctx.currentPage + '&per_page=' + ctx.perPage+'&parametro='+this.parametro_busqueda + '&filter=' + this.filter
                 }
                 let promise = axios.get(url_api)
                 return promise
@@ -265,6 +273,16 @@ export default {
             }
         },
         refresh_table() {
+            if (this.parametro_busqueda != 0) {
+                if ($("#txtFilter").val().trim()) {
+                    this.cargar = true;
+                    this.$root.$emit('bv::refresh::table', 'table')
+                } else {
+                    this.filter = ''
+                    $("#txtFilter").focus();
+                    return 0;
+                }
+            }
             this.cargar = true;
             this.$root.$emit('bv::refresh::table', 'table')
         },
@@ -348,19 +366,19 @@ export default {
         },
         //checa si tiene permisos para ver esa parte del sistema
         urlIr: function () {
-            window.open(this.$hostname_frontend + 'polizas/vender', "_blank");
+            window.open(this.$hostname_frontend + 'ventas/vender', "_blank");
             //this.$router.push('/polizas/vender');
         },
         pagos(venta) {
-            window.open(this.$hostname_frontend + 'polizas/pagos/' + venta, "_blank");
+            window.open(this.$hostname_frontend + 'cobranza/pagar/' + venta, "_blank");
             //this.$router.push('/polizas/pagos/'+venta);
         },
         editar(venta_id) {
-            window.open(this.$hostname_frontend + 'polizas/editar_afiliacion/' + venta_id, "_blank");
+            window.open(this.$hostname_frontend + 'ventas/editar_afiliacion/' + venta_id, "_blank");
             //this.$router.push('/polizas/pagos/'+venta);
         },
         renovar(poliza_id) {
-            window.open(this.$hostname_frontend + 'polizas/renovar/' + poliza_id, "_blank");
+            window.open(this.$hostname_frontend + 'ventas/renovar/' + poliza_id, "_blank");
             //this.$router.push('/polizas/pagos/'+venta);
         }
     },
@@ -368,7 +386,14 @@ export default {
         // mix the getters into computed with object spread operator
         ...mapGetters([
             'permisos'
-        ])
+        ]),
+        isDisabled() {
+            // evaluate whatever you need to determine disabled here...
+            if (this.parametro_busqueda == 0)
+                return true;
+            else
+                return false;
+        }
     },
     created() {
         this.permisos_por_modulo.consultar = this.$permiso(5, 1);
@@ -380,8 +405,5 @@ export default {
 </script>
 
 <style lang="css">
-.eliminado {
-    text-decoration: line-through;
-    color: red;
-}
+
 </style>

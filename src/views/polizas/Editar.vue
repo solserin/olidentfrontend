@@ -229,7 +229,7 @@
                                     <strong>Costo:</strong> <span style="float:right;" class="text-primary" v-if="form.tipo_poliza_id.precio"> <strong>${{ form.tipo_poliza_id.precio | numFormat('0,000.00')}}</strong></span>
                                 </b-list-group-item>
                                 <div>
-                                    <b-button squared type="submit" variant="primary" class="mt-3 boton-vender">
+                                    <b-button v-if="this.form.num_poliza" squared type="submit" variant="primary" class="mt-3 boton-vender">
                                         <i class="fa fa-edit mr-2" aria-hidden="true"></i>
                                         <strong>Actualizar</strong>
                                     </b-button>
@@ -526,7 +526,6 @@ export default {
                             //aqui va el codigo para guardar un nuevo rol
                             axios.put(this.$hostname + 'polizas/' + this.venta_id, this.form)
                                 .then(resp => {
-                                    console.log(resp.data)
                                     if (resp.data != -1) {
                                         this.num_poliza = this.form.num_poliza
                                         this.mostrarPoliza()
@@ -698,105 +697,5 @@ export default {
 }
 </script>
 
-<style>
-.divider {
-    border-bottom: 1px solid #5c6873;
-}
-
-.info-venta {
-    background-color: #f8fafb !important;
-    padding-bottom: 100px;
-}
-
-.quitar-padding .card-body {
-    padding: 0px !important;
-}
-
-.sin-padding {
-    padding: 0px !important;
-}
-
-.card {
-    border: none;
-}
-
-.nav-tabs .nav-link {
-    color: #5c6873;
-    font-weight: 600;
-    text-transform: uppercase;
-    padding: 10px 0px 20px 0px;
-}
-
-.nav-tabs .nav-link.active,
-.nav-tabs .nav-link:hover {
-    border: none;
-    font-weight: 600;
-    border-bottom: 2px solid #5c6873;
-}
-
-.tab-content .tab-pane {
-    padding: 1rem 0rem 1rem 0rem;
-}
-
-.tab-content {
-    border: none;
-}
-
-.nombre-tab {
-    font-size: 16px;
-}
-
-.form-group {
-    color: #505558;
-    font-size: 13px !important;
-}
-
-.link-back,
-.link-back:hover {
-    color: #505558;
-    text-decoration: none;
-}
-
-.bg-continuar,
-.bg-continuar:hover {
-    padding: 8px 30px 8px 30px;
-    border: none;
-    background-color: #0077e2;
-    color: #fff;
-    font-weight: bold;
-}
-
-.autocomplete {
-    border-radius: 0px !important;
-
-}
-
-.autocomplete img {
-    vertical-align: top;
-}
-
-.autocomplete__box {
-    border-radius: 0px !important;
-    border: 1px solid #e4e7ea;
-}
-
-.boton-vender {
-    min-width: 100%;
-}
-
-#modalBuscador .modal-header {
-    background-color: #5c6873 !important;
-    border-radius: 0px !important;
-    color: #fff !important;
-}
-
-#modalBuscador .modal-content {
-    border-radius: 0px;
-    border: none;
-}
-
-#modalBuscador .close {
-    color: #fff;
-}
-
+<style scoped>
 </style>

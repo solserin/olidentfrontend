@@ -33,14 +33,19 @@ const Vendedores = () => import('@/views/catalogos/vendedores/Grupos')
 const Rutas = () => import('@/views/catalogos/rutas/Rutas')
 //fin catalogos
 
-
 //Componentes para el control de servicios de las polizas
-const Polizas = () => import('@/views/polizas/Polizas')
 const Ventas = () => import('@/views/polizas/Ventas')
 const Vender = () => import('@/views/polizas/Vender')
 const Editar = () => import('@/views/polizas/Editar')
+const Cancelar = () => import('@/views/polizas/Cancelar')
+const Consultar = () => import('@/views/polizas/Consultar')
 const Renovar = () => import('@/views/polizas/Renovar')
 const Pagos = () => import('@/views/polizas/Pagos')
+const GuardarPagos = () => import('@/views/polizas/GuardarPagos')
+const ConsultarPagos = () => import('@/views/polizas/ConsultarPagos')
+
+//componentes para hacer los pagos
+
 
 
 var tiene_permiso_modulo=0;
@@ -200,13 +205,54 @@ let router=new Router({
           }
         },
         {
-          path: 'pagos/:id',
-          name: 'Pagos pólizas',
+          path: 'cancelar',
+          name: 'Cancelar pólizas',
+          component: Cancelar,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'consultar',
+          name: 'Consultar pólizas',
+          component: Consultar,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+      ]
+    },
+
+    {
+      path: '/cobranza/',
+      redirect: '/cobranza',
+      name: 'Pagos',
+      component: DefaultContainer,
+      children: [
+        {
+          path: '/',
+          name: 'Control de pagos',
           component: Pagos,
           meta: { 
             requiresAuth: true
           }
-        }
+        },
+        {
+          path: 'pagar/:id',
+          name: 'Realizar Pagos',
+          component: GuardarPagos,
+          meta: { 
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'consultar',
+          name: 'Consultar Pagos',
+          component: ConsultarPagos,
+          meta: { 
+            requiresAuth: true
+          }
+        },
       ]
     },
     
@@ -269,7 +315,7 @@ router.beforeEach((to, from, next) => {
         //fin de validacion de rutas de polizas
         //estas rutas son para rutas sin necesidad de crear un modulo aparte
         //validacion para rutas de polizas vender (permiso agregar en polizas)
-        if(to.path=='/ventas/vender' ||  to.path=='/ventas/editar' ||  to.path=='/ventas/renovar'){
+        if(to.path=='/ventas/vender' ||  to.path=='/ventas/editar' ||  to.path=='/ventas/renovar' ||  to.path=='/ventas/cancelar' ||  to.path=='/ventas/consultar'){
           store.getters.permisos.forEach(element => {
             //checo si tiene permiso al modulo y al permiso
             if(element.modulo_id==5 && element.permiso_id==2){
@@ -278,8 +324,7 @@ router.beforeEach((to, from, next) => {
             }
           });
         }
-
-        if(to.path=='/polizas/pagos'){
+        if(to.path=='/cobranza/pagar' || to.path=='/cobranza/consultar'){
           store.getters.permisos.forEach(element => {
             //checo si tiene permiso al modulo y al permiso
             if(element.modulo_id==5 && element.permiso_id==2){

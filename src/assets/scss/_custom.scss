@@ -62,7 +62,7 @@
 .labels {
     font-weight: bold;
 }
-input[type=text],input[type=email],input[type=password],select,input[type=text]:read-only {
+input[type=text],input[type=email],input[type=password],select,input[type=text]:read-only,input[type=email]:read-only,select:disabled {
     border-radius: 0px !important;
     display: block;
     width: 100%;
@@ -82,3 +82,162 @@ input[type=text],input[type=email],input[type=password],select,input[type=text]:
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 }
 
+
+//opciones menu
+.opcion {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 0px 0px 0px 0px;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #495057;
+}
+
+.opcion:hover {
+    height: 325px;
+    cursor: pointer;
+    background-color: #17a2b8;
+    color: #fff !important;
+}
+
+.opcion:hover .nombre-opcion {
+    padding-bottom: 20px;
+}
+
+.opcion:hover .btn {
+    font-weight: 600;
+    background-color: #fff !important;
+}
+
+.opcion .btn:hover {
+    color: #0493f9;
+}
+
+.opcion:hover img {
+    -webkit-filter: grayscale(0%);
+    /* Safari 6.0 - 9.0 */
+    filter: grayscale(0%);
+}
+
+.nombre-opcion {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.opcion img {
+    -webkit-filter: grayscale(100%);
+    /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+    margin: 20px auto 0px auto;
+    max-width: 125px;
+}
+/////////////////////////
+
+//vender, renovar, editar, cancelar, consukltar
+.divider {
+    border-bottom: 1px solid #5c6873;
+}
+
+.info-venta {
+    background-color: #f8fafb !important;
+    padding-bottom: 100px;
+}
+
+.quitar-padding .card-body {
+    padding: 0px !important;
+}
+
+.sin-padding {
+    padding: 0px !important;
+}
+
+.card {
+    border: none;
+}
+
+.nav-tabs .nav-link {
+    color: #5c6873;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 10px 0px 20px 0px;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-link:hover {
+    border: none;
+    font-weight: 600;
+    border-bottom: 2px solid #5c6873;
+}
+
+.tab-content .tab-pane {
+    padding: 1rem 0rem 1rem 0rem;
+}
+
+.tab-content {
+    border: none;
+}
+
+.nombre-tab {
+    font-size: 16px;
+}
+
+.form-group {
+    color: #505558;
+    font-size: 13px !important;
+}
+
+.link-back,
+.link-back:hover {
+    color: #505558;
+    text-decoration: none;
+}
+
+.bg-continuar,
+.bg-continuar:hover {
+    padding: 8px 30px 8px 30px;
+    border: none;
+    background-color: #0077e2;
+    color: #fff;
+    font-weight: bold;
+}
+
+.autocomplete {
+    border-radius: 0px !important;
+
+}
+
+.autocomplete img {
+    vertical-align: top;
+}
+
+.autocomplete__box {
+    border-radius: 0px !important;
+    border: 1px solid #e4e7ea;
+}
+
+.boton-vender {
+    min-width: 100%;
+}
+
+#modalBuscador .modal-header {
+    background-color: #5c6873 !important;
+    border-radius: 0px !important;
+    color: #fff !important;
+}
+
+#modalBuscador .modal-content {
+    border-radius: 0px;
+    border: none;
+}
+
+#modalBuscador .close {
+    color: #fff;
+}
+
+///////////////////////////////////////////////
+
+.eliminado {
+    text-decoration: line-through;
+    color: red;
+}

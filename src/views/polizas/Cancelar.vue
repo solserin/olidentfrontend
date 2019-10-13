@@ -37,7 +37,7 @@
                             Detalles de la Póliza
                         </h5>
                         <p class="text-center">
-                            El siguiente formulario le permite <strong>Renovar</strong> una póliza.
+                            El siguiente formulario le permite <strong class="text-danger">Cancelar</strong> la vigencia de una póliza.
                         </p>
                     </div>
                     <div class=" pt-2 pl-4 pr-4">
@@ -60,13 +60,13 @@
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Fecha Venta (*):" label-for="txtFecha" label-class="labels">
-                                    <date-picker readonly="readonly" v-model="form.fecha_venta" :config="options"></date-picker>
+                                    <date-picker disabled readonly="readonly" v-model="form.fecha_venta" :config="options"></date-picker>
                                     <div class="text-danger text-center" v-if="errors.fecha_venta">{{errors.fecha_venta}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Tipo de Póliza (*):" label-for="cmbTipoPoliza" label-class="labels">
-                                    <b-form-select required id="cmbTipoPoliza" v-model="form.tipo_poliza_id">
+                                    <b-form-select disabled required id="cmbTipoPoliza" v-model="form.tipo_poliza_id">
                                         <!-- This slot appears above the options from 'options' prop -->
                                         <template v-slot:first>
                                             <option value="" disabled>-- Selecione 1 Póliza--</option>
@@ -79,7 +79,7 @@
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Ruta de Cobro (*):" label-for="cmbRutas" label-class="labels">
-                                    <b-form-select required id="cmbRutas" v-model="form.ruta_id">
+                                    <b-form-select disabled required id="cmbRutas" v-model="form.ruta_id">
                                         <!-- This slot appears above the options from 'options' prop -->
                                         <template v-slot:first>
                                             <option value="" disabled>-- Selecione 1 Ruta--</option>
@@ -90,9 +90,9 @@
                                     <div class="text-danger text-center" v-if="errors.ruta_id">{{errors.ruta_id}}</div>
                                 </b-form-group>
                             </b-col>
-                            <b-col xs="12" md="6">
+                            <b-col xs="12" md="12">
                                 <b-form-group label="Vendido por (*):" label-for="cmbVendedor" label-class="labels">
-                                    <b-form-select required id="cmbVendedor" v-model="form.vendedor_id">
+                                    <b-form-select disabled required id="cmbVendedor" v-model="form.vendedor_id">
                                         <!-- This slot appears above the options from 'options' prop -->
                                         <template v-slot:first>
                                             <option value="" disabled>-- Selecione 1 Vendedor--</option>
@@ -103,48 +103,50 @@
                                     <div class="text-danger text-center" v-if="errors.vendedor_id">{{errors.vendedor_id}}</div>
                                 </b-form-group>
                             </b-col>
-                            <b-col xs="12" md="6">
+
+                            <!--<b-col xs="12" md="6">
                                 <b-form-group label="Abono Inicial (*):" label-for="txtAbono" label-class="labels">
                                     <b-form-input required maxlength="4" v-model="form.abono" type="text" id="txtAbono"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.abono">{{errors.abono}}</div>
                                 </b-form-group>
-                            </b-col>
+                            </b-col>-->
                         </b-row>
+
                         <h5 class="nombre-tab pb-4 text-success">Información del Titular</h5>
                         <b-row>
                             <b-col xs="12" md="12">
                                 <b-form-group label="Nombre Completo (*):" label-for="txtNombre" label-class="labels">
-                                    <b-form-input required id="txtNombre" v-model="form.titular"></b-form-input>
+                                    <b-form-input readonly="readonly" required id="txtNombre" v-model="form.titular"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.titular">{{errors.titular}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Colonia (*):" label-for="txtColonia" label-class="labels">
-                                    <b-form-input required id="txtColonia" v-model="form.colonia"></b-form-input>
+                                    <b-form-input readonly="readonly" required id="txtColonia" v-model="form.colonia"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.colonia">{{errors.colonia}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Calle (*):" label-for="txtCalle" label-class="labels">
-                                    <b-form-input required id="txtCalle" v-model="form.calle"></b-form-input>
+                                    <b-form-input readonly="readonly" required id="txtCalle" v-model="form.calle"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.calle">{{errors.calle}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="3">
                                 <b-form-group label="Numero (*):" label-for="txtNumero" label-class="labels">
-                                    <b-form-input required id="txtNumero" v-model="form.numero"></b-form-input>
+                                    <b-form-input readonly="readonly" required id="txtNumero" v-model="form.numero"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.numero">{{errors.numero}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="3">
                                 <b-form-group label="C.P:" label-for="txtCp" label-class="labels">
-                                    <b-form-input id="txtCp" v-model="form.cp"></b-form-input>
+                                    <b-form-input readonly="readonly" id="txtCp" v-model="form.cp"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.cp">{{errors.cp}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Comunidad (*):" label-for="txtComunidad" label-class="labels">
-                                    <autocomplete initialDisplay="Ignore este dato si no desea modificarlo." required ref="autocomplete" v-model="form.localidad_id" source="http://localhost:8000/rutas/localidad?filter=" results-property="data" :results-display="formattedDisplay" @clear="form.localidad_id='';localidad=''" @nothingSelected="form.localidad_id=''" @selected="addDistributionGroup" placeholder="Buscar Comunidad" name="txtLocalidad">
+                                    <autocomplete disabled initialDisplay="Ignore este dato si no desea modificarlo." required ref="autocomplete" v-model="form.localidad_id" source="http://localhost:8000/rutas/localidad?filter=" results-property="data" :results-display="formattedDisplay" @clear="form.localidad_id='';localidad=''" @nothingSelected="form.localidad_id=''" @selected="addDistributionGroup" placeholder="Buscar Comunidad" name="txtLocalidad">
                                         <template v-slot:noResults>
                                             <strong>Sin </strong>resultados.
                                         </template>
@@ -154,25 +156,25 @@
                             </b-col>
                             <b-col xs="12" md="3">
                                 <b-form-group label="Email:" label-for="txtEmail" label-class="labels">
-                                    <b-form-input type="email" id="txtEmail" v-model="form.email"></b-form-input>
+                                    <b-form-input readonly="readonly" type="email" id="txtEmail" v-model="form.email"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.email">{{errors.email}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="3">
                                 <b-form-group label="Teléfono (*):" label-for="txtTelefono" label-class="labels">
-                                    <b-form-input required id="txtTelefono" v-model="form.telefono"></b-form-input>
+                                    <b-form-input readonly="readonly" required id="txtTelefono" v-model="form.telefono"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.telefono">{{errors.telefono}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="3">
                                 <b-form-group label="Ocupación:" label-for="txtOcupacion" label-class="labels">
-                                    <b-form-input id="txtOcupacion" v-model="form.ocupacion"></b-form-input>
+                                    <b-form-input readonly="readonly" id="txtOcupacion" v-model="form.ocupacion"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.ocupacion">{{errors.ocupacion}}</div>
                                 </b-form-group>
                             </b-col>
                             <b-col xs="12" md="3">
                                 <b-form-group label="Edad:" label-for="txtEdad" label-class="labels">
-                                    <b-form-input required id="txtEdad" v-model="form.edad"></b-form-input>
+                                    <b-form-input readonly="readonly" required id="txtEdad" v-model="form.edad"></b-form-input>
                                     <div class="text-danger text-center" v-if="errors.edad">{{errors.edad}}</div>
                                 </b-form-group>
                             </b-col>
@@ -191,11 +193,11 @@
                                 <tr v-for="index in parseInt(form.tipo_poliza_id.numero_beneficiarios)" v-bind:key="index">
                                     <th scope="row">{{index}}</th>
                                     <td>
-                                        <b-form-input required v-model="form.beneficiarios[index-1].nombre"></b-form-input>
+                                        <b-form-input readonly="readonly" required v-model="form.beneficiarios[index-1].nombre"></b-form-input>
                                         <div class="text-danger text-center" v-if="errors.beneficiarios[index-1].nombre">{{errors.beneficiarios[index-1].nombre}}</div>
                                     </td>
                                     <td>
-                                        <b-form-input required v-model="form.beneficiarios[index-1].edad"></b-form-input>
+                                        <b-form-input readonly="readonly" required v-model="form.beneficiarios[index-1].edad"></b-form-input>
                                         <div class="text-danger text-center" v-if="errors.beneficiarios[index-1].edad">{{errors.beneficiarios[index-1].edad}}</div>
                                     </td>
                                 </tr>
@@ -226,26 +228,17 @@
                                 <b-list-group-item>
                                     <strong>Costo:</strong> <span style="float:right;" class="text-primary" v-if="form.tipo_poliza_id.precio"> <strong>${{ form.tipo_poliza_id.precio | numFormat('0,000.00')}}</strong></span>
                                 </b-list-group-item>
-                                <b-list-group-item>
-                                    <strong>Abono inicial:</strong> <span style="float:right;" class="text-primary" v-if="form.abono"><strong>${{ form.abono | numFormat('0,000.00')}}</strong></span>
-                                </b-list-group-item>
-                                <b-list-group-item>
-                                    <strong>Saldo restante:</strong> <span style="float:right;" class="text-success" v-if="restante"> <strong>${{ this.restante | numFormat('0,000.00')}}</strong></span>
-                                </b-list-group-item>
                                 <div>
-                                    <b-button v-if="this.form.num_poliza" squared type="submit" variant="success" class="mt-3 boton-vender">
-                                        <i class="fa fa-database mr-2" aria-hidden="true"></i>
-                                        <strong>Renovar</strong>
+                                    <b-button v-if="this.form.num_poliza" squared type="submit" variant="danger" class="mt-3 boton-vender">
+                                        <i class="fa fa-close mr-2" aria-hidden="true"></i>
+                                        <strong>Cancelar</strong>
                                     </b-button>
                                 </div>
                                 <div class="mt-5 text-center" v-if="this.num_poliza">
                                     <h4 class="pb-2">Reportes póliza: {{num_poliza}}</h4>
-                                    <h6 class="pb-2 text-danger">Última póliza modificada</h6>
+                                    <h6 class="pb-2 text-danger">Última póliza cancelada</h6>
                                     <b-button @click="mostrarPoliza" class="mr-4" pill variant="success" size="md">
                                         <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Reporte
-                                    </b-button>
-                                    <b-button @click="pagos" class="ml-4" pill variant="primary " size="md">
-                                        <i class="fa fa-usd" aria-hidden="true"></i> Pagos
                                     </b-button>
                                 </div>
                             </b-list-group>
@@ -432,33 +425,14 @@ export default {
             this.$store.dispatch('loading')
             axios.get(this.$hostname + 'ventas/' + num_poliza)
                 .then(resp => {
+                    //valido que tenga datos la respuesta
                     if (resp.data) {
-                        this.venta_status = ''
-                        this.venta_estado_venta = ''
-                        //valido que tenga datos la respuesta
-                        if (resp.data.status == 0 || resp.data.estado_venta == 0) {
-                            //valido que ya haya sido pagada la poliza, en caso de haber sido cancelada no se aplica la validacion
-                            if (resp.data.restante > 0 && resp.data.status == 1) {
-                                this.$bvModal.hide('modalBuscador');
-
-                                this.$toasted.show("Debe liquidar la cuenta de esta póliza para poder renovar ("+resp.data.restante+" Pesos).", {
-                                    iconPack: 'fontawesome',
-                                    type: 'error',
-                                    theme: 'toasted-primary',
-                                    icon: 'close',
-                                    duration: 6000,
-                                    position: 'top-right',
-                                    closeOnSwipe: true,
-                                    keepOnHover: true
-                                });
-                                this.$store.dispatch('success')
-                                return 0;
-                            }
-
+                        if (resp.data.status == 1 && resp.data.estado_venta == 1) {
                             this.venta_id = resp.data.id
                             this.form.num_poliza = resp.data.polizas_id
-                            this.form.fecha_venta = ''
-                            this.form.abono = 0
+                            this.form.fecha_venta = resp.data.fecha_venta
+                            //this.form.fecha_afiliacion=resp.data['poliza_origen'].fecha_afiliacion
+                            //console.log(this.form.tipo_poliza_id)
                             this.form.tipo_poliza_id = resp.data['tipo_poliza']
                             //id ruta
                             let ruta_opcion = {
@@ -494,13 +468,13 @@ export default {
                             this.$bvModal.hide('modalBuscador');
                         } else {
                             this.$bvModal.hide('modalBuscador');
-                            this.$toasted.show("Esta póliza no está vencida ni cancelada, no se puede renovar.", {
+                            this.$toasted.show("Esta póliza ya ha sido cancelada o ha vencido su periodo de vigencia.", {
                                 iconPack: 'fontawesome',
                                 type: 'error',
                                 theme: 'toasted-primary',
                                 icon: 'close',
                                 duration: 5000,
-                                position: 'top-right',
+                                position: 'top-center',
                                 closeOnSwipe: true,
                                 keepOnHover: true
                             });
@@ -513,7 +487,7 @@ export default {
                             type: 'error',
                             theme: 'toasted-primary',
                             icon: 'close',
-                            duration: 4000,
+                            duration: 5000,
                             position: 'top-center',
                             closeOnSwipe: true,
                             keepOnHover: true
@@ -540,108 +514,107 @@ export default {
         },
         onSubmit(evt) {
             evt.preventDefault()
-            this.modalConfirmar('Renovar póliza', 'success').then(resp => {
+            this.modalConfirmar('Cancelar esta póliza', 'danger').then(resp => {
                 if (resp) {
                     this.reset_errores();
                     try {
-                        this.$store.dispatch('loading');
-                        //aqui va el codigo para guardar un nuevo rol
-                        axios.post(this.$hostname + 'polizas/renovar_poliza', this.form)
-                            .then(resp => {
-                                console.log(resp)
-                                if (resp.data != -1) {
-                                    this.venta_id = resp.data
-                                    this.num_poliza = this.form.num_poliza
-                                    this.mostrarPoliza()
-                                    this.limpiar_formulario();
-                                    this.$store.dispatch('success')
-                                    this.$toasted.show("La póliza se renovó correctamente", {
-                                        iconPack: 'fontawesome',
-                                        type: 'success',
-                                        theme: 'toasted-primary',
-                                        icon: 'check',
-                                        duration: 6000,
-                                        position: 'top-right',
-                                        closeOnSwipe: true,
-                                        keepOnHover: true
-                                    });
-                                } else {
-                                    this.$store.dispatch('success')
-                                    this.$toasted.show("Esta póliza no está vencida ni cancelada, no se puede renovar.", {
-                                        iconPack: 'fontawesome',
-                                        type: 'error',
-                                        theme: 'toasted-primary',
-                                        icon: 'close',
-                                        duration: 5000,
-                                        position: 'top-right',
-                                        closeOnSwipe: true,
-                                        keepOnHover: true
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                if (error.response.data['code'] == 422) {
-                                    //error de validacion de datos
-                                    if (error.response.data.error['usuario_registro_id']) {
-                                        this.errors.usuario_registro_id = error.response.data.error['usuario_registro_id'][0]
+                        if (this.form.status_venta == 1) {
+                            this.$store.dispatch('loading');
+                            //aqui va el codigo para guardar un nuevo rol
+                            axios.put(this.$hostname + 'polizas/cancelar_poliza/' + this.venta_id, this.form)
+                                .then(resp => {
+                                    if (resp.data != -1) {
+                                        this.num_poliza = this.form.num_poliza
+                                        this.mostrarPoliza()
+                                        this.limpiar_formulario();
+                                        this.$store.dispatch('success')
+                                        this.$toasted.show("La póliza se canceló correctamente", {
+                                            iconPack: 'fontawesome',
+                                            type: 'success',
+                                            theme: 'toasted-primary',
+                                            icon: 'check',
+                                            duration: 6000,
+                                            position: 'top-right',
+                                            closeOnSwipe: true,
+                                            keepOnHover: true
+                                        });
+                                    } else {
+                                        this.$store.dispatch('success')
+                                        this.$toasted.show("Esta póliza ya habia sido cancelada o ha vencido su periodo de vigencia.", {
+                                            iconPack: 'fontawesome',
+                                            type: 'error',
+                                            theme: 'toasted-primary',
+                                            icon: 'close',
+                                            duration: 4000,
+                                            position: 'top-center',
+                                            closeOnSwipe: true,
+                                            keepOnHover: true
+                                        });
                                     }
-                                    if (error.response.data.error['num_poliza']) {
-                                        this.errors.num_poliza = error.response.data.error['num_poliza'][0]
-                                    }
-                                    if (error.response.data.error['fecha_venta']) {
-                                        this.errors.fecha_venta = error.response.data.error['fecha_venta'][0]
-                                    }
-                                    if (error.response.data.error['tipo_poliza_id']) {
-                                        this.errors.tipo_poliza_id = error.response.data.error['tipo_poliza_id'][0]
-                                    }
-                                    if (error.response.data.error['ruta_id']) {
-                                        this.errors.ruta_id = error.response.data.error['ruta_id'][0]
-                                    }
-                                    if (error.response.data.error['vendedor_id']) {
-                                        this.errors.vendedor_id = error.response.data.error['vendedor_id'][0]
-                                    }
-                                    if (error.response.data.error['titular']) {
-                                        this.errors.titular = error.response.data.error['titular'][0]
-                                    }
-                                    if (error.response.data.error['abono']) {
-                                        this.errors.abono = error.response.data.error['abono'][0]
-                                    }
-                                    if (error.response.data.error['colonia']) {
-                                        this.errors.colonia = error.response.data.error['colonia'][0]
-                                    }
-                                    if (error.response.data.error['calle']) {
-                                        this.errors.calle = error.response.data.error['calle'][0]
-                                    }
-                                    if (error.response.data.error['email']) {
-                                        this.errors.email = error.response.data.error['email'][0]
-                                    }
-                                    if (error.response.data.error['telefono']) {
-                                        this.errors.telefono = error.response.data.error['telefono'][0]
-                                    }
-                                    if (error.response.data.error['edad']) {
-                                        this.errors.edad = error.response.data.error['edad'][0]
-                                    }
-                                    if (error.response.data.error['numero']) {
-                                        this.errors.numero = error.response.data.error['numero'][0]
-                                    }
-                                    if (error.response.data.error['cp']) {
-                                        this.errors.cp = error.response.data.error['cp'][0]
-                                    }
-                                    if (error.response.data.error['localidad_id']) {
-                                        this.errors.localidad_id = error.response.data.error['localidad_id'][0]
-                                    }
-                                    for (let index = 0; index < 4; index++) {
-                                        if (error.response.data.error['beneficiarios.' + index + '.nombre']) {
-                                            this.errors.beneficiarios[index].nombre = error.response.data.error['beneficiarios.' + index + '.nombre'][0]
+                                })
+                                .catch(error => {
+                                    if (error.response.data['code'] == 422) {
+                                        //error de validacion de datos
+                                        if (error.response.data.error['usuario_registro_id']) {
+                                            this.errors.usuario_registro_id = error.response.data.error['usuario_registro_id'][0]
                                         }
-                                        if (error.response.data.error['beneficiarios.' + index + '.edad']) {
-                                            this.errors.beneficiarios[index].edad = error.response.data.error['beneficiarios.' + index + '.edad'][0]
+                                        if (error.response.data.error['num_poliza']) {
+                                            this.errors.num_poliza = error.response.data.error['num_poliza'][0]
+                                        }
+                                        if (error.response.data.error['fecha_venta']) {
+                                            this.errors.fecha_venta = error.response.data.error['fecha_venta'][0]
+                                        }
+                                        if (error.response.data.error['tipo_poliza_id']) {
+                                            this.errors.tipo_poliza_id = error.response.data.error['tipo_poliza_id'][0]
+                                        }
+                                        if (error.response.data.error['ruta_id']) {
+                                            this.errors.ruta_id = error.response.data.error['ruta_id'][0]
+                                        }
+                                        if (error.response.data.error['vendedor_id']) {
+                                            this.errors.vendedor_id = error.response.data.error['vendedor_id'][0]
+                                        }
+                                        if (error.response.data.error['titular']) {
+                                            this.errors.titular = error.response.data.error['titular'][0]
+                                        }
+                                        if (error.response.data.error['abono']) {
+                                            this.errors.abono = error.response.data.error['abono'][0]
+                                        }
+                                        if (error.response.data.error['colonia']) {
+                                            this.errors.colonia = error.response.data.error['colonia'][0]
+                                        }
+                                        if (error.response.data.error['calle']) {
+                                            this.errors.calle = error.response.data.error['calle'][0]
+                                        }
+                                        if (error.response.data.error['email']) {
+                                            this.errors.email = error.response.data.error['email'][0]
+                                        }
+                                        if (error.response.data.error['telefono']) {
+                                            this.errors.telefono = error.response.data.error['telefono'][0]
+                                        }
+                                        if (error.response.data.error['edad']) {
+                                            this.errors.edad = error.response.data.error['edad'][0]
+                                        }
+                                        if (error.response.data.error['numero']) {
+                                            this.errors.numero = error.response.data.error['numero'][0]
+                                        }
+                                        if (error.response.data.error['cp']) {
+                                            this.errors.cp = error.response.data.error['cp'][0]
+                                        }
+                                        if (error.response.data.error['localidad_id']) {
+                                            this.errors.localidad_id = error.response.data.error['localidad_id'][0]
+                                        }
+                                        for (let index = 0; index < 4; index++) {
+                                            if (error.response.data.error['beneficiarios.' + index + '.nombre']) {
+                                                this.errors.beneficiarios[index].nombre = error.response.data.error['beneficiarios.' + index + '.nombre'][0]
+                                            }
+                                            if (error.response.data.error['beneficiarios.' + index + '.edad']) {
+                                                this.errors.beneficiarios[index].edad = error.response.data.error['beneficiarios.' + index + '.edad'][0]
+                                            }
                                         }
                                     }
-                                }
-                                this.$store.dispatch('error')
-                            })
-
+                                    this.$store.dispatch('error')
+                                })
+                        }
                     } catch (error) {
                         this.$store.dispatch('error')
                     }
@@ -722,6 +695,4 @@ export default {
 </script>
 
 <style scoped>
-
-
 </style>

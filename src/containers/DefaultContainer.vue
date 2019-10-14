@@ -54,7 +54,7 @@
             <!--<a href="https://coreui.io">CoreUI</a>-->
             <span class="ml-1">&copy; 2019 Clínica Dental OLI DENT.</span>
         </div>
-        <div class="ml-auto">
+        <div class="ml-auto" hidden>
             <span class="mr-1">Desarrollado Por</span>
             <a href="https://www.solserin.com">Solserin Soluciones Web</a>
         </div>

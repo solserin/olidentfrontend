@@ -7,7 +7,7 @@ import {store} from '../store/store'
 const DefaultContainer = () => import('@/containers/DefaultContainer')
 
 // Views
-const Dashboard = () => import('@/views/Dashboard')
+const Dashboard = () => import('@/views/Home')
 
 // Views - Pages
 const Page404 = () => import('@/views/pages/Page404')
@@ -318,7 +318,29 @@ router.beforeEach((to, from, next) => {
         if(to.path=='/ventas/vender' ||  to.path=='/ventas/editar' ||  to.path=='/ventas/renovar' ||  to.path=='/ventas/cancelar' ||  to.path=='/ventas/consultar'){
           store.getters.permisos.forEach(element => {
             //checo si tiene permiso al modulo y al permiso
-            if(element.modulo_id==5 && element.permiso_id==2){
+            if((to.path=='/ventas/vender' && element.modulo_id==7 && element.permiso_id==2)){
+              //puede vender
+              tiene_permiso_modulo=1;
+              return;
+            }
+            if((to.path=='/ventas/renovar' && element.modulo_id==7 && element.permiso_id==2)){
+              //puede renovar
+              tiene_permiso_modulo=1;
+              return;
+            }
+
+            if((to.path=='/ventas/editar' && element.modulo_id==7 && element.permiso_id==3)){
+              //puede editar
+              tiene_permiso_modulo=1;
+              return;
+            }
+            if((to.path=='/ventas/cancelar' && element.modulo_id==7 && element.permiso_id==4)){
+              //puede cancelar
+              tiene_permiso_modulo=1;
+              return;
+            }
+            if((to.path=='/ventas/consultar' && element.modulo_id==7 && element.permiso_id==1)){
+              //puede cancelar
               tiene_permiso_modulo=1;
               return;
             }
@@ -327,7 +349,14 @@ router.beforeEach((to, from, next) => {
         if(to.path=='/cobranza/pagar' || to.path=='/cobranza/consultar'){
           store.getters.permisos.forEach(element => {
             //checo si tiene permiso al modulo y al permiso
-            if(element.modulo_id==5 && element.permiso_id==2){
+            if((to.path=='/cobranza/pagar' && element.modulo_id==8 && element.permiso_id==2)){
+              //puede vender
+              tiene_permiso_modulo=1;
+              return;
+            }
+
+            if((to.path=='/cobranza/consultar' && element.modulo_id==8 && element.permiso_id==1)){
+              //puede vender
               tiene_permiso_modulo=1;
               return;
             }

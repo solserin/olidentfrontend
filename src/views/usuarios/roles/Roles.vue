@@ -29,8 +29,6 @@
             <b-col xs="12" sm="12" md="5">
                 <div class="float-right  mt-3">
                     <b-button v-b-modal.modalNuevo pill class="mr-2" variant="primary" v-if="permisos_por_modulo.agregar"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo</b-button>
-                    <b-button hidden pill variant="outline-danger" @click="mostrarPdf" v-if="permisos_por_modulo.consultar"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf</b-button>
-                    <b-button pill variant="outline-success" hidden><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</b-button>
                 </div>
             </b-col>
         </b-row>
@@ -84,7 +82,7 @@ export default {
     },
     data() {
         return {
-            cargar: false,
+            cargar: true,
             url: '',
             //datos compartidos del componente NuevoRol
             selected: null,

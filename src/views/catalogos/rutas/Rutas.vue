@@ -45,7 +45,6 @@
                         <div>
                             <b-button v-if="permisos_por_modulo.modificar" pill variant="primary" size="sm" @click="get_datos_modificar(data.item)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></b-button>
                             <b-button v-if="permisos_por_modulo.eliminar" pill class="ml-4" variant="danger" size="sm" @click="eliminar(data.item)"><i class="fa fa-trash-o" aria-hidden="true"></i></b-button>
-                            <b-button hidden pill size="sm" variant="secondary"><i class="fa fa-search" aria-hidden="true"></i></b-button>
                         </div>
                     </template>
                     <!-- A virtual composite column -->
@@ -252,10 +251,10 @@ export default {
         ])
     },
     created() {
-        this.permisos_por_modulo.consultar = this.$permiso(2, 1);
-        this.permisos_por_modulo.agregar = this.$permiso(2, 2);
-        this.permisos_por_modulo.modificar = this.$permiso(2, 3);
-        this.permisos_por_modulo.eliminar = this.$permiso(2, 4);
+        this.permisos_por_modulo.consultar = this.$permiso(6, 1);
+        this.permisos_por_modulo.agregar = this.$permiso(6, 2);
+        this.permisos_por_modulo.modificar = this.$permiso(6, 3);
+        this.permisos_por_modulo.eliminar = this.$permiso(6, 4);
     },
 }
 </script>

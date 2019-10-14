@@ -64,6 +64,17 @@ const plugin = {
 }
 Vue.use(plugin)
 
+axios.interceptors.response.use(function (response) {
+  return response;
+}, function (error) {
+  if (401 === error.response.status) {
+    store.dispatch('logout');
+    router.push('/')
+  } else {
+      return Promise.reject(error);
+  }
+});
+
 /* eslint-disable no-new */
 new Vue({
   store:store,

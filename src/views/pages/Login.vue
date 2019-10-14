@@ -26,17 +26,17 @@
                                     <b-col cols="4">
                                         <b-button variant="primary" class="px-4" @click="login()">Login</b-button>
                                     </b-col>
-                                    <b-col cols="8" class="text-right">
+                                    <b-col cols="8" class="text-right" hidden>
                                         <b-button variant="link" class="px-0">Olvidó su contraseña?</b-button>
                                     </b-col>
                                 </b-row>
                             </b-form>
                         </b-card-body>
                     </b-card>
-                    <b-card no-body class="text-primary py-5 d-md-down-none" style="width:44%">
+                    <b-card no-body v-if="datosEmpresa.logo" class="text-primary py-5 d-md-down-none" style="width:44%">
                         <b-card-body class="text-center">
                             <div>
-                                <h2>SIIGA OLI DENT</h2>
+                                <h2 hidden>SIIGA OLI DENT</h2>
                                 <p>Bienvenido al sistema integral de información y gerencia administrativa de clínicas dentales OLI DENT.</p>
                                 <img class="navbar-brand-full" :src="datosEmpresa.logo" width="300" alt="CoreUI Logo">
                             </div>
@@ -65,7 +65,6 @@ export default {
     components: {
             Loading
     },
-
     methods: {
         login() {
             const vm = this;

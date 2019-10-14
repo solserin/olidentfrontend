@@ -94,7 +94,7 @@
                                             </b-row>
                                         </b-col>
                                     </b-row>
-                                    <div class="text-center mt-5">
+                                    <div class="text-center mt-5" v-if="permisos_por_modulo.modificar">
                                         <b-button squared type="submit" variant="primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Actualizar</b-button>
                                     </div>
                                 </b-form>
@@ -123,6 +123,12 @@ export default {
 
     data: function () {
         return {
+            permisos_por_modulo: {
+                agregar: false,
+                consultar: false,
+                modificar: false,
+                eliminar: false
+            },
             form: {
                 id: 1,
                 logo: '',
@@ -291,6 +297,12 @@ export default {
         this.form.ciudad = this.datosEmpresa.ciudad;
         this.form.descripcion = this.datosEmpresa.descripcion;
         this.$store.dispatch('error')
+
+        //verificando permiso
+        this.permisos_por_modulo.consultar = this.$permiso(1, 1);
+        this.permisos_por_modulo.agregar = this.$permiso(1, 2);
+        this.permisos_por_modulo.modificar = this.$permiso(1, 3);
+        this.permisos_por_modulo.eliminar = this.$permiso(1, 4);
     }
 }
 </script>

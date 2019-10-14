@@ -522,7 +522,7 @@ export default {
             }
         },
         pagos(venta) {
-            window.open(this.$hostname_frontend + 'polizas/pagos/' + this.venta_id, "_blank");
+            window.open(this.$hostname_frontend + 'cobranza/pagar/' + this.venta_id, "_blank");
             //this.$router.push('/polizas/pagos/'+venta);
         },
         mostrarPoliza() {

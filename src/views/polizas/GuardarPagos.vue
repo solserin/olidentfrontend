@@ -22,7 +22,7 @@
             </b-row>
             <b-row>
                 <b-col xs="12" class="text-center" v-if="buscador.num_poliza">
-                    <b-button class="mt-4 mb-4" squared variant="primary" @click="getVentaDatos(buscador.num_poliza)"><i class="fa fa-search" aria-hidden="true"></i> Cargar Datos</b-button>
+                    <b-button  class="mt-4 mb-4" squared variant="primary" @click="getVentaDatos(buscador.num_poliza)"><i class="fa fa-search" aria-hidden="true"></i> Cargar Datos</b-button>
                 </b-col>
             </b-row>
         </b-col>
@@ -103,10 +103,10 @@
                                         <td>$ {{ abono.cantidad | numFormat('0,000.00')}}</td>
                                         <td>$ {{ (saldo_anterior(index)-abono.cantidad) | numFormat('0,000.00')}}</td>
                                         <td>
-                                            <b-button class="mr-2" pill size="sm" variant="secondary">
+                                            <b-button hidden class="mr-2" pill size="sm" variant="secondary">
                                                 <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
                                             </b-button>
-                                            <b-button class="mr-2" pill size="sm" variant="danger" @click="cancelar_pago(abono.id)" v-if="abono.status==1">
+                                            <b-button  class="mr-2" pill size="sm" variant="danger" @click="cancelar_pago(abono.id)" v-if=" permisos_por_modulo.eliminar && abono.status==1">
                                                 <i class="fa fa-close" aria-hidden="true"></i>
                                             </b-button>
                                         </td>
@@ -120,7 +120,7 @@
                                         <td><strong>$ {{ (saldo_abonado(pagos[0].abonos.length)) | numFormat('0,000.00')}}</strong></td>
                                         <td><strong>$ {{ pagos[0].total - saldo_abonado(pagos[0].abonos.length)| numFormat('0,000.00')}}</strong></td>
                                         <td>
-                                            <b-button squared type="submit" variant="primary" class="boton-vender">
+                                            <b-button v-if="permisos_por_modulo.consultar" @click="mostrarTarjeta" squared type="button" variant="primary" class="boton-vender">
                                                 <i class="fa fa-list-alt" aria-hidden="true"></i>
                                                 <strong> Tarjeta de cobro</strong>
                                             </b-button>
@@ -169,7 +169,7 @@
                                     </span>
                                 </b-list-group-item>
                                 <div v-if="pagos.length">
-                                    <b-button v-if="pagos[0]['restante']>0" squared type="submit" variant="success" class="mt-3 boton-vender">
+                                    <b-button v-if="permisos_por_modulo.agregar && pagos[0]['restante']>0" squared type="submit" variant="success" class="mt-3 boton-vender">
                                         <i class="fa fa-database mr-2" aria-hidden="true"></i>
                                         <strong>Pagar</strong>
                                     </b-button>
@@ -204,6 +204,12 @@ export default {
     },
     data() {
         return {
+             permisos_por_modulo: {
+                agregar: false,
+                consultar: false,
+                modificar: false,
+                eliminar: false
+            },
             buscador: {
                 num_poliza: '',
                 titular: '',
@@ -471,7 +477,10 @@ export default {
                     sum += this.pagos[0].abonos[x].cantidad;
             }
             return this.pagos[0].total - sum;
-        }
+        },
+        mostrarTarjeta() {
+            this.url = this.$hostname + 'polizas/tarjeta_cobranza?venta_id=' + this.form.venta_id
+        },
     },
     created() {
         this.form.usuario_registro_id = this.user.id
@@ -480,6 +489,11 @@ export default {
             this.getAbonos();
         }
         this.getVendedores()
+
+         this.permisos_por_modulo.consultar = this.$permiso(8, 1);
+        this.permisos_por_modulo.agregar = this.$permiso(8, 2);
+        this.permisos_por_modulo.modificar = this.$permiso(8, 3);
+        this.permisos_por_modulo.eliminar = this.$permiso(8, 4);
     },
     computed: {
         ...mapGetters([

@@ -116,7 +116,7 @@
                                                     <b-badge variant="danger" v-if="venta.status==0">Cancelado</b-badge>
                                                 </td>
                                                 <td>
-                                                    <b-button class="mr-2" squared size="sm" variant="secondary" @click="mostrarPoliza(venta.id,venta.polizas_id)">
+                                                    <b-button class="mr-2" squared size="sm" variant="secondary" @click="mostrarTarjeta(venta.id)">
                                                         <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf
                                                     </b-button>
                                                     <b-button class="mr-2" squared size="sm" variant="success" @click="pagos(venta.id)">
@@ -361,26 +361,14 @@ export default {
                 }
             });
         },
-        mostrarPoliza(venta_id, poliza_num) {
-            this.url = this.$hostname + 'polizas/nota_venta?venta_id=' + venta_id + '&poliza_id=' + poliza_num
+       mostrarTarjeta(id_venta) {
+            this.url = this.$hostname + 'polizas/tarjeta_cobranza?venta_id=' + id_venta
         },
         //checa si tiene permisos para ver esa parte del sistema
-        urlIr: function () {
-            window.open(this.$hostname_frontend + 'ventas/vender', "_blank");
-            //this.$router.push('/polizas/vender');
-        },
         pagos(venta) {
             window.open(this.$hostname_frontend + 'cobranza/pagar/' + venta, "_blank");
             //this.$router.push('/polizas/pagos/'+venta);
         },
-        editar(venta_id) {
-            window.open(this.$hostname_frontend + 'ventas/editar_afiliacion/' + venta_id, "_blank");
-            //this.$router.push('/polizas/pagos/'+venta);
-        },
-        renovar(poliza_id) {
-            window.open(this.$hostname_frontend + 'ventas/renovar/' + poliza_id, "_blank");
-            //this.$router.push('/polizas/pagos/'+venta);
-        }
     },
     computed: {
         // mix the getters into computed with object spread operator

@@ -9,7 +9,7 @@
                     <div class="nombre-opcion mt-3  text-center">
                         Afiliar Póliza
                     </div>
-                    <div class="mt-5">
+                    <div class="mt-5" v-if="permisos_por_modulo.agregar">
                         <b-button pill variant="outline-primary" @click="urlIr('ventas/vender')">Seleccionar</b-button>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                     <div class="nombre-opcion mt-3  text-center">
                         Renovar pólizas
                     </div>
-                    <div class="mt-5">
+                    <div class="mt-5" v-if="permisos_por_modulo.agregar">
                         <b-button pill variant="outline-primary" @click="urlIr('ventas/renovar')">Seleccionar</b-button>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                     <div class="nombre-opcion mt-3  text-center">
                         Modificar Pólizas
                     </div>
-                    <div class="mt-5">
+                    <div class="mt-5" v-if="permisos_por_modulo.modificar">
                         <b-button pill variant="outline-primary" @click="urlIr('ventas/editar')">Seleccionar</b-button>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                     <div class="nombre-opcion mt-3  text-center">
                         Cancelar Pólizas
                     </div>
-                    <div class="mt-5">
+                    <div class="mt-5" v-if="permisos_por_modulo.eliminar">
                         <b-button pill variant="outline-primary" @click="urlIr('ventas/cancelar')">Seleccionar</b-button>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                     <div class="nombre-opcion mt-3  text-center">
                         Consultar Pólizas
                     </div>
-                    <div class="mt-5">
+                    <div class="mt-5" v-if="permisos_por_modulo.consultar">
                         <b-button pill variant="outline-primary" @click="urlIr('ventas/consultar')">Seleccionar</b-button>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                     <div class="nombre-opcion mt-3  text-center">
                         Consultar Reportes
                     </div>
-                    <div class="mt-5">
+                    <div class="mt-5" v-if="permisos_por_modulo.consultar">
                         <b-button pill variant="outline-primary" @click="urlIr('ventas/cancelar')">Seleccionar</b-button>
                     </div>
                 </div>
@@ -77,11 +77,28 @@
 
 <script>
 export default {
+    data() {
+        return {
+            //permisos del usuario
+            permisos_por_modulo: {
+                agregar: false,
+                consultar: false,
+                modificar: false,
+                eliminar: false
+            },
+        }
+    },
     methods: {
         urlIr: function (url) {
             //window.open(this.$hostname_frontend + url, "_blank");
             this.$router.push(url);
         },
+    },
+    created() {
+        this.permisos_por_modulo.consultar = this.$permiso(7, 1);
+        this.permisos_por_modulo.agregar = this.$permiso(7, 2);
+        this.permisos_por_modulo.modificar = this.$permiso(7, 3);
+        this.permisos_por_modulo.eliminar = this.$permiso(7, 4);
     },
 
 }

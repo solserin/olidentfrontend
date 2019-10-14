@@ -698,7 +698,7 @@ export default {
             this.url = this.$hostname + 'polizas/nota_venta?venta_id=' + this.venta_id + '&poliza_id=' + this.num_poliza
         },
         pagos(venta) {
-            window.open(this.$hostname_frontend + 'ventas/pagos/' + this.venta_id, "_blank");
+            window.open(this.$hostname_frontend + 'cobranza/pagar/' + this.venta_id, "_blank");
             //this.$router.push('/polizas/pagos/'+venta);
         },
     },

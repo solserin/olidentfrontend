@@ -1,12 +1,12 @@
 <template>
-<div class="app flex-row align-items-center">
+<div data-v-f3f3eg9 class="app flex-row align-items-center">
     <div class="container">
         <b-row class="justify-content-center">
             <b-col md="8">
                 <b-card-group>
                     <b-card no-body class="p-4">
                         <b-card-body>
-                             <loading v-if="authStatus ==='loading'" :active.sync="isLoading"></loading>
+                            <loading v-if="authStatus ==='loading'" :active.sync="isLoading"></loading>
                             <b-form>
                                 <h1>Login</h1>
                                 <p class="text-muted">Ingrese sus datos de acceso</p>
@@ -26,19 +26,17 @@
                                     <b-col cols="4">
                                         <b-button variant="primary" class="px-4" @click="login()">Login</b-button>
                                     </b-col>
-                                    <b-col cols="8" class="text-right" hidden>
+                                    <b-col cols="8" class="text-right">
                                         <b-button variant="link" class="px-0">Olvidó su contraseña?</b-button>
                                     </b-col>
                                 </b-row>
                             </b-form>
                         </b-card-body>
                     </b-card>
-                    <b-card no-body v-if="datosEmpresa.logo" class="text-primary py-5 d-md-down-none" style="width:44%">
+                    <b-card no-body class="text-primary py-5 d-md-down-none" style="width:44%">
                         <b-card-body class="text-center">
-                            <div>
-                                <h2 hidden>SIIGA OLI DENT</h2>
-                                <p>Bienvenido al sistema integral de información y gerencia administrativa de clínicas dentales OLI DENT.</p>
-                                <img class="navbar-brand-full" :src="datosEmpresa.logo" width="300" alt="CoreUI Logo">
+                            <div class="mt-5">
+                                <img class="navbar-brand-full mt-3" src="../../assets/images/logo.png" width="250" alt="CoreUI Logo">
                             </div>
                         </b-card-body>
                     </b-card>
@@ -51,9 +49,11 @@
 
 <script>
 import Loading from 'vue-loading-overlay';
-    // Import stylesheet
+// Import stylesheet
 import 'vue-loading-overlay/dist/vue-loading.css';
-import { mapGetters } from 'vuex'
+import {
+    mapGetters
+} from 'vuex'
 export default {
     data() {
         return {
@@ -63,7 +63,7 @@ export default {
         }
     },
     components: {
-            Loading
+        Loading
     },
     methods: {
         login() {
@@ -80,17 +80,16 @@ export default {
                     this.$router.push('/');
                 })
                 .catch(err => {
-                   this.$toasted.show("Error de usuario y/o contraseña",{
-                       iconPack:'fontawesome',
-                       type:'error',
-                       theme:'toasted-primary',
-                       icon:'lock',
-                       duration:10000,
-                       position:'bottom-center'
-                   });
+                    this.$toasted.show("Error de usuario y/o contraseña", {
+                        iconPack: 'fontawesome',
+                        type: 'error',
+                        theme: 'toasted-primary',
+                        icon: 'lock',
+                        duration: 10000,
+                        position: 'bottom-center'
+                    });
                 });
 
-               
             /*if (vm.userEmail === vm.$root.userEmail && vm.password === vm.$root.userPassword) {
               //vm.$router.push({ name: 'Dashboard' });
             }
@@ -101,13 +100,23 @@ export default {
             }*/
         }
     },
-      computed: {
-    // mix the getters into computed with object spread operator
-    ...mapGetters([
-      'authStatus',
-      'rol',
-      'datosEmpresa'
-    ])
-  }
+    computed: {
+        // mix the getters into computed with object spread operator
+        ...mapGetters([
+            'authStatus',
+            'rol',
+            'datosEmpresa'
+        ])
+    }
 }
 </script>
+
+<style>
+.app[data-v-f3f3eg9]{
+    background: url(../../assets/images/background.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+</style>

@@ -3,7 +3,7 @@
     <AppHeader fixed>
         <SidebarToggler class="d-lg-none" display="md" mobile />
         <b-link class="navbar-brand" to="#">
-            <img class="navbar-brand-full" :src="datosEmpresa.logo" width="89" height="25" alt="CoreUI Logo">
+            <img class="navbar-brand-full" :src="datosEmpresa.logo" width="89" height="25" alt="Empresa Logo">
             <img class="navbar-brand-minimized" src="https://cdn3.iconfinder.com/data/icons/seo-glyph-2/24/gear-setting-512.png" width="30" height="30" alt="CoreUI Logo">
         </b-link>
         <SidebarToggler class="d-md-down-none" display="lg" :defaultOpen=true />
@@ -26,7 +26,7 @@
             <DefaultHeaderDropdownAccnt />
         </b-navbar-nav>
         <!--<AsideToggler class="d-none d-lg-block" />-->
-        <AsideToggler class="d-lg-none" mobile />
+        <!--<AsideToggler class="d-lg-none" mobile />-->
     </AppHeader>
     <div class="app-body">
         <AppSidebar fixed>

@@ -44,8 +44,9 @@ Vue.filter('numFormat', numFormat(numeral));
 
 Vue.use(BootstrapVue)
 
-Vue.prototype.$hostname = 'http://localhost:8000/'
-Vue.prototype.$hostname_frontend = '<%= BASE_URL %>'
+Vue.prototype.$hostname = 'https://www.api.olident.com.mx/'
+Vue.prototype.$hostname_frontend = 'http://localhost:8080/'
+
 
 const plugin = {
   install (Vue,options) {

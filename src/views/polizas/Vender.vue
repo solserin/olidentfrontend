@@ -112,7 +112,7 @@
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Comunidad (*):" label-for="txtComunidad" label-class="labels">
-                                    <autocomplete required ref="autocomplete" v-model="form.localidad_id" source="http://localhost:8000/rutas/localidad?filter=" results-property="data" :results-display="formattedDisplay" @clear="form.localidad_id='';localidad=''" @nothingSelected="form.localidad_id=''" @selected="addDistributionGroup" placeholder="Buscar Comunidad" name="txtLocalidad">
+                                    <autocomplete required ref="autocomplete" v-model="form.localidad_id" :source="this.$hostname+'rutas/localidad?filter='" results-property="data" :results-display="formattedDisplay" @clear="form.localidad_id='';localidad=''" @nothingSelected="form.localidad_id=''" @selected="addDistributionGroup" placeholder="Buscar Comunidad" name="txtLocalidad">
                                         <template v-slot:noResults>
                                             <strong>Sin </strong>resultados.
                                         </template>

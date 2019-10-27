@@ -181,7 +181,7 @@ export default {
                                     this.limpiar_formulario();
                                     this.$bvModal.hide('modalNuevo');
                                     this.$store.dispatch('success')
-                                    this.$toasted.show("El nuevo rol se actualizó con éxito", {
+                                    this.$toasted.show("El rol se actualizó con éxito", {
                                         iconPack: 'fontawesome',
                                         type: 'success',
                                         theme: 'toasted-primary',

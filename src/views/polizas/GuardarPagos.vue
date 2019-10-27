@@ -22,7 +22,7 @@
             </b-row>
             <b-row>
                 <b-col xs="12" class="text-center" v-if="buscador.num_poliza">
-                    <b-button  class="mt-4 mb-4" squared variant="primary" @click="getVentaDatos(buscador.num_poliza)"><i class="fa fa-search" aria-hidden="true"></i> Cargar Datos</b-button>
+                    <b-button class="mt-4 mb-4" squared variant="primary" @click="getVentaDatos(buscador.num_poliza)"><i class="fa fa-search" aria-hidden="true"></i> Cargar Datos</b-button>
                 </b-col>
             </b-row>
         </b-col>
@@ -44,9 +44,9 @@
                     </div>
                     <div class=" pt-2 pl-4 pr-4">
                         <h5 class="nombre-tab pb-4 text-success" v-if="pagos.length">
-                            <div v-if="pagos[0]['restante']>0">Información del pago</div>
+                            <div v-if="permisos_por_modulo.agregar && pagos[0]['restante']>0">Información del pago</div>
                         </h5>
-                        <b-row v-if="pagos.length">
+                        <b-row v-if="permisos_por_modulo.agregar && pagos.length">
                             <b-col xs="12" md="4" v-if="pagos[0]['restante']>0">
                                 <b-form-group label="Fecha de pago (*):" label-for="txtFecha" label-class="labels">
                                     <date-picker readonly="readonly" v-model="form.fecha_abono" :config="options"></date-picker>
@@ -74,7 +74,7 @@
                             </b-col>
                         </b-row>
                         <h5 class="nombre-tab pb-4 text-success">Abonos registrados
-                            <b-button v-b-modal.modalBuscador squared size="sm" variant="secondary" style="background-color: #6c757d; float:right; color:#fff; font-size:18px;">
+                            <b-button v-if="permisos_por_modulo.agregar" v-b-modal.modalBuscador squared size="sm" variant="secondary" style="background-color: #6c757d; float:right; color:#fff; font-size:18px;">
                                 <img src="../../assets/images/consultar.png" style=" max-width: 35px !important;"> Buscar Póliza
                             </b-button>
                         </h5>
@@ -106,7 +106,7 @@
                                             <b-button hidden class="mr-2" pill size="sm" variant="secondary">
                                                 <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
                                             </b-button>
-                                            <b-button  class="mr-2" pill size="sm" variant="danger" @click="cancelar_pago(abono.id)" v-if=" permisos_por_modulo.eliminar && abono.status==1">
+                                            <b-button class="mr-2" pill size="sm" variant="danger" @click="cancelar_pago(abono.id)" v-if=" permisos_por_modulo.eliminar && abono.status==1">
                                                 <i class="fa fa-close" aria-hidden="true"></i>
                                             </b-button>
                                         </td>
@@ -204,7 +204,7 @@ export default {
     },
     data() {
         return {
-             permisos_por_modulo: {
+            permisos_por_modulo: {
                 agregar: false,
                 consultar: false,
                 modificar: false,
@@ -490,7 +490,7 @@ export default {
         }
         this.getVendedores()
 
-         this.permisos_por_modulo.consultar = this.$permiso(8, 1);
+        this.permisos_por_modulo.consultar = this.$permiso(8, 1);
         this.permisos_por_modulo.agregar = this.$permiso(8, 2);
         this.permisos_por_modulo.modificar = this.$permiso(8, 3);
         this.permisos_por_modulo.eliminar = this.$permiso(8, 4);

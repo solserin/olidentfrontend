@@ -14,7 +14,7 @@
                         <!-- These options will appear after the ones from 'options' prop -->
                         <option value="0">Todos</option>
                         <option value="1">Número de Póliza</option>
-                        <option value="2">Nombre de Titular</option>
+                        <option value="2">Nombre</option>
                     </b-form-select>
                 </b-input-group>
             </b-col>
@@ -31,7 +31,7 @@
             </b-col>
             <b-col xs="12" sm="12" md="2">
                 <div class="mt-3">
-                    <b-button style="float:right;" squared variant="primary" v-if="permisos_por_modulo.agregar" @click="refresh_table"><i class="fa fa-search" aria-hidden="true"></i> Mostrar</b-button>
+                    <b-button style="float:right;" squared variant="primary" v-if="permisos_por_modulo.consultar" @click="refresh_table"><i class="fa fa-search" aria-hidden="true"></i> Mostrar</b-button>
                 </div>
             </b-col>
             <b-col xs="12" sm="12" md="3">
@@ -398,10 +398,10 @@ export default {
         }
     },
     created() {
-        this.permisos_por_modulo.consultar = this.$permiso(5, 1);
-        this.permisos_por_modulo.agregar = this.$permiso(5, 2);
-        this.permisos_por_modulo.modificar = this.$permiso(5, 3);
-        this.permisos_por_modulo.eliminar = this.$permiso(5, 4);
+        this.permisos_por_modulo.consultar = this.$permiso(7, 1);
+        this.permisos_por_modulo.agregar = this.$permiso(7, 2);
+        this.permisos_por_modulo.modificar = this.$permiso(7, 3);
+        this.permisos_por_modulo.eliminar = this.$permiso(7, 4);
     },
 }
 </script>

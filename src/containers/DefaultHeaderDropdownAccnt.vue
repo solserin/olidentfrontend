@@ -1,7 +1,7 @@
 <template>
 <AppHeaderDropdown right no-caret>
     <template slot="header">
-        {{permisos[0].email}}
+        <span>{{permisos[0].email}}</span>
         <img :src="user.imagen" class="img-avatar" :alt="permisos[0].email" />
     </template>
     <template slot="dropdown">

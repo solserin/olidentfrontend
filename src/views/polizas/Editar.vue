@@ -146,7 +146,7 @@
                             </b-col>
                             <b-col xs="12" md="6">
                                 <b-form-group label="Comunidad (*):" label-for="txtComunidad" label-class="labels">
-                                    <autocomplete initialDisplay="Ignore este dato si no desea modificarlo." required ref="autocomplete" v-model="form.localidad_id" source="http://localhost:8000/rutas/localidad?filter=" results-property="data" :results-display="formattedDisplay" @clear="form.localidad_id='';localidad=''" @nothingSelected="form.localidad_id=''" @selected="addDistributionGroup" placeholder="Buscar Comunidad" name="txtLocalidad">
+                                    <autocomplete initialDisplay="Ignore este dato si no desea modificarlo." required ref="autocomplete" v-model="form.localidad_id" :source="this.$hostname+'rutas/localidad?filter='" results-property="data" :results-display="formattedDisplay" @clear="form.localidad_id='';localidad=''" @nothingSelected="form.localidad_id=''" @selected="addDistributionGroup" placeholder="Buscar Comunidad" name="txtLocalidad">
                                         <template v-slot:noResults>
                                             <strong>Sin </strong>resultados.
                                         </template>
@@ -461,7 +461,7 @@ export default {
                             this.localidad_inicial = resp.data['beneficiarios'][0].localidad;
                             //aqui le pongo cinco beneficiarios por default
                             //deberia ser (resp.data.num_beneficiarios+1)
-                            if (this.form.beneficiarios.length > 1) {
+                            if (resp.data['beneficiarios'].length > 1) {
                                 for (let index = 1; index < 5; index++) {
                                     this.form.beneficiarios[index - 1].nombre = resp.data['beneficiarios'][index].nombre;
                                     this.form.beneficiarios[index - 1].edad = resp.data['beneficiarios'][index].edad;
@@ -674,7 +674,7 @@ export default {
             this.url = this.$hostname + 'polizas/nota_venta?venta_id=' + this.venta_id + '&poliza_id=' + this.num_poliza
         },
         pagos(venta) {
-            window.open(this.$hostname_frontend + 'ventas/pagos/' + this.venta_id, "_blank");
+            window.open(this.$hostname_frontend + 'cobranza/pagar/' + this.venta_id, "_blank");
             //this.$router.push('/polizas/pagos/'+venta);
         },
     },

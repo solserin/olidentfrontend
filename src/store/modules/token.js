@@ -5,7 +5,7 @@ const state={
     status: '',
     token: localStorage.getItem('access_token') || '',
     user:[],
-    host:'http://localhost:8000/',
+    host:'https://www.api.olident.com.mx/',
     menu:[],
     permisos:[],
     datosEmpresa:[]
@@ -56,7 +56,7 @@ const actions={
         return new Promise((resolve, reject) => {
           var datos={
             client_id:1,
-            client_secret:'7hRY9FChED1V9MoophirT8KwNfnESypjHLmOP4ZU',
+            client_secret:'D6sLFZ4vDugxtfCZ4xEmHPb4bZ7lp8e4evF9prey',
             grant_type:'password',
             username:data.email,
             password:data.password

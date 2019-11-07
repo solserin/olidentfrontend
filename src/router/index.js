@@ -44,8 +44,12 @@ const Pagos = () => import('@/views/polizas/Pagos')
 const GuardarPagos = () => import('@/views/polizas/GuardarPagos')
 const ConsultarPagos = () => import('@/views/polizas/ConsultarPagos')
 
+
 //componentes para hacer los pagos
 
+//reportes
+const ReportePagos = () => import('@/views/polizas/reportes/Pagos')
+//fin de reportes
 
 
 var tiene_permiso_modulo=0;
@@ -253,9 +257,16 @@ let router=new Router({
             requiresAuth: true
           }
         },
+        {
+          path: 'reportes',
+          name: 'Reportes de Pagos',
+          component: ReportePagos,
+          meta: { 
+            requiresAuth: true
+          }
+        },
       ]
     },
-    
     {
       path: '/pages',
       redirect: '/pages/404',
@@ -346,7 +357,7 @@ router.beforeEach((to, from, next) => {
             }
           });
         }
-        if(to.path=='/cobranza/pagar' || to.path=='/cobranza/consultar'){
+        if(to.path=='/cobranza/pagar' || to.path=='/cobranza/consultar' || to.path=='/cobranza/reportes'){
           store.getters.permisos.forEach(element => {
             //checo si tiene permiso al modulo y al permiso
             if((to.path=='/cobranza/pagar' && element.modulo_id==8 && element.permiso_id==2)){
@@ -356,6 +367,12 @@ router.beforeEach((to, from, next) => {
             }
 
             if((to.path=='/cobranza/consultar' && element.modulo_id==8 && element.permiso_id==1)){
+              //puede vender
+              tiene_permiso_modulo=1;
+              return;
+            }
+            //confirmamos que el usuario es administrador y puede ver estos reportes
+            if((to.path=='/cobranza/reportes' && element.modulo_id==8 && element.permiso_id==1 &&store.getters.user.roles_id==1)){
               //puede vender
               tiene_permiso_modulo=1;
               return;

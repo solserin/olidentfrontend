@@ -32,7 +32,7 @@
                         Reportes de Cobranza
                     </div>
                     <div class="mt-5" v-if="permisos_por_modulo.consultar">
-                        <b-button pill variant="outline-primary" @click="urlIr('ventas/cancelar')">Seleccionar</b-button>
+                        <b-button pill variant="outline-primary" @click="urlIr('cobranza/reportes')">Seleccionar</b-button>
                     </div>
                 </div>
             </b-col>

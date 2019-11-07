@@ -398,6 +398,7 @@ export default {
         }
     },
     created() {
+        this.$store.dispatch('success')
         this.permisos_por_modulo.consultar = this.$permiso(7, 1);
         this.permisos_por_modulo.agregar = this.$permiso(7, 2);
         this.permisos_por_modulo.modificar = this.$permiso(7, 3);

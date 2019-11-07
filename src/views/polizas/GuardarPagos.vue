@@ -483,6 +483,7 @@ export default {
         },
     },
     created() {
+        this.$store.dispatch('success')
         this.form.usuario_registro_id = this.user.id
         if (!isNaN(this.$route.params.id)) {
             this.form.venta_id = this.$route.params.id;

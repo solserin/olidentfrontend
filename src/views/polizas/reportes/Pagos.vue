@@ -41,7 +41,7 @@
                         <b-form-select id="cmbPolizas" v-model="form.tipo_polizas_id">
                             <!-- These options will appear after the ones from 'options' prop -->
                             <option value="">Todas</option>
-                            <option v-for="poliza in polizas" v-bind:key="poliza.id" :value="poliza.tipo">{{poliza.tipo}}</option>
+                            <option v-for="poliza in polizas" v-bind:key="poliza.id" :value="poliza.id">{{poliza.tipo}}</option>
                         </b-form-select>
                     </b-form-group>
                 </b-col>
@@ -50,7 +50,7 @@
                         <b-form-select id="cmbPagos" v-model="form.pagos_estado">
                             <option value="">Todos</option>
                             <option value="1">Capturados</option>
-                            <option value="2">Cancelados</option>
+                            <option value="0">Cancelados</option>
                         </b-form-select>
                     </b-form-group>
                 </b-col>
@@ -58,7 +58,7 @@
                     <b-form-group label="Ruta (*):" label-for="cmbRutas" label-class="labels">
                         <b-form-select id="cmbRutas" v-model="form.rutas_id">
                             <option value="">Todas</option>
-                            <option v-for="ruta in rutas" v-bind:key="ruta.id" :value="ruta">{{ruta.ruta}}</option>
+                            <option v-for="ruta in rutas" v-bind:key="ruta.id" :value="ruta.id">{{ruta.ruta}}</option>
                         </b-form-select>
                     </b-form-group>
                 </b-col>
@@ -67,7 +67,7 @@
                         <b-form-select id="cmbCobrador" v-model="form.cobrador_id">
                             <!-- These options will appear after the ones from 'options' prop -->
                             <option value="">Todos</option>
-                            <option v-for="cobrador in cobradores" v-bind:key="cobrador.id" :value="cobrador">{{cobrador.name}}</option>
+                            <option v-for="cobrador in cobradores" v-bind:key="cobrador.id" :value="cobrador.id">{{cobrador.name}}</option>
                         </b-form-select>
                     </b-form-group>
                 </b-col>
@@ -160,7 +160,7 @@ export default {
                 if (this.form.fecha_inicio) {
                     this.$store.dispatch('loading');
                     axios({
-                        url: 'http://localhost:8000/ventas/reporte_especifico_pagos?fecha_inicio=' + this.form.fecha_inicio + '&fecha_fin=' + this.form.fecha_fin + '&polizas_id=' + this.form.tipo_polizas_id + '&pagos_estado=' + this.form.pagos_estado + '&rutas_id=' + this.form.rutas_id + '&cobrador_id=' + this.form.cobrador_id + '&tipo_ventas_id' + this.form.tipo_ventas_id,
+                        url: 'http://localhost:8000/ventas/reporte_especifico_pagos?fecha_inicio=' + this.form.fecha_inicio + '&fecha_fin=' + this.form.fecha_fin + '&tipo_polizas_id=' + this.form.tipo_polizas_id + '&pagos_estado=' + this.form.pagos_estado + '&rutas_id=' + this.form.rutas_id + '&cobrador_id=' + this.form.cobrador_id + '&tipo_ventas_id=' + this.form.tipo_ventas_id,
                         method: 'GET',
                         responseType: 'blob',
                     }).then((response) => {
@@ -169,7 +169,6 @@ export default {
                         }));
                         var fileLink = document.createElement('a');
                         this.pdf_url_especifico = fileURL;
-                        console.log(this.pdf_url_especifico)
                         fileLink.href = fileURL;
                         fileLink.setAttribute('download', 'file.pdf');
                         document.body.appendChild(fileLink);

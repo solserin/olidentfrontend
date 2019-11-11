@@ -64,6 +64,23 @@ const plugin = {
 }
 Vue.use(plugin)
 
+//verifico que antes de mandar una peticion se revise el token exista
+axios.interceptors.request.use(function (config) {
+  if(config.url!=Vue.prototype.$hostname+'oauth/token'){
+    console.log(config.url)
+    console.log(store.getters.isLoggedIn)
+    if(!store.getters.isLoggedIn){
+      router.push('/')
+    }
+  }
+  return config;
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error);
+});
+
+
+//aqui reviso que en caso de recibir un error de tipo 401 me mande al login
 axios.interceptors.response.use(function (response) {
   return response;
 }, function (error) {

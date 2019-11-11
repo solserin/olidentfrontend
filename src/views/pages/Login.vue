@@ -107,7 +107,10 @@ export default {
             'rol',
             'datosEmpresa'
         ])
-    }
+    },
+    created() {
+        this.$store.dispatch('success')
+    },
 }
 </script>
 

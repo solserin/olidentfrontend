@@ -72,6 +72,21 @@
                     </b-form-group>
                 </b-col>
             </b-row>
+            <!--<b-row hidden>
+                <b-col xs="12" sm="12" md="6">
+                    <b-form-group label="Nombre del Reporte:" label-for="txtAbono" label-class="labels">
+                        <b-form-input required maxlength="4" v-model="form.abono" type="text" id="txtAbono"></b-form-input>
+                    </b-form-group>
+                </b-col>
+                <b-col xs="12" sm="12" md="6">
+                    <b-form-group label="Ordenar Reporte (*):" label-for="cmbCobrador" label-class="labels">
+                        <b-form-select id="cmbCobrador" v-model="form.cobrador_id">
+                            <option value="">Todos</option>
+                            <option v-for="cobrador in cobradores" v-bind:key="cobrador.id" :value="cobrador.id">{{cobrador.name}}</option>
+                        </b-form-select>
+                    </b-form-group>
+                </b-col>
+            </b-row>-->
             <b-row>
                 <b-col xs="12">
                     <div>

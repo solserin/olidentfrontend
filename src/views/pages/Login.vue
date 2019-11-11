@@ -109,7 +109,7 @@ export default {
         ])
     },
     created() {
-        this.$store.dispatch('success')
+        this.$store.dispatch('error')
     },
 }
 </script>

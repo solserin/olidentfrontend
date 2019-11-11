@@ -67,6 +67,7 @@ Vue.use(plugin)
 //verifico que antes de mandar una peticion se revise el token exista
 axios.interceptors.request.use(function (config) {
   if(config.url!=Vue.prototype.$hostname+'oauth/token'){
+    store.dispatch('actualizarLoginEstado');
     console.log(config.url)
     console.log(store.getters.isLoggedIn)
     if(!store.getters.isLoggedIn){

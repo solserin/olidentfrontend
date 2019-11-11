@@ -48,6 +48,9 @@ const mutations={
       },
       getEmpresaDatos(state,datos){
         state.datosEmpresa=datos
+      },
+      getEstadoLogin(state){
+        state.token=localStorage.getItem('access_token') || ''
       }
 };
 
@@ -216,6 +219,18 @@ const actions={
       ActualizarUser({ commit },datos) {
         commit('datosUsuario',datos)
    },
+   error({ commit }) {
+    return new Promise((resolve, reject) => {
+      commit('auth_error')
+      resolve()
+    })
+  },
+  actualizarLoginEstado({ commit }) {
+    return new Promise((resolve, reject) => {
+      commit('getEstadoLogin')
+      resolve()
+    })
+  },
 };
 
 export default{

@@ -175,7 +175,7 @@ export default {
                 if (this.form.fecha_inicio) {
                     this.$store.dispatch('loading');
                     axios({
-                        url: 'http://localhost:8000/ventas/reporte_especifico_pagos?fecha_inicio=' + this.form.fecha_inicio + '&fecha_fin=' + this.form.fecha_fin + '&tipo_polizas_id=' + this.form.tipo_polizas_id + '&pagos_estado=' + this.form.pagos_estado + '&rutas_id=' + this.form.rutas_id + '&cobrador_id=' + this.form.cobrador_id + '&tipo_ventas_id=' + this.form.tipo_ventas_id,
+                        url: this.$hostname + 'ventas/reporte_especifico_pagos?fecha_inicio=' + this.form.fecha_inicio + '&fecha_fin=' + this.form.fecha_fin + '&tipo_polizas_id=' + this.form.tipo_polizas_id + '&pagos_estado=' + this.form.pagos_estado + '&rutas_id=' + this.form.rutas_id + '&cobrador_id=' + this.form.cobrador_id + '&tipo_ventas_id=' + this.form.tipo_ventas_id,
                         method: 'GET',
                         responseType: 'blob',
                     }).then((response) => {

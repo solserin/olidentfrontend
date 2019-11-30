@@ -44,8 +44,8 @@ Vue.filter('numFormat', numFormat(numeral));
 
 Vue.use(BootstrapVue)
 
-Vue.prototype.$hostname = 'http://localhost:8000/'
-Vue.prototype.$hostname_frontend = 'http://localhost:8080/'
+Vue.prototype.$hostname = 'https://www.api.olident.com.mx/'
+Vue.prototype.$hostname_frontend = 'https://sistema.olident.com.mx/'
 
 const plugin = {
   install (Vue,options) {
@@ -68,8 +68,8 @@ Vue.use(plugin)
 axios.interceptors.request.use(function (config) {
   if(config.url!=Vue.prototype.$hostname+'oauth/token'){
     store.dispatch('actualizarLoginEstado');
-    console.log(config.url)
-    console.log(store.getters.isLoggedIn)
+    //console.log(config.url)
+    //console.log(store.getters.isLoggedIn)
     if(!store.getters.isLoggedIn){
       router.push('/')
     }

@@ -2,9 +2,9 @@
 <div data-v-f3f3eg9 class="app flex-row align-items-center">
     <div class="container">
         <b-row class="justify-content-center">
-            <b-col md="8">
+            <b-col md="5">
                 <b-card-group>
-                    <b-card no-body class="p-4">
+                    <b-card no-body class="p-4" style="background-color: rgba(255, 255, 255, 0.8) !important;">
                         <b-card-body>
                             <loading v-if="authStatus ==='loading'" :active.sync="isLoading"></loading>
                             <b-form>
@@ -14,29 +14,34 @@
                                     <b-input-group-prepend>
                                         <b-input-group-text><i class="icon-user"></i></b-input-group-text>
                                     </b-input-group-prepend>
-                                    <b-form-input v-model="userEmail" type="email" required="required" class="form-control" placeholder="Username" autocomplete="username email" />
+                                    <b-form-input v-model="userEmail" type="email" required="required" class="form-control" placeholder="Email de usuario" autocomplete="Email de usuario" />
                                 </b-input-group>
                                 <b-input-group class="mb-4">
                                     <b-input-group-prepend>
                                         <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
                                     </b-input-group-prepend>
-                                    <b-form-input v-model="password" type="password" class="form-control" placeholder="Password" autocomplete="current-password" v-on:keyup.enter="login()" />
+                                    <b-form-input v-model="password" type="password" class="form-control" placeholder="Contraseña" autocomplete="current-password" v-on:keyup.enter="login()" />
                                 </b-input-group>
                                 <b-row>
                                     <b-col cols="4">
-                                        <b-button variant="primary" class="px-4" @click="login()">Login</b-button>
+                                        <b-button variant="primary" class="px-4" @click="login()">Entrar</b-button>
                                     </b-col>
-                                    <b-col cols="8" class="text-right">
+                                    <b-col cols="8" class="text-right" hidden>
                                         <b-button variant="link" class="px-0">Olvidó su contraseña?</b-button>
                                     </b-col>
                                 </b-row>
                             </b-form>
                         </b-card-body>
                     </b-card>
-                    <b-card no-body class="text-primary py-5 d-md-down-none" style="width:44%">
+                    <b-card hidden no-body class="text-primary py-5 d-md-down-none" style="background-color: rgba(255, 255, 255, 0.8) !important;width:44%;">
                         <b-card-body class="text-center">
-                            <div class="mt-5">
-                                <img class="navbar-brand-full mt-3" src="../../assets/images/logo.png" width="250" alt="CoreUI Logo">
+                            <div>
+                                 <b-embed
+    type="iframe"
+    aspect="16by9"
+    src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0"
+    allowfullscreen
+  ></b-embed>
                             </div>
                         </b-card-body>
                     </b-card>

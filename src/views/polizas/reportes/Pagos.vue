@@ -4,19 +4,43 @@
         <div slot="header">Generar Reportes</div>
         <b-form @submit="onSubmit">
             <b-row>
-                <b-col xs="12" sm="6" md="3">
-                    <b-form-group label="Fecha Inicio (*):" label-for="txtFecha" label-class="labels">
+                <b-col xs="12" sm="6" md="4">
+                    <b-form-group label="Fecha Inicio Pago (*):" label-for="txtFecha" label-class="labels">
                         <date-picker readonly="readonly" v-model="form.fecha_inicio" :config="options"></date-picker>
                         <div class="text-danger text-center" v-if="errors.fecha_inicio">{{errors.fecha_inicio}}</div>
                     </b-form-group>
                 </b-col>
-                <b-col xs="12" sm="6" md="3">
-                    <b-form-group label="Fecha Fin (*):" label-for="txtFecha" label-class="labels">
+                <b-col xs="12" sm="6" md="4">
+                    <b-form-group label="Fecha Fin Pago (*):" label-for="txtFecha" label-class="labels">
                         <date-picker readonly="readonly" v-model="form.fecha_fin" :config="options"></date-picker>
                         <div class="text-danger text-center" v-if="errors.fecha_fin">{{errors.fecha_fin}}</div>
                     </b-form-group>
                 </b-col>
-                <b-col xs="12" sm="6" md="3">
+                <b-col xs="12" sm="6" md="4">
+                    <div class="text-right">
+                        <b-button style="width:100%;" squared type="submit" variant="primary" class="mt-4">
+                            <i class="fa fa-refresh mr-2" aria-hidden="true"></i>
+                            <span>Actualizar</span>
+                        </b-button>
+                    </div>
+                </b-col>
+            </b-row>
+            <b-row>
+                <b-col xs="12" sm="6" md="4">
+                    <b-form-group label="Fecha Captura (*):" label-for="txtFecha" label-class="labels">
+                        <date-picker readonly="readonly" v-model="form.fecha_captura" :config="options"></date-picker>
+                    </b-form-group>
+                </b-col>
+                <b-col xs="12" sm="6" md="4">
+                    <b-form-group label="Capturado Por Usuario (*):" label-for="cmbCobrador" label-class="labels">
+                        <b-form-select id="cmbCobrador" v-model="form.capturo_id">
+                            <!-- These options will appear after the ones from 'options' prop -->
+                            <option value="">Todos</option>
+                            <option v-for="cobrador in cobradores" v-bind:key="cobrador.id" :value="cobrador.id">{{cobrador.name}}</option>
+                        </b-form-select>
+                    </b-form-group>
+                </b-col>
+                <b-col xs="12" sm="6" md="4">
                     <b-form-group label="Tipo de Venta (*):" label-for="cmbTipoVenta" label-class="labels">
                         <b-form-select id="cmbTipoVenta" v-model="form.tipo_ventas_id">
                             <!-- These options will appear after the ones from 'options' prop -->
@@ -25,14 +49,6 @@
                             <option value="2">Renovación</option>
                         </b-form-select>
                     </b-form-group>
-                </b-col>
-                <b-col xs="12" sm="6" md="3">
-                    <div class="text-right">
-                        <b-button style="width:100%;" squared type="submit" variant="primary" class="mt-4">
-                            <i class="fa fa-refresh mr-2" aria-hidden="true"></i>
-                            <span>Actualizar</span>
-                        </b-button>
-                    </div>
                 </b-col>
             </b-row>
             <b-row>
@@ -97,6 +113,7 @@
                             <b-tab title="Gráficas">
                                 <b-embed type="iframe" aspect="16by9" :src="this.pdf_url_especifico" allowfullscreen></b-embed>
                             </b-tab>
+
                         </b-tabs>
                     </div>
                 </b-col>
@@ -125,6 +142,8 @@ export default {
             rutas: [],
             cobradores: [],
             form: {
+                fecha_captura: '',
+                capturo_id: '',
                 fecha_inicio: '',
                 fecha_fin: '',
                 tipo_polizas_id: '',
@@ -172,10 +191,10 @@ export default {
         onSubmit(evt) {
             evt.preventDefault()
             try {
-                if (this.form.fecha_inicio) {
+                if (this.form.fecha_inicio && this.form.fecha_fin) {
                     this.$store.dispatch('loading');
                     axios({
-                        url: this.$hostname + 'ventas/reporte_especifico_pagos?fecha_inicio=' + this.form.fecha_inicio + '&fecha_fin=' + this.form.fecha_fin + '&tipo_polizas_id=' + this.form.tipo_polizas_id + '&pagos_estado=' + this.form.pagos_estado + '&rutas_id=' + this.form.rutas_id + '&cobrador_id=' + this.form.cobrador_id + '&tipo_ventas_id=' + this.form.tipo_ventas_id,
+                        url: this.$hostname + 'ventas/reporte_especifico_pagos?fecha_inicio=' + this.form.fecha_inicio + '&fecha_fin=' + this.form.fecha_fin + '&tipo_polizas_id=' + this.form.tipo_polizas_id + '&pagos_estado=' + this.form.pagos_estado + '&rutas_id=' + this.form.rutas_id + '&cobrador_id=' + this.form.cobrador_id + '&tipo_ventas_id=' + this.form.tipo_ventas_id+ '&capturo_id=' + this.form.capturo_id+ '&fecha_captura=' + this.form.fecha_captura,
                         method: 'GET',
                         responseType: 'blob',
                     }).then((response) => {
@@ -202,6 +221,17 @@ export default {
                         });
                         this.$store.dispatch('error');
                     })
+                }else{
+                    this.$toasted.show("Seleccione una fecha Incio y una fecha Fin", {
+                            iconPack: 'fontawesome',
+                            type: 'error',
+                            theme: 'toasted-primary',
+                            icon: 'close',
+                            duration: 4000,
+                            position: 'top-center',
+                            closeOnSwipe: true,
+                            keepOnHover: true
+                        });
                 }
 
             } catch (error) {

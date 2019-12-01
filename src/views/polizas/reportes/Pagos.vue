@@ -223,9 +223,9 @@
 
                                 </div>
                             </b-tab>
-                            <!--<b-tab title="Gráficas">
-                                <b-embed type="iframe" aspect="16by9" :src="this.pdf_url_especifico" allowfullscreen></b-embed>
-                            </b-tab>-->
+                            <b-tab title="Gráficas">
+                                
+                            </b-tab>
 
                         </b-tabs>
                     </div>

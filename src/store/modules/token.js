@@ -5,7 +5,7 @@ const state={
     status: '',
     token: localStorage.getItem('access_token') || '',
     user:[],
-    host:'https://www.api.olident.com.mx/',
+    host:'http://localhost:8000/',
     menu:[],
     permisos:[],
     datosEmpresa:[]

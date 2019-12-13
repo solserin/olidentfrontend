@@ -110,6 +110,11 @@
                             <b-tab title="Información Específica" active>
                                 <!--<b-embed type="iframe" aspect="16by9" :src="this.pdf_url_especifico" allowfullscreen></b-embed>-->
                                 <div class="table-responsive-md">
+
+                                    <div class="float-right mb-3" v-if="this.datos_result.length>0">
+                                        <b-button squared variant="primary" @click="descargarPdfLista()"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> <strong> PDF</strong></b-button>
+                                    </div>
+
                                     <table class="table" v-for="(cobrador,index) in cobradores_id" v-bind:key="cobrador.id" v-bind:index="index">
                                         <thead>
                                             <tr style="background-color:#17a2b8; color:#fff;">
@@ -122,7 +127,8 @@
                                                     <table class="table table-striped" style="font-weight:normal;">
                                                         <thead>
                                                             <tr>
-                                                                <th scope="col">#</th>
+                                                                <th scope="col"># Pago</th>
+                                                                <th scope="col">Póliza</th>
                                                                 <th scope="col">Fecha Abono</th>
                                                                 <th scope="col">Titular</th>
                                                                 <th scope="col">Capturista</th>
@@ -135,6 +141,7 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr :class="[abono.status?'':'eliminado']" v-for="(abono) in datos_result" v-bind:key="abono.id">
+                                                                <th v-if="cobrador.id==abono.id_cobrador" scope="row"><span>{{abono.num_poliza}}</span></th>
                                                                 <th v-if="cobrador.id==abono.id_cobrador" scope="row"><span>{{abono.id}}</span></th>
                                                                 <td v-if="cobrador.id==abono.id_cobrador"><span>{{abono.fecha_abono}}</span></td>
                                                                 <td v-if="cobrador.id==abono.id_cobrador"><span>{{abono.nombre}}</span></td>
@@ -146,10 +153,10 @@
                                                                 <td v-if="cobrador.id==abono.id_cobrador"><span>$ {{ abono.cantidad | numFormat('0,000.00')}}</span></td>
                                                             </tr>
                                                             <tr style="border-bottom:3px solid #007bff; color:#007bff;">
-                                                                <td colspan="9" align="right"><strong>ABONOS COBRADOR POR: {{cobrador.nombre}}</strong></td>
+                                                                <td colspan="10" align="right"><strong>ABONOS COBRADOR POR: {{cobrador.nombre}}</strong></td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="9">
+                                                                <td colspan="10">
                                                                     <table class="table">
                                                                         <tbody>
                                                                             <tr style="background-color:#fff; color:#000; font-weight:600;">
@@ -224,9 +231,8 @@
                                 </div>
                             </b-tab>
                             <b-tab title="Gráficas">
-                                
+                                <Graficas :datos="datos_result" :cobradores="cobradores_id" :datos_busqueda="form" :cobrado="cobrado" :cancelado="cancelado" :total="total"></Graficas>
                             </b-tab>
-
                         </b-tabs>
                     </div>
                 </b-col>
@@ -238,7 +244,11 @@
 
 <script>
 import axios from 'axios'
+import Graficas from '../reportes/GraficasPagos'
 export default {
+    components: {
+        Graficas
+    },
     data() {
         return {
             options: {
@@ -252,9 +262,9 @@ export default {
             //con estos datos ordeno el resultado por cobrador
             cobradores_id: [],
             datos_result: [],
-            cobrado:0,
-            cancelado:0,
-            total:0,
+            cobrado: 0,
+            cancelado: 0,
+            total: 0,
             //fin de ordenar datos
             pdf_url_especifico: '',
             polizas: [],
@@ -279,6 +289,10 @@ export default {
         }
     },
     methods: {
+        descargarPdfLista() {
+            //traigo los tipos de poliza
+            window.open("http://localhost:8000/ventas/reporte_especifico_pagos?fecha_inicio=" + this.form.fecha_inicio + "&fecha_fin=" + this.form.fecha_fin + "&imprimir=yes");
+        },
         getTiposPoliza() {
             //traigo los tipos de poliza
             axios.get(this.$hostname + 'tipos_polizas')
@@ -322,9 +336,9 @@ export default {
                     axios.get(url_query).
                     then((response) => {
                         //reseteo los totales
-                        this.cobrado=0
-                        this.cancelado=0
-                        this.total=0
+                        this.cobrado = 0
+                        this.cancelado = 0
+                        this.total = 0
                         //fin de reseteo
                         this.cobradores_id = []
                         this.$store.dispatch('success');
@@ -340,6 +354,7 @@ export default {
                                 total: 0
                             });
                         }
+
                         for (let index = 0; index < response.data.length; index++) {
                             if (index == 0) {
                                 //si solo es un row dejo el total al primer arreglo
@@ -357,29 +372,27 @@ export default {
                                     this.cobradores_id[index_cobrador].total = this.cobradores_id[index_cobrador].cobrado - this.cobradores_id[index_cobrador].cancelado
                                 }
                                 //sino es solo un row, se debe sumar todo row
-                                if (response.data[index + 1]) {
-                                    if (response.data[index + 1].id_cobrador != response.data[index].id_cobrador) {
-                                        index_cobrador++ //aumento el index del cobrador
-                                        this.cobradores_id.push({
-                                            nombre: response.data[index + 1].name,
-                                            id: response.data[index + 1].id_cobrador,
-                                            cobrado: 0,
-                                            cancelado: 0,
-                                            total: 0
-                                        });
-                                    }
+                            }
+                            if (response.data[index + 1]) {
+                                if (response.data[index + 1].id_cobrador != response.data[index].id_cobrador) {
+                                    index_cobrador++ //aumento el index del cobrador
+                                    this.cobradores_id.push({
+                                        nombre: response.data[index + 1].name,
+                                        id: response.data[index + 1].id_cobrador,
+                                        cobrado: 0,
+                                        cancelado: 0,
+                                        total: 0
+                                    });
                                 }
-
                             }
 
                         }
-
                         //haciendo la suma total
-                          for (let index = 0; index < this.cobradores_id.length; index++) {
-                              this.cobrado+=this.cobradores_id[index].cobrado
-                              this.cancelado+=this.cobradores_id[index].cancelado
-                              this.total+=this.cobradores_id[index].total
-                          }
+                        for (let index = 0; index < this.cobradores_id.length; index++) {
+                            this.cobrado += this.cobradores_id[index].cobrado
+                            this.cancelado += this.cobradores_id[index].cancelado
+                            this.total += this.cobradores_id[index].total
+                        }
 
                         /*var fileURL = window.URL.createObjectURL(new Blob([response.data], {
                             type: 'application/pdf'

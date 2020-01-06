@@ -32,8 +32,8 @@
                     </b-form-group>
                 </b-col>
                 <b-col xs="12" sm="6" md="4">
-                    <b-form-group label="Capturado Por Usuario (*):" label-for="cmbCobrador" label-class="labels">
-                        <b-form-select id="cmbCobrador" v-model="form.capturo_id">
+                    <b-form-group label="Capturado Por Usuario (*):" label-for="cmbCapturista" label-class="labels">
+                        <b-form-select id="cmbCapturista" v-model="form.capturo_id">
                             <!-- These options will appear after the ones from 'options' prop -->
                             <option value="">Todos</option>
                             <option v-for="cobrador in cobradores" v-bind:key="cobrador.id" :value="cobrador.id">{{cobrador.name}}</option>
@@ -230,6 +230,9 @@
 
                                 </div>
                             </b-tab>
+                            <b-tab title="% de recuperación">
+                                <Graficas :datos="datos_result" :cobradores="cobradores_id" :datos_busqueda="form" :cobrado="cobrado" :cancelado="cancelado" :total="total"></Graficas>
+                            </b-tab>
                             <b-tab title="Gráficas">
                                 <Graficas :datos="datos_result" :cobradores="cobradores_id" :datos_busqueda="form" :cobrado="cobrado" :cancelado="cancelado" :total="total"></Graficas>
                             </b-tab>
@@ -291,7 +294,7 @@ export default {
     methods: {
         descargarPdfLista() {
             //traigo los tipos de poliza
-            window.open("http://localhost:8000/ventas/reporte_especifico_pagos?fecha_inicio=" + this.form.fecha_inicio + "&fecha_fin=" + this.form.fecha_fin + "&imprimir=yes");
+            window.open(this.$hostname + "ventas/reporte_especifico_pagos?fecha_inicio=" + this.form.fecha_inicio + "&fecha_fin=" + this.form.fecha_fin + "&imprimir=yes");
         },
         getTiposPoliza() {
             //traigo los tipos de poliza
@@ -343,7 +346,6 @@ export default {
                         this.cobradores_id = []
                         this.$store.dispatch('success');
                         this.datos_result = response.data
-
                         let index_cobrador = 0;
                         if (response.data.length) {
                             this.cobradores_id.push({
@@ -354,7 +356,6 @@ export default {
                                 total: 0
                             });
                         }
-
                         for (let index = 0; index < response.data.length; index++) {
                             if (index == 0) {
                                 //si solo es un row dejo el total al primer arreglo
@@ -393,7 +394,6 @@ export default {
                             this.cancelado += this.cobradores_id[index].cancelado
                             this.total += this.cobradores_id[index].total
                         }
-
                         /*var fileURL = window.URL.createObjectURL(new Blob([response.data], {
                             type: 'application/pdf'
                         }));

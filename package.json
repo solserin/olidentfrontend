@@ -27,6 +27,7 @@
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "2.0.0-rc.24",
     "chart.js": "^2.9.3",
+    "chartjs-plugin-datalabels": "^0.7.0",
     "core-js": "^2.6.9",
     "css-vars-ponyfill": "^2.0.2",
     "flag-icon-css": "^3.3.0",

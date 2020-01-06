@@ -24,5 +24,6 @@ $simple-line-font-path: '~simple-line-icons/fonts/';
 /* Import Bootstrap Vue Styles */
 @import '~bootstrap-vue/dist/bootstrap-vue.css';
 // Import Main styles for this application
+@import url("https://use.fontawesome.com/releases/v5.8.1/css/all.css");
 @import 'assets/scss/style';
 </style>

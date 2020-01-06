@@ -149,7 +149,7 @@ export default {
 */
             this.$store.dispatch('loading');
             axios({
-                url: 'http://localhost:8000/polizas/reporte_grafica_cobranza',
+                url: this.$hostname+'polizas/reporte_grafica_cobranza',
                 method: 'POST',
                 data: {
                     ima: this.imagen,
@@ -173,7 +173,6 @@ export default {
                 this.$store.dispatch('success');
                 fileLink.click();
             }).catch(error => {
-                this.resetear_pdf()
                 this.$toasted.show("Ha ocurrido un error en el servidor por favor reintente", {
                     iconPack: 'fontawesome',
                     type: 'error',

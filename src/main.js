@@ -17,7 +17,7 @@ import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
- 
+
 Vue.use(VueAxios, axios)
 
 // register the plugin on vue
@@ -38,15 +38,15 @@ Vue.use(datePicker);
 
 import numeral from 'numeral';
 import numFormat from 'vue-filter-number-format';
- 
+
 Vue.filter('numFormat', numFormat(numeral));
 // todo
 // cssVars()
 
 Vue.use(BootstrapVue)
 
-Vue.prototype.$hostname = 'http://localhost:8000/'
-Vue.prototype.$hostname_frontend = 'http://localhost:8080/'
+Vue.prototype.$hostname = 'https://www.api.olident.com.mx/'
+Vue.prototype.$hostname_frontend = 'https://www.olident.com.mx/'
 
 const plugin = {
   install (Vue,options) {

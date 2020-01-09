@@ -5,7 +5,7 @@ const state={
     status: '',
     token: localStorage.getItem('access_token') || '',
     user:[],
-    host:'http://localhost:8000/',
+    host:'https://www.api.olident.com.mx/',
     menu:[],
     permisos:[],
     datosEmpresa:[]
@@ -90,7 +90,7 @@ const actions={
         })
       },
       fillPerfil({ commit },id) {
-        
+
            return axios.post(state.host+'usuarios/loadPerfil/'+id)
             .then(res=>{
                 const data=res.data.data;
@@ -189,13 +189,13 @@ const actions={
                     temporal=[]
                 });
                 commit('getPerfil',menu)
-              
+
             })
             .catch(err=>{
                 console.log(err)
 
             })
-        
+
       },
       getDatosEmpresa({ commit }) {
         return axios.get(state.host+'empresas/1')

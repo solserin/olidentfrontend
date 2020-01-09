@@ -136,7 +136,7 @@
                       </b-col>
                       <b-col xs="12" sm="12" md="9">
                          <div class="float-right" v-if="this.datos_result.length>0">
-                          <b-button squared variant="primary" @click="descargarPdfLista()">
+                          <b-button squared variant="primary" @click="descargarPdfListaRuta()">
                             <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
                             <strong>PDF</strong>
                           </b-button>
@@ -343,6 +343,15 @@ export default {
           "&fecha_fin=" +
           this.form.fecha_fin +
           "&rutas_id=" +
+          this.form.rutas_id +
+          "&imprimir=yes"
+      );
+    },
+    descargarPdfListaRuta() {
+      //traigo los tipos de poliza
+      window.open(
+        this.$hostname +
+          "ventas/ruta_completa?rutas_id=" +
           this.form.rutas_id +
           "&imprimir=yes"
       );

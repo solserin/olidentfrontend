@@ -48,7 +48,7 @@ const ConsultarPagos = () => import('@/views/polizas/ConsultarPagos')
 //componentes para hacer los pagos
 
 //reportes
-const ReportePagos = () => import('@/views/polizas/reportes/Pagos')
+const ReportePagos = () => import('@/views/polizas/reportes/ReporteCobranza')
 //fin de reportes
 
 

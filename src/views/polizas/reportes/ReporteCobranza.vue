@@ -121,120 +121,6 @@
                     </table>
                   </div>
                 </b-tab>
-                <b-tab title="Ruta Completa">
-
-                    <b-row>
-                      <b-col xs="12" sm="12" md="3">
-                        <b-input-group class="mt-3" hidden>
-                          <b-input-group-prepend is-text>
-                            <b>
-                              <i class="fa fa-filter" aria-hidden="true"></i>
-                            </b>
-                          </b-input-group-prepend>
-                          <b-form-select v-model="perPage" >
-                            <!-- This slot appears above the options from 'options' prop -->
-                            <template v-slot:first>
-                              <option :value="null" disabled>-- Mostrar 10 --</option>
-                            </template>
-                            <!-- These options will appear after the ones from 'options' prop -->
-                            <option value="10">Mostrar 10</option>
-                            <option value="20">Mostrar 20</option>
-                            <option value="30">Mostrar 30</option>
-                            <option value="50">Mostrar 50</option>
-                          </b-form-select>
-                        </b-input-group>
-                      </b-col>
-                      <b-col xs="12" sm="12" md="9">
-                         <div class="float-right" v-if="this.datos_result.length>0">
-                          <b-button squared variant="primary" @click="descargarPdfListaRuta()">
-                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
-                            <strong>PDF</strong>
-                          </b-button>
-                        </div>
-
-
-                      </b-col>
-                    </b-row>
-                    <b-row>
-                      <b-col xs="12">
-                        <b-table
-                          id="table"
-                          stacked="lg"
-                          responsive
-                          :fixed="true"
-                          hover
-                          :foot-clone="true"
-                          :busy.sync="isBusy"
-                          :items="myProvider"
-                          :fields="fields"
-                          :current-page="currentPage"
-                          :per-page="perPage"
-                          striped
-                          show-empty
-                          :emptyText="texto"
-                          primary-key="id"
-                          class="mt-5"
-                        >
-                          <template v-slot:table-caption>
-                            Total de Resultados:
-                            <strong>{{rowsTotal}}</strong> de
-                            <strong>{{totalRows}}</strong> Registros.
-                          </template>
-                          <template v-slot:empty="scope">
-                            <p class="text-center">{{ scope.emptyText }}</p>
-                          </template>
-                          <template v-slot:num_poliza="data">
-                            <p class="text-center">{{ data.item.num_poliza }}</p>
-                          </template>
-                          <template v-slot:titular="data">
-                            <p class="text-center">{{ data.item.ventas[0].nombre }}</p>
-                          </template>
-                          <template v-slot:fecha_venta="data">
-                            <p class="text-center">{{ data.item.ventas[0].fecha_venta }}</p>
-                          </template>
-                          <template v-slot:precio="data">
-                            <p
-                              class="text-center"
-                            >$ {{ data.item.ventas[0].total | numFormat('0,000.00')}}</p>
-                          </template>
-                          <template v-slot:abonado="data">
-                            <p
-                              class="text-center"
-                            >$ {{ data.item.ventas[0].abonado | numFormat('0,000.00')}}</p>
-                          </template>
-                          <template v-slot:saldo="data">
-                            <p
-                              class="text-center"
-                            >$ {{ data.item.ventas[0].restante | numFormat('0,000.00')}}</p>
-                          </template>
-                          <template v-slot:acciones="data">
-                            <b-button
-                              class="mr-2"
-                              squared
-                              size="sm"
-                              variant="success"
-                              @click="verPagos(data.item.ventas[0].id)"
-                            >
-                              <i class="fa fa-dollar" aria-hidden="true"></i> Pagos
-                            </b-button>
-                          </template>
-
-                          <!-- A virtual composite column -->
-                        </b-table>
-                        <b-pagination
-                          v-model="currentPage"
-                          :total-rows="totalRows"
-                          :per-page="perPage"
-                          first-text="<<"
-                          prev-text="<"
-                          next-text=">"
-                          last-text=">>"
-                          class="mt-3 mb-5 justify-content-center"
-                        ></b-pagination>
-                      </b-col>
-                    </b-row>
-
-                </b-tab>
               </b-tabs>
             </div>
           </b-col>
@@ -414,7 +300,7 @@ export default {
             .get(url_query)
             .then(response => {
               //aqui mando traer toda la ruta que se selecciono
-              this.refresh_table();
+              //this.refresh_table();
               this.$store.dispatch("success");
               this.datos_result = response.data;
             })

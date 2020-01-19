@@ -49,6 +49,7 @@ const ConsultarPagos = () => import('@/views/polizas/ConsultarPagos')
 
 //reportes
 const ReportePagos = () => import('@/views/polizas/reportes/ReporteCobranza')
+const ReporteRutas = () => import('@/views/polizas/reportes/ReporteRutas')
 //fin de reportes
 
 
@@ -70,7 +71,7 @@ let router=new Router({
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -86,7 +87,7 @@ let router=new Router({
           path: '/perfil',
           name: 'PerfilUsuario',
           component: Perfil,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -103,7 +104,7 @@ let router=new Router({
           path: '/',
           name: 'Control de Usuarios',
           component: Usuarios,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -111,7 +112,7 @@ let router=new Router({
           path: 'roles',
           name: 'Roles de Usuario',
           component: Roles,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         }
@@ -129,7 +130,7 @@ let router=new Router({
           path: '/',
           name: 'Datos de la empresa',
           component: Empresa,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         }
@@ -146,7 +147,7 @@ let router=new Router({
           path: 'servicios',
           name: 'Servicios de la clinica',
           component: Servicios,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -154,7 +155,7 @@ let router=new Router({
           path: 'vendedores',
           name: 'Vendedores de polizas',
           component: Vendedores,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -162,7 +163,7 @@ let router=new Router({
           path: 'rutas',
           name: 'Rutas de cobro',
           component: Rutas,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         }
@@ -180,7 +181,7 @@ let router=new Router({
           path: '/',
           name: 'Control de ventas',
           component: Ventas,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -188,7 +189,7 @@ let router=new Router({
           path: 'vender',
           name: 'Vender pólizas',
           component: Vender,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -196,7 +197,7 @@ let router=new Router({
           path: 'editar',
           name: 'Actualizar pólizas',
           component: Editar,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -204,7 +205,7 @@ let router=new Router({
           path: 'renovar',
           name: 'Renovar pólizas',
           component: Renovar,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -212,7 +213,7 @@ let router=new Router({
           path: 'cancelar',
           name: 'Cancelar pólizas',
           component: Cancelar,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -220,7 +221,7 @@ let router=new Router({
           path: 'consultar',
           name: 'Consultar pólizas',
           component: Consultar,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -237,7 +238,7 @@ let router=new Router({
           path: '/',
           name: 'Control de pagos',
           component: Pagos,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -245,7 +246,7 @@ let router=new Router({
           path: 'pagar/:id',
           name: 'Realizar Pagos',
           component: GuardarPagos,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -253,7 +254,7 @@ let router=new Router({
           path: 'consultar',
           name: 'Consultar Pagos',
           component: ConsultarPagos,
-          meta: { 
+          meta: {
             requiresAuth: true
           }
         },
@@ -261,7 +262,15 @@ let router=new Router({
           path: 'reportes',
           name: 'Reportes de Pagos',
           component: ReportePagos,
-          meta: { 
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'rutas',
+          name: 'Reportes de Rutas',
+          component: ReporteRutas,
+          meta: {
             requiresAuth: true
           }
         },
@@ -289,7 +298,7 @@ let router=new Router({
           path: 'login',
           name: 'Login',
           component: Login
-          
+
         }
       ]
     },
@@ -307,7 +316,7 @@ router.beforeEach((to, from, next) => {
   //aqui los regreso al dashboard en caso de que ya este logueado
   if(to.fullPath=='/pages/login'){
     if (store.getters.isLoggedIn) {
-      next('/dashboard') 
+      next('/dashboard')
     }
   }
 
@@ -357,7 +366,7 @@ router.beforeEach((to, from, next) => {
             }
           });
         }
-        if(to.path=='/cobranza/pagar' || to.path=='/cobranza/consultar' || to.path=='/cobranza/reportes'){
+        if(to.path=='/cobranza/pagar' || to.path=='/cobranza/consultar' || to.path=='/cobranza/reportes' || to.path=='/cobranza/rutas'){
           store.getters.permisos.forEach(element => {
             //checo si tiene permiso al modulo y al permiso
             if((to.path=='/cobranza/pagar' && element.modulo_id==8 && element.permiso_id==2)){
@@ -377,6 +386,14 @@ router.beforeEach((to, from, next) => {
               tiene_permiso_modulo=1;
               return;
             }
+
+            if((to.path=='/cobranza/rutas' && element.modulo_id==8 && element.permiso_id==1 &&store.getters.user.roles_id==1)){
+              //puede vender
+              tiene_permiso_modulo=1;
+              return;
+            }
+
+
           });
         }
 
@@ -386,9 +403,9 @@ router.beforeEach((to, from, next) => {
         }
 
 
-        
 
-       
+
+
         //fin de validacion de ruta para vender
 
         //aqui dependiendo de las rutas de arribadecido si puede proseguir o nor
@@ -398,7 +415,7 @@ router.beforeEach((to, from, next) => {
           return
         }else{
           //no puede entrar a la ruta
-          next('/dashboard') 
+          next('/dashboard')
         }
         //verifico que tenga permiso para entrar a ese modulo
       }else{
@@ -408,9 +425,9 @@ router.beforeEach((to, from, next) => {
       next()
       return
     }
-    next('/pages/login') 
+    next('/pages/login')
   } else {
-    next() 
+    next()
   }
 })
 

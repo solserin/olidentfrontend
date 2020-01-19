@@ -4,7 +4,7 @@
       <div slot="header">Generar Reportes</div>
       <b-form @submit="onSubmit">
         <b-row>
-          <b-col xs="12" sm="6" md="3">
+          <b-col xs="12" sm="6" md="6">
             <b-form-group label="Fecha Inicio Pago (*):" label-for="txtFecha" label-class="labels">
               <date-picker readonly="readonly" v-model="form.fecha_inicio" :config="options"></date-picker>
               <div
@@ -13,13 +13,13 @@
               >{{errors.fecha_inicio}}</div>
             </b-form-group>
           </b-col>
-          <b-col xs="12" sm="6" md="3">
+          <b-col xs="12" sm="6" md="6">
             <b-form-group label="Fecha Fin Pago (*):" label-for="txtFecha" label-class="labels">
               <date-picker readonly="readonly" v-model="form.fecha_fin" :config="options"></date-picker>
               <div class="text-danger text-center" v-if="errors.fecha_fin">{{errors.fecha_fin}}</div>
             </b-form-group>
           </b-col>
-          <b-col xs="12" sm="6" md="3">
+          <b-col xs="12" sm="6" md="4">
             <b-form-group label="Ruta (*):" label-for="cmbRutas" label-class="labels">
               <b-form-select id="cmbRutas" v-model="form.rutas_id">
                 <option value>Selecciones 1 Ruta</option>
@@ -27,7 +27,17 @@
               </b-form-select>
             </b-form-group>
           </b-col>
-          <b-col xs="12" sm="6" md="3">
+           <b-col xs="12" sm="6" md="4">
+                    <b-form-group label="Cobrador (*):" label-for="cmbCobrador" label-class="labels">
+                        <b-form-select id="cmbCobrador" v-model="form.cobrador_id">
+                            <!-- These options will appear after the ones from 'options' prop -->
+                            <option value="">Todos</option>
+                            <option v-for="cobrador in cobradores" v-bind:key="cobrador.id" :value="cobrador.id">{{cobrador.name}}</option>
+                        </b-form-select>
+                    </b-form-group>
+                </b-col>
+
+          <b-col xs="12" sm="6" md="4">
             <div class="text-right">
               <b-button style="width:100%;" squared type="submit" variant="primary" class="mt-4">
                 <i class="fa fa-refresh mr-2" aria-hidden="true"></i>
@@ -64,29 +74,29 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(abono) in datos_result" v-bind:key="abono.aid">
-                          <th scope="row">
+                        <tr  v-for="(abono) in datos_result" v-bind:key="abono.aid">
+                          <th scope="row" v-if="abono.importe>0 && abono.enganche_id!=abono.id_abo">
                             <span>{{abono.polizas_id}}</span>
                           </th>
-                          <td>
+                          <td v-if="abono.importe>0 && abono.enganche_id!=abono.id_abo">
                             <span>{{abono.fecha_abono}}</span>
                           </td>
-                          <td>
+                          <td v-if="abono.importe>0 && abono.enganche_id!=abono.id_abo">
                             <span>{{abono.nombre}}</span>
                           </td>
-                          <td>
+                          <td v-if="abono.importe>0 && abono.enganche_id!=abono.id_abo">
                             <span>{{abono.ruta}}</span>
                           </td>
-                          <td>
+                          <td v-if="abono.importe>0 && abono.enganche_id!=abono.id_abo">
                             <span>$ {{ abono.importe | numFormat('0,000.00')}}</span>
                           </td>
-                          <td>
+                          <td v-if="abono.importe>0 && abono.enganche_id!=abono.id_abo">
                             <span>$ {{ abono.cantidad | numFormat('0,000.00')}}</span>
                           </td>
-                          <td>
+                          <td v-if="abono.importe>0 && abono.enganche_id!=abono.id_abo">
                             <span>$ {{ abono.saldo | numFormat('0,000.00')}}</span>
                           </td>
-                          <td>
+                          <td v-if="abono.importe>0 && abono.enganche_id!=abono.id_abo">
                             <b-button
                               class="mr-2"
                               squared
@@ -318,7 +328,8 @@ export default {
       form: {
         fecha_inicio: "",
         fecha_fin: "",
-        rutas_id: ""
+        rutas_id: "",
+        cobrador_id: ''
       },
       errors: {
         fecha_inicio: "",
@@ -344,6 +355,8 @@ export default {
           this.form.fecha_fin +
           "&rutas_id=" +
           this.form.rutas_id +
+          "&cobrador_id=" +
+          this.form.cobrador_id +
           "&imprimir=yes"
       );
     },
@@ -367,6 +380,15 @@ export default {
           console.log(error);
         });
     },
+    getVendedores() {
+            axios.get(this.$hostname + 'usuarios/vendedores')
+                .then(resp => {
+                    this.cobradores = resp.data.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
     onSubmit(evt) {
       evt.preventDefault();
       try {
@@ -385,8 +407,9 @@ export default {
             "&fecha_fin=" +
             this.form.fecha_fin +
             "&rutas_id=" +
-            this.form.rutas_id;
-
+            this.form.rutas_id +
+            "&cobrador_id=" +
+            this.form.cobrador_id;
           axios
             .get(url_query)
             .then(response => {
@@ -455,7 +478,6 @@ export default {
           this.form.rutas_id;
 
         let promise = axios.get(url_api);
-        console.log(url_api);
         return promise
           .then(resp => {
             var items = resp.data.data.data;
@@ -482,6 +504,7 @@ export default {
   },
   created() {
     this.getRutasCobros();
+    this.getVendedores();
     this.$store.dispatch("success");
   }
 };
